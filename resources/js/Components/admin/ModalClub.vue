@@ -1,0 +1,43 @@
+<script setup>
+import DialogModal from '../DialogModal.vue';
+import InputError from '../InputError.vue';
+import TextInput from '../TextInput.vue';
+
+const emit = defineEmits(['close', 'save'])
+
+defineProps({
+    club: { type: Object, default: () => ({}) },
+    error: { type: Object, default: () => ({}) },
+    show: { type: Boolean, default: false }
+});
+</script>
+
+<template>
+    <DialogModal :show="show" maxWidth="lg" @close="$emit('close')">
+        <template #title>
+            {{ `${club.id === undefined ? 'Añadir' : 'Editar'} club` }}
+        </template>
+        <template #content>
+            <div class="mt-4">
+                <form class="w-2xl">
+
+                    <TextInput v-model="club.name" type="text" class="mt-2 block w-full" placeholder="Nombre de club"
+                        minlength="3" maxlength="50" />
+                    <InputError :message="error.name" class="mt-2" />
+
+                    <TextInput v-model="club.address" type="text" class="mt-2 block w-full" placeholder="Comunidad"
+                        minlength="3" maxlength="50" />
+                    <InputError :message="error.address" class="mt-2" />
+
+                    <!-- <select v-model="club.group_id" class="mt-2 block w-full rounded border-gray-300">
+                        <option value="femenino">Femenino</option>
+                        <option value="masculino">Masculino</option>
+                    </select> -->
+                </form>
+            </div>
+        </template>
+        <template #footer>
+            <button @click="$emit('save')" class="px-6 py-2 ml-2 bg-blue-600 text-blue-100 rounded">Guardar</button>
+        </template>
+    </DialogModal>
+</template>
