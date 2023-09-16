@@ -12,7 +12,10 @@ class ClubController extends Controller
 {
     public function index(Category $category)
     {
-        $clubs = Club::where('category_id', $category->id)->get();
+        $clubs = Club::select('g.name AS gname', 'clubs.*')
+            ->leftJoin('groups AS g', 'g.id', 'group_id')
+            ->where('clubs.category_id', $category->id)->get();
+
         $groups = Group::where('category_id', $category->id)->get();
 
         return Inertia::render('Club/Index', compact('category', 'clubs', 'groups'));

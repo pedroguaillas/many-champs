@@ -3,6 +3,8 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\GenerateGamesController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -47,5 +49,11 @@ Route::middleware([
     Route::get('games/{game}/edit', [GameController::class, 'edit'])->name('games.edit');
     Route::put('games/{game}/update', [GameController::class, 'update'])->name('games.update');
     Route::delete('games/{game}/destroy', [GameController::class, 'destroy'])->name('games.destroy');
-    Route::get('categories/{category}/generate_games', [GameController::class, 'generateGames'])->name('games.generate_games');
+    Route::get('categories/{category}/groups', [GroupController::class, 'index'])->name('groups.index');
+    Route::post('groups', [GroupController::class, 'store'])->name('groups.store');
+    Route::put('groups/{group}/update', [GroupController::class, 'update'])->name('groups.update');
+    Route::delete('groups/{group}/destroy', [GroupController::class, 'destroy'])->name('groups.destroy');
+
+    Route::get('categoria/{category}/generarpartidos', [GenerateGamesController::class, 'index'])->name('games.vgenerate');
+    Route::post('categories/{category}/sgenerate', [GenerateGamesController::class, 'generate'])->name('games.sgenerate');
 });

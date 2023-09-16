@@ -8,6 +8,7 @@ const emit = defineEmits(['close', 'save'])
 defineProps({
     club: { type: Object, default: () => ({}) },
     error: { type: Object, default: () => ({}) },
+    groups: { type: Array, default: () => [] },
     show: { type: Boolean, default: false }
 });
 </script>
@@ -29,10 +30,12 @@ defineProps({
                         minlength="3" maxlength="50" />
                     <InputError :message="error.address" class="mt-2" />
 
-                    <!-- <select v-model="club.group_id" class="mt-2 block w-full rounded border-gray-300">
-                        <option value="femenino">Femenino</option>
-                        <option value="masculino">Masculino</option>
-                    </select> -->
+                    <label :for="'Grupo'" class="mt-4 inline-block">Grupo</label>
+                    <select v-if="groups.length > 0" v-model="club.group_id"
+                        class="mt-2 block w-full rounded border-gray-300">
+                        <option v-for="group in groups" :value="group.id">{{ group.name }}</option>
+                    </select>
+                    <InputError :message="error.group_id" class="mt-2" />
                 </form>
             </div>
         </template>

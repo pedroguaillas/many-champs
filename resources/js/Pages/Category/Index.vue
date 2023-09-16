@@ -1,7 +1,7 @@
 <script setup>
 import ModalCategory from '@/Components/admin/ModalCategory.vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { router, useForm } from '@inertiajs/vue3';
+import { router, useForm, Link } from '@inertiajs/vue3';
 import { reactive, ref } from 'vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -143,7 +143,10 @@ const deleteCategory = (id, name) => {
                             <td>{{ `$${item.inscription}` }}</td>
                             <td>{{ item.gender }}</td>
                             <td>
-                                <div class="relative inline-flex [&>button>i]:text-white">
+                                <div class="relative inline-flex [&>a>i]:text-white [&>button>i]:text-white">
+                                    <Link :href="route('groups.index', item.id)" class="rounded p-2 mr-1 bg-green-500">
+                                    <i class="fa fa-users"></i>
+                                    </Link>
                                     <button @click="edit(item)" class="rounded px-2 py-1 bg-blue-500">
                                         <i class="fa fa-edit"></i>
                                     </button>

@@ -2,64 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Group;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class GroupController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Category $category)
     {
-        //
+        $groups = Group::where('category_id', $category->id)->get();
+
+        return Inertia::render('Category/Group/Index', compact('groups', 'category'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'alpha:ascii',
+            'category_id' => 'exists:App\Models\Category,id'
+        ]);
+
+        Group::create($request->all());
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Group $group)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Group $group)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Group $group)
     {
-        //
+        $request->validate([
+            'name' => 'alpha:ascii',
+            'category_id' => 'exists:App\Models\Category,id'
+        ]);
+
+        $group->update($request->all());
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Group $group)
     {
-        //
+        $group->delete();
     }
 }

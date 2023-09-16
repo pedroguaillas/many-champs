@@ -43,9 +43,8 @@ const deleteGame = (game) => {
 
             <!-- Card header -->
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">{{ category.name }}</h2>
-
-                <Link :href="route('games.create', category.id)"
+                <h2 class="text-xl font-bold">{{ `${category.name} ${category.gender}` }}</h2>
+                <Link v-if="games.length > 0" :href="route('games.create', category.id)"
                     class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
                 +
                 </Link>
@@ -54,7 +53,7 @@ const deleteGame = (game) => {
             <!-- Resposive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
+                <table v-if="games.length > 0" class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
                     <thead>
                         <tr class="[&>th]:py-2">
                             <th>N°</th>
@@ -83,11 +82,15 @@ const deleteGame = (game) => {
                         </tr>
                     </tbody>
                 </table>
-                <p v-if="games.length === 0">Si quieres crear todos los partidos de fase de grupos haz clic
-                    <button @click="toggle" class="text-indigo-500">
-                        aqui
-                    </button>
+
+                <!-- Mstrar si no hay ningun partido creado -->
+                <p v-if="games.length === 0" class="mt-4">
+                    Para crear los partidos de fase de grupos haz clic
+                    <Link :href="route('games.vgenerate', category.id)" class="text-indigo-500">aqui</Link>
+                    , o para crear el primer partido individual haz clic
+                    <Link :href="route('games.create', category.id)" class="text-indigo-500">aqui</Link>
                 </p>
+
             </div>
         </div>
     </AdminLayout>

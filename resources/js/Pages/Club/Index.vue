@@ -17,7 +17,8 @@ const modal = ref(false);
 
 const initialStateClub = {
     name: '',
-    address: ''
+    address: '',
+    group_id: 0
 }
 
 const club = reactive({ ...initialStateClub });
@@ -39,8 +40,9 @@ const save = () => {
     processing.value = true;
 
     if (club.id === undefined) {
+        const data = { ...club, category_id: props.category.id, group_id: club.group_id > 0 ? club.group_id : null }
         axios
-            .post(route('clubs.store'), { category_id: props.category.id, ...club })
+            .post(route('clubs.store'), data)
             .then(() => {
                 processing.value = false;
 
@@ -124,8 +126,7 @@ const deleteClub = (id, name) => {
             <!-- Card Header -->
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold">Clubes</h2>
-                <button @click="toggle"
-                    class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
+                <button @click="toggle" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
                     +
                 </button>
             </div>
@@ -145,7 +146,7 @@ const deleteClub = (id, name) => {
                     <tbody>
                         <tr v-for="club in clubs" :key="club.id" class="border-t [&>td]:py-2">
                             <td>{{ club.name }}</td>
-                            <td>{{ club.group_name }}</td>
+                            <td>{{ club.gname }}</td>
                             <td>{{ club.address }}</td>
                             <td>
                                 <div class="relative inline-flex [&>button>i]:text-white">
@@ -165,4 +166,5 @@ const deleteClub = (id, name) => {
         </div>
     </AdminLayout>
 
-    <ModalClub :show="modal" :club="club" :error="errorClub" @close="toggle" @save="save" /></template>
+    <ModalClub :show="modal" :club="club" :error="errorClub" :groups="groups" @close="toggle" @save="save" />
+</template>
