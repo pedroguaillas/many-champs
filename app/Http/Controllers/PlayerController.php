@@ -2,45 +2,57 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Club;
 use App\Models\Player;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class PlayerController extends Controller
 {
-    public function index()
+    public function index(Club $club)
     {
-        $players = Player::all();
-        return Inertia::render('Player/Index', compact('players'));
-    }
-
-    public function create()
-    {
-        //
+        $players = $club->players;
+        return Inertia::render('Player/Index', compact('club', 'players'));
     }
 
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'cedula' => 'nullable|max:10',
+            'first_name' => 'required|max:50',
+            'last_name' => 'required|max:50',
+            'date_of_birth' => 'nullable|date',
+            't_shirt' => 'nullable|numeric',
+            'phone' => 'nullable|max:10'
+        ]);
 
-    public function show(Player $player)
-    {
-        //
-    }
+        $inputs = $request->input();
 
-    public function edit(Player $player)
-    {
-        //
+        $user = Auth::user();
+
+        // Agregar el id del Campeonato actual donde se encuentra logeado el usuario
+        $inputs += ['team_id' => $user->currentTeam->id];
+
+        Player::create($inputs);
     }
 
     public function update(Request $request, Player $player)
     {
-        //
+        $request->validate([
+            'cedula' => 'nullable|max:10',
+            'first_name' => 'required|max:50',
+            'last_name' => 'required|max:50',
+            'date_of_birth' => 'nullable|date',
+            't_shirt' => 'nullable|numeric',
+            'phone' => 'nullable|max:10'
+        ]);
+
+        $player->update($request->all());
     }
 
     public function destroy(Player $player)
     {
-        //
+        $player->delete();
     }
 }

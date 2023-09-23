@@ -1,26 +1,36 @@
 <script setup>
 
-import { ref } from 'vue';
-import Sidebar from '@/Components/admin/Sidebar.vue';
+// Imports
+import Header from './admin/Header.vue';
+import Sidebar from './admin/Sidebar.vue';
 import { Head } from '@inertiajs/vue3';
-import Header from '@/Components/admin/Header.vue';
+import { ref, watch } from 'vue';
 
+// Props
 defineProps({
     title: String
 });
 
+// Refs
+const divRef = ref(null);
 const menu = ref(false);
 
 const toggle = () => {
     menu.value = !menu.value;
 };
 
+watch(divRef, () => {
+    if (divRef.value.getBoundingClientRect().width > 640) {
+        toggle();
+    }
+})
+
 </script>
 
 <template>
     <Head :title="title" />
 
-    <div class="bg-slate-200 h-screen">
+    <div ref="divRef" class="bg-slate-200 h-screen">
 
         <Sidebar :menu="menu" />
         <Header :menu="menu" @toggle="toggle" />

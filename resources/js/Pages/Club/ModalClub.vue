@@ -1,16 +1,21 @@
 <script setup>
-import DialogModal from '../DialogModal.vue';
-import InputError from '../InputError.vue';
-import TextInput from '../TextInput.vue';
 
-const emit = defineEmits(['close', 'save'])
+// Imports
+import DialogModal from '@/Components/DialogModal.vue';
+import InputError from '@/Components/InputError.vue';
+import TextInput from '@/Components/TextInput.vue';
 
+// Props
 defineProps({
     club: { type: Object, default: () => ({}) },
     error: { type: Object, default: () => ({}) },
     groups: { type: Array, default: () => [] },
     show: { type: Boolean, default: false }
 });
+
+// Emits
+defineEmits(['close', 'save'])
+
 </script>
 
 <template>

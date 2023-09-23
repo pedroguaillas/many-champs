@@ -1,82 +1,87 @@
 <script setup>
 
 // Imports
-import ModalCategory from './ModalCategory.vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { router, useForm, Link } from '@inertiajs/vue3';
+import ModalGroup from './ModalGroup.vue';
+import { router, useForm } from '@inertiajs/vue3'
 import { reactive, ref } from 'vue';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 
 // Props
-defineProps({
-    categories: { type: Array, default: () => [] }
+const props = defineProps({
+    category: { type: Object, default: () => { } },
+    groups: { type: Array, default: () => [] },
 });
 
 // Refs
 const modal = ref(false);
 
-const initialStateCategory = {
-    name: '',
-    inscription: '',
-    gender: ''
-}
+const initialStateGroup = { name: '' }
+
+// Forms
 
 // Reactives
-const category = reactive({ ...initialStateCategory });
-const errorCategory = reactive({ ...initialStateCategory });
+const group = reactive({ ...initialStateGroup });
+const errors = reactive({ ...initialStateGroup });
 
 const resetForm = () => {
-    Object.assign(category, initialStateCategory);
+    Object.assign(group, initialStateGroup);
 }
 
-const resetErrorForm = () => {
-    Object.assign(errorCategory, initialStateCategory);
+const resetError = () => {
+    Object.assign(errors, initialStateGroup);
 }
 
 const toggle = () => {
     modal.value = !modal.value
 }
 
+const newGroup = () => {
+    resetForm();
+    resetError();
+    toggle();
+}
+
 const save = () => {
-    if (category.id === undefined) {
+
+    if (group.id === undefined) {
         axios
-            .post(route('categories.store'), category)
+            .post(route('groups.store'), { category_id: props.category.id, ...group })
             .then(() => {
                 toggle();
                 resetForm();
-                resetErrorForm();
+                resetError();
 
-                router.reload({ only: ['categories'] });
+                router.reload({ only: ['groups'] });
             }).catch(error => {
-                resetErrorForm();
+                resetError();
 
                 Object.keys(error.response.data.errors).forEach(key => {
-                    errorCategory[key] = error.response.data.errors[key][0]
+                    errors[key] = error.response.data.errors[key][0]
                 });
             })
     } else {
         axios
-            .put(route('categories.update', category.id), category)
+            .put(route('groups.update', group.id), group)
             .then(() => {
                 toggle();
                 resetForm();
-                resetErrorForm();
+                resetError();
 
-                router.reload({ only: ['categories'] });
+                router.reload({ only: ['groups'] });
             }).catch(error => {
-                resetErrorForm();
+                resetError();
 
                 Object.keys(error.response.data.errors).forEach(key => {
-                    errorCategory[key] = error.response.data.errors[key][0]
+                    errors[key] = error.response.data.errors[key][0]
                 });
             })
     }
 }
 
-const edit = (cat) => {
-    Object.keys(cat).forEach(key => {
-        category[key] = cat[key]
+const edit = (item) => {
+    Object.keys(item).forEach(key => {
+        group[key] = item[key]
     });
     toggle();
 }
@@ -84,21 +89,22 @@ const edit = (cat) => {
 // utilizado para eliminar una categoría
 const form = useForm({ id: '' });
 
-const deleteCategory = (id, name) => {
+const deleteGroup = (item) => {
     const alert = Swal.mixin({
         buttonsStyling: true
     });
     alert.fire({
-        title: `¿Esta seguro eliminar la categoría ${name}?`,
+        title: `¿Esta seguro eliminar el grupo ${item.name}?`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: '<i class="fa-solid fa-check"></i> Si, Eliminar',
         cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            form.delete(route('categories.destroy', id), {
-                onFinish: () => router.reload({ only: ['categories'] })
-            })
+            form.delete(route('groups.destroy', item.id))
+                .then(() => {
+                    router.reload({ only: ['groups'] });
+                });
         }
     });
 }
@@ -106,14 +112,15 @@ const deleteCategory = (id, name) => {
 </script>
 
 <template>
-    <AdminLayout :title="'Categorías'">
+    <AdminLayout :title="`Grupos ${props.category.name} ${props.category.gender}`">
+
         <!-- Card -->
         <div class="m-4 p-4 bg-white rounded drop-shadow-md">
 
             <!-- Card header -->
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">Categorías</h2>
-                <button @click="toggle" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
+                <h2 class="text-xl font-bold">{{ `Grupos ${props.category.name} ${props.category.gender}` }}</h2>
+                <button @click="newGroup" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
                     +
                 </button>
             </div>
@@ -125,28 +132,20 @@ const deleteCategory = (id, name) => {
                     <thead>
                         <tr class="[&>th]:py-2">
                             <th>N°</th>
-                            <th>Categoría</th>
-                            <th>Inscripción</th>
-                            <th>Género</th>
+                            <th>Grupo</th>
                             <th class="w-1"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item, i in categories" :key="item.id" class="border-t [&>td]:py-2">
+                        <tr v-for="item, i in groups" :key="item.id" class="border-t [&>td]:py-2">
                             <td>{{ i + 1 }}</td>
                             <td>{{ item.name }}</td>
-                            <td>{{ `$${item.inscription}` }}</td>
-                            <td>{{ item.gender }}</td>
                             <td>
                                 <div class="relative inline-flex [&>a>i]:text-white [&>button>i]:text-white">
-                                    <Link :href="route('groups.index', item.id)" class="rounded p-2 mr-1 bg-green-500">
-                                    <i class="fa fa-users"></i>
-                                    </Link>
                                     <button @click="edit(item)" class="rounded px-2 py-1 bg-blue-500">
                                         <i class="fa fa-edit"></i>
                                     </button>
-                                    <button @click="$event => deleteCategory(item.id, item.name)"
-                                        class="rounded px-2 py-1 ml-1 bg-red-500">
+                                    <button @click="$event => deleteGroup(item)" class="rounded px-2 py-1 ml-1 bg-red-500">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </div>
@@ -158,5 +157,5 @@ const deleteCategory = (id, name) => {
         </div>
     </AdminLayout>
 
-    <ModalCategory :show="modal" :category="category" :error="errorCategory" @close="toggle" @save="save" />
+    <ModalGroup :show="modal" :group="group" :error="errors" @close="toggle" @save="save" />
 </template>

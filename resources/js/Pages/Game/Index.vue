@@ -67,7 +67,10 @@ const deleteGame = (game) => {
                         <tr v-for="game, i in games" :key="game.id" class="border-t [&>td]:py-2">
                             <td>{{ i + 1 }}</td>
                             <td>{{ game.c1name }}</td>
-                            <td>VS</td>
+                            <td>
+                                <span :class="game.state === 'planificado' ? 'bg-yellow-500' : null"
+                                    class="rounded px-2 py-1">VS</span>
+                            </td>
                             <td>{{ game.c2name }}</td>
                             <td>
                                 <div class="relative inline-flex [&>a>i]:text-white [&>button>i]:text-white">

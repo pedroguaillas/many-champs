@@ -6,6 +6,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\GenerateGamesController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PlayerController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -53,6 +54,11 @@ Route::middleware([
     Route::post('groups', [GroupController::class, 'store'])->name('groups.store');
     Route::put('groups/{group}/update', [GroupController::class, 'update'])->name('groups.update');
     Route::delete('groups/{group}/destroy', [GroupController::class, 'destroy'])->name('groups.destroy');
+
+    Route::get('club/{club}/jugadores', [PlayerController::class, 'index'])->name('players.index');
+    // Route::post('players', [PlayerController::class, 'store'])->name('players.store');
+    // Route::put('players/{player}', [PlayerController::class, 'update'])->name('players.update');
+    Route::resource('players', PlayerController::class)->only(['store', 'update', 'destroy']);
 
     Route::get('categoria/{category}/generarpartidos', [GenerateGamesController::class, 'index'])->name('games.vgenerate');
     Route::post('categories/{category}/sgenerate', [GenerateGamesController::class, 'generate'])->name('games.sgenerate');

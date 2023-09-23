@@ -1,27 +1,24 @@
 <script setup>
-import DialogModal from '../DialogModal.vue';
-import InputError from '../InputError.vue';
-import TextInput from '../TextInput.vue';
 
-const emit = defineEmits(['close', 'save'])
+// Imports
+import DialogModal from '@/Components/DialogModal.vue';
+import InputError from '@/Components/InputError.vue';
+import TextInput from '@/Components/TextInput.vue';
 
+// Props
 defineProps({
     category: { type: Object, default: () => ({}) },
     error: { type: Object, default: () => ({}) },
     show: { type: Boolean, default: false }
 });
 
-const close = () => {
-    emit('close')
-}
+// Emits
+defineEmits(['close', 'save'])
 
-const save = () => {
-    emit('save')
-}
 </script>
 
 <template>
-    <DialogModal :show="show" maxWidth="lg" @close="close">
+    <DialogModal :show="show" maxWidth="lg" @close="$emit('close')">
         <template #title>
             {{ `${category.id === undefined ? 'Añadir' : 'Editar'} categoría` }}
         </template>
@@ -46,7 +43,7 @@ const save = () => {
             </div>
         </template>
         <template #footer>
-            <button @click="save()" class="px-6 py-2 ml-2 bg-blue-600 text-blue-100 rounded">Guardar</button>
+            <button @click="$emit('save')" class="px-6 py-2 ml-2 bg-blue-600 text-blue-100 rounded">Guardar</button>
         </template>
     </DialogModal>
 </template>

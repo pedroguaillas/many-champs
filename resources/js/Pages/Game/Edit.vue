@@ -60,10 +60,20 @@ const save = () => {
             <InputError :message="error.time" class="mt-2" />
 
             <select v-model="form.progress_id" class="mt-2 block w-full rounded border-gray-300">
-                <option v-for="p in progress" :key="p.id" :value="p.id" :selected="form.progress_id === p.id">{{ p.description
+                <option v-for="p in progress" :key="p.id" :value="p.id" :selected="form.progress_id === p.id">{{
+                    p.description
                 }}</option>
             </select>
             <InputError :message="error.progress_id" class="mt-2" />
+
+            <select v-model="form.state" class="mt-2 block w-full rounded border-gray-300">
+                <option value="creado" :selected="form.state === 'creado'">Creado</option>
+                <option value="planificado" :selected="form.state === 'planificado'">Planificado</option>
+                <option value="jugando" :selected="form.state === 'jugando'">Jugando</option>
+                <option value="suspendido" :selected="form.state === 'suspendido'">Suspendido</option>
+                <option value="finalizado" :selected="form.state === 'finalizado'">Finalizado</option>
+            </select>
+            <InputError :message="error.state" class="mt-2" />
 
             <div class="w-full flex justify-end">
                 <button @click="save" :disabled="form.processing" class="py-2 px-4 mt-2 bg-indigo-500 rounded text-white">

@@ -1,7 +1,7 @@
 <script setup>
-import ModalClub from '@/Components/admin/ModalClub.vue';
+import ModalClub from './ModalClub.vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { router, useForm } from '@inertiajs/vue3';
+import { router, Link, useForm } from '@inertiajs/vue3';
 import { reactive, ref } from 'vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -12,7 +12,6 @@ const props = defineProps({
     groups: { type: Array, default: () => [] }
 });
 
-const processing = ref(false);
 const modal = ref(false);
 
 const initialStateClub = {
@@ -37,23 +36,17 @@ const toggle = () => {
 }
 
 const save = () => {
-    processing.value = true;
-
     if (club.id === undefined) {
         const data = { ...club, category_id: props.category.id, group_id: club.group_id > 0 ? club.group_id : null }
         axios
             .post(route('clubs.store'), data)
             .then(() => {
-                processing.value = false;
-
                 toggle();
                 resetForm();
                 resetErrorForm();
 
                 router.reload({ only: ['clubs'] });
             }).catch(error => {
-                processing.value = false;
-
                 resetErrorForm();
 
                 Object.keys(error.response.data.errors).forEach(key => {
@@ -64,16 +57,12 @@ const save = () => {
         axios
             .put(route('clubs.update', club.id), club)
             .then(() => {
-                processing.value = false;
-
                 toggle();
                 resetForm();
                 resetErrorForm();
 
                 router.reload({ only: ['clubs'] });
             }).catch(error => {
-                processing.value = false;
-
                 resetErrorForm();
 
                 Object.keys(error.response.data.errors).forEach(key => {
@@ -107,10 +96,9 @@ const deleteClub = (id, name) => {
         cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            form.delete(route('clubs.destroy', id))
-                .then(() => {
-                    router.reload({ only: ['clubs'] });
-                });
+            form.delete(route('clubs.destroy', id), {
+                onFinish: () => router.reload({ only: ['clubs'] })
+            });
         }
     });
 }
@@ -137,6 +125,7 @@ const deleteClub = (id, name) => {
                 <table class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
                     <thead>
                         <tr class="[&>th]:py-2">
+                            <th>N°</th>
                             <th>Nombre</th>
                             <th>Grupo</th>
                             <th>Lugar</th>
@@ -144,17 +133,20 @@ const deleteClub = (id, name) => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="club in clubs" :key="club.id" class="border-t [&>td]:py-2">
+                        <tr v-for="club, i in clubs" :key="club.id" class="border-t [&>td]:py-2">
+                            <td>{{ i + 1 }}</td>
                             <td>{{ club.name }}</td>
                             <td>{{ club.gname }}</td>
                             <td>{{ club.address }}</td>
                             <td>
-                                <div class="relative inline-flex [&>button>i]:text-white">
-                                    <button @click="edit(club)" class="rounded px-2 py-1 bg-blue-500">
+                                <div class="relative inline-flex [&>a>i]:text-white [&>button>i]:text-white">
+                                    <Link :href="route('players.index', club.id)" class="rounded px-2 py-1 bg-green-500">
+                                    <i class="fa fa-users"></i>
+                                    </Link>
+                                    <button @click="edit(club)" class="mx-1 rounded px-2 py-1 bg-blue-500">
                                         <i class="fa fa-edit"></i>
                                     </button>
-                                    <button @click="deleteClub(club.id, club.name)"
-                                        class="rounded px-2 py-1 ml-1 bg-red-500">
+                                    <button @click="deleteClub(club.id, club.name)" class="rounded px-2 py-1 bg-red-500">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </div>

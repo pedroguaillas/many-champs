@@ -13,7 +13,7 @@ class GroupController extends Controller
     {
         $groups = Group::where('category_id', $category->id)->get();
 
-        return Inertia::render('Category/Group/Index', compact('groups', 'category'));
+        return Inertia::render('Group/Index', compact('groups', 'category'));
     }
 
     public function store(Request $request)
