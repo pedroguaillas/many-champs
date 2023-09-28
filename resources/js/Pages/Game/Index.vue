@@ -74,7 +74,12 @@ const deleteGame = (game) => {
                             <td>{{ game.c2name }}</td>
                             <td>
                                 <div class="relative inline-flex [&>a>i]:text-white [&>button>i]:text-white">
-                                    <Link :href="route('games.select-players', game.id)"
+                                    <Link v-if="game.state === 'creado' || game.state === 'planificado'"
+                                        :href="route('games.select-players', game.id)"
+                                        class="rounded px-2 py-2 bg-green-500">
+                                    <i class="far fa-futbol"></i>
+                                    </Link>
+                                    <Link v-else :href="route('playing.index', game.id)"
                                         class="rounded px-2 py-2 bg-green-500">
                                     <i class="far fa-futbol"></i>
                                     </Link>

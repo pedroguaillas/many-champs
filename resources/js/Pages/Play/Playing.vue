@@ -14,15 +14,16 @@ const props = defineProps({
 
 <template>
     <AdminLayout :title="'Seleccionar jugadores'">
-        <div class="p-4 bg-white rounded drop-shadow-md">
+
+        <div class="bg-white rounded drop-shadow-md">
 
             <!-- Card header -->
-            <div class="flex justify-between items-center bg-blue-400">
-                <h2 class="text-xl font-bold">{{ `${game.c1_name} ()` }}</h2>
+            <div class="flex px-4 py-2 justify-between items-center rounded-t bg-blue-500">
+                <h2 class="text-xl text-white font-bold">{{ `${game.c1_name} ()` }}</h2>
             </div>
 
             <!-- Resposive -->
-            <div class="w-full overflow-x-auto">
+            <div class="w-full p-4 overflow-x-auto">
                 <!-- Tabla -->
                 <table v-if="c1_players.length > 0"
                     class="mt-4 text-sm sm:text-xs table-auto w-full text-gray-700 [&>thead>tr>th]:text-left">
@@ -36,24 +37,35 @@ const props = defineProps({
             </div>
         </div>
 
-        <div class="mt-4 p-4 bg-white rounded drop-shadow-md">
+        <div class="mt-4 bg-white rounded drop-shadow-md">
 
             <!-- Card header -->
-            <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">{{ `${game.c2_name} ()` }}</h2>
+            <div class="flex px-4 py-2 justify-between items-center rounded-t bg-blue-500">
+                <h2 class="text-xl text-white font-bold">{{ `${game.c2_name} ()` }}</h2>
             </div>
 
-            <!-- Resposive -->
-            <div class="w-full overflow-x-auto">
-                <!-- Tabla -->
-                <table v-if="c2_players.length > 0"
-                    class="mt-4 text-sm sm:text-xs table-auto w-full text-gray-700 [&>thead>tr>th]:text-left">
-                    <tbody>
-                        <tr v-for="c2, i in c2_players" :key="c2.id" class="border-t [&>td]:py-2">
-                            <td>{{ `${c2.first_name} ${c2.last_name}` }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Card Body -->
+            <div class="w-full p-4 overflow-x-auto">
+
+                <!-- form-group -->
+                <div v-for="c2, i in c2_players" :key="c2.id" class="w-full pb-2">
+                    <!-- input-group -->
+                    <div class="flex">
+                        <!-- Buttons -->
+                        <div class="text-xl text-white flex">
+                            <button class="px-2 py-1 bg-blue-500 rounded-l">+</button>
+                            <button class="px-3 py-1 bg-slate-500">-</button>
+                        </div>
+                        <div class="h-8 p-1 border-slate-500 flex-auto">{{ `${c2.first_name} ${c2.last_name}` }}
+                        </div>
+                        <div class="flex text-white">
+                            <button class="px-2 py-1 bg-slate-500"><i class="fa fa-check"></i></button>
+                            <button class="px-2 py-1 bg-yellow-500"><i class="fa fa-check"></i></button>
+                            <button class="px-2 py-1 bg-red-500"><i class="fa fa-check"></i></button>
+                            <button class="px-2 py-1 bg-blue-500 rounded-r"><i class="fa fa-exchange-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>
