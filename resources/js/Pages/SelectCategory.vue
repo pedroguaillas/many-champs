@@ -18,7 +18,7 @@ const colorSTrans = ref(['bg-blue-900', 'bg-blue-800', 'bg-blue-700']);
 
         <!-- Contenedor de targetas -->
         <div
-            class="grid grid-cols-1 m-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 [&>div]:justify-between text-white">
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 [&>div]:justify-between text-white">
 
             <!-- Card 1-->
             <div v-for="(category, i) in categories" :class=colors[i]

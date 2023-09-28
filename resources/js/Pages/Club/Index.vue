@@ -109,7 +109,7 @@ const deleteClub = (id, name) => {
     <AdminLayout :title="'Clubes'">
 
         <!-- Card -->
-        <div class="m-4 p-4 bg-white rounded drop-shadow-md">
+        <div class="p-4 bg-white rounded drop-shadow-md">
 
             <!-- Card Header -->
             <div class="flex justify-between items-center">

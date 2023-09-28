@@ -2,64 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GameItem;
-use Illuminate\Http\Request;
+use App\Models\Player;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class GameItemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index($game_id)
     {
-        //
-    }
+        $game = json_decode(json_encode(DB::table('games AS g')
+            ->select('g.*', 'c1.name AS c1_name', 'c2.name AS c2_name')
+            ->join('clubs AS c1', 'club1_id', 'c1.id')
+            ->join('clubs AS c2', 'club2_id', 'c2.id')
+            ->where('g.id', $game_id)
+            ->get()[0]), true);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        $c1_players = Player::select('players.*', 'gi.id AS gi_id', 'gi.goals', 'gi.santion', 'gi.paid_santion', 'gi.change_player_id', 'gi.card_black')
+            ->join('game_items AS gi', 'players.id', 'player_id')
+            ->where([
+                'game_id' => $game['id'],
+                'club_id' => $game['club1_id']
+            ])->get();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $c2_players = Player::select('players.*', 'gi.id AS gi_id', 'gi.goals', 'gi.santion', 'gi.paid_santion', 'gi.change_player_id', 'gi.card_black')
+            ->join('game_items AS gi', 'players.id', 'player_id')
+            ->where([
+                'game_id' => $game['id'],
+                'club_id' => $game['club2_id']
+            ])->get();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(GameItem $gameItem)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(GameItem $gameItem)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, GameItem $gameItem)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(GameItem $gameItem)
-    {
-        //
+        return Inertia::render('Play/Playing', compact('c1_players', 'c2_players', 'game'));
     }
 }

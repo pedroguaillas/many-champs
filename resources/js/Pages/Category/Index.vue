@@ -108,7 +108,7 @@ const deleteCategory = (id, name) => {
 <template>
     <AdminLayout :title="'Categorías'">
         <!-- Card -->
-        <div class="m-4 p-4 bg-white rounded drop-shadow-md">
+        <div class="p-4 bg-white rounded drop-shadow-md">
 
             <!-- Card header -->
             <div class="flex justify-between items-center">

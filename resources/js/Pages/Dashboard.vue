@@ -6,7 +6,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
     <AdminLayout :title="'Panel de inicio'">
 
         <!-- Contenedor de targetas -->
-        <div class="grid grid-cols-1 m-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 [&>div]:justify-between text-white">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 [&>div]:justify-between text-white">
 
             <!-- Card 1-->
             <div class="p-4 bg-green-600 rounded drop-shadow-md flex items-center gap-2">

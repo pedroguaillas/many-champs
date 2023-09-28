@@ -3,9 +3,11 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\GameItemController;
 use App\Http\Controllers\GenerateGamesController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PlayController;
 use App\Http\Controllers\PlayerController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -56,10 +58,13 @@ Route::middleware([
     Route::delete('groups/{group}/destroy', [GroupController::class, 'destroy'])->name('groups.destroy');
 
     Route::get('club/{club}/jugadores', [PlayerController::class, 'index'])->name('players.index');
-    // Route::post('players', [PlayerController::class, 'store'])->name('players.store');
-    // Route::put('players/{player}', [PlayerController::class, 'update'])->name('players.update');
     Route::resource('players', PlayerController::class)->only(['store', 'update', 'destroy']);
 
     Route::get('categoria/{category}/generarpartidos', [GenerateGamesController::class, 'index'])->name('games.vgenerate');
     Route::post('categories/{category}/sgenerate', [GenerateGamesController::class, 'generate'])->name('games.sgenerate');
+
+    // Seleccionar los jugadores para jugar
+    Route::get('juego/{game_id}/seleccionar-jugadores', [PlayController::class, 'index'])->name('games.select-players');
+    Route::post('play/store/{game}', [PlayController::class, 'store'])->name('play.store');
+    Route::get('partido/{game_id}', [GameItemController::class, 'index'])->name('playing.index');
 });

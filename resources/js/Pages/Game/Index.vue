@@ -39,7 +39,7 @@ const deleteGame = (game) => {
 <template>
     <AdminLayout :title="'Partidos'">
         <!-- Card -->
-        <div class="m-4 p-4 bg-white rounded drop-shadow-md">
+        <div class="p-4 bg-white rounded drop-shadow-md">
 
             <!-- Card header -->
             <div class="flex justify-between items-center">
@@ -74,10 +74,14 @@ const deleteGame = (game) => {
                             <td>{{ game.c2name }}</td>
                             <td>
                                 <div class="relative inline-flex [&>a>i]:text-white [&>button>i]:text-white">
-                                    <Link :href="route('games.edit', game.id)" class="rounded px-2 py-2 bg-blue-500">
+                                    <Link :href="route('games.select-players', game.id)"
+                                        class="rounded px-2 py-2 bg-green-500">
+                                    <i class="far fa-futbol"></i>
+                                    </Link>
+                                    <Link :href="route('games.edit', game.id)" class="rounded p-2 mx-1 bg-blue-500">
                                     <i class="fa fa-edit"></i>
                                     </Link>
-                                    <button @click="$event => deleteGame(game)" class="rounded px-2 py-1 ml-1 bg-red-500">
+                                    <button @click="$event => deleteGame(game)" class="rounded px-2 py-1 bg-red-500">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </div>

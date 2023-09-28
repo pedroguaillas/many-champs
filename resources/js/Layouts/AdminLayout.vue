@@ -23,6 +23,8 @@ watch(divRef, () => {
     if (divRef.value.getBoundingClientRect().width > 640) {
         toggle();
     }
+
+    // divRef si altura del main mas altura del Header > h-screen ? h-full : h-screen
 })
 
 </script>
@@ -35,7 +37,7 @@ watch(divRef, () => {
         <Sidebar :menu="menu" />
         <Header :menu="menu" @toggle="toggle" />
 
-        <main :class="{ 'sm:ml-[16em] sm:w-[100%-16em]': menu, 'ml-0 w-full': !menu }" class="ease-out duration-200 z-50">
+        <main :class="{ 'sm:ml-[16em] sm:w-[100%-16em]': menu, 'ml-0 w-full': !menu }" class="ease-out duration-200 z-50 h-[calc(100vh - 4em)] px-4 pt-[5em] pb-4 overflow-y-auto">
             <slot />
         </main>
     </div>
