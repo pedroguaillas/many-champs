@@ -1,5 +1,5 @@
 FROM php:8.1.9-fpm-alpine
-RUN apk —no-cache upgrade && \
+RUN apk --no-cache upgrade && \
 apk --no-cache add bash git sudo openssh libxml2-dev oniguruma-dev autoconf gcc g++ make npm freetype-dev libjpeg-turbo-dev libpng-dev
 
 # PHP: Install php extensions
