@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GameItem;
 use App\Models\Player;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class GameItemController extends Controller
 {
@@ -32,5 +33,11 @@ class GameItemController extends Controller
             ])->get();
 
         return Inertia::render('Play/Playing', compact('c1_players', 'c2_players', 'game'));
+    }
+
+    public function sumGol(GameItem $gameItem)
+    {
+        $gameItem->goals++;
+        $gameItem->save();
     }
 }
