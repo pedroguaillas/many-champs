@@ -40,7 +40,7 @@ defineEmits(['close', 'save'])
                         class="mt-2 block w-full rounded border-gray-300">
                         <option v-for="group in groups" :value="group.id">{{ group.name }}</option>
                     </select>
-                    <InputError :message="error.group_id" class="mt-2" />
+                    <InputError :message="error.group" class="mt-2" />
                 </form>
             </div>
         </template>

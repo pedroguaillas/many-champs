@@ -16,22 +16,22 @@ defineProps({
 // Refs
 const modal = ref(false);
 
-const initialStateCategory = {
-    name: '',
-    inscription: '',
-    gender: ''
-}
+const initialCategory = { name: '', inscription: '', gender: '' }
 
 // Reactives
-const category = reactive({ ...initialStateCategory });
-const errorCategory = reactive({ ...initialStateCategory });
+const category = reactive({ ...initialCategory });
+const errorCategory = reactive({ ...initialCategory });
 
-const resetForm = () => {
-    Object.assign(category, initialStateCategory);
+const newCategory = () => {
+    if (category.id !== undefined) {
+        delete category.id
+    }
+    Object.assign(category, initialCategory);
+    toggle();
 }
 
 const resetErrorForm = () => {
-    Object.assign(errorCategory, initialStateCategory);
+    Object.assign(errorCategory, initialCategory);
 }
 
 const toggle = () => {
@@ -44,7 +44,6 @@ const save = () => {
             .post(route('categories.store'), category)
             .then(() => {
                 toggle();
-                resetForm();
                 resetErrorForm();
 
                 router.reload({ only: ['categories'] });
@@ -60,7 +59,6 @@ const save = () => {
             .put(route('categories.update', category.id), category)
             .then(() => {
                 toggle();
-                resetForm();
                 resetErrorForm();
 
                 router.reload({ only: ['categories'] });
@@ -113,7 +111,7 @@ const deleteCategory = (id, name) => {
             <!-- Card header -->
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold">Categorías</h2>
-                <button @click="toggle" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
+                <button @click="newCategory" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
                     +
                 </button>
             </div>

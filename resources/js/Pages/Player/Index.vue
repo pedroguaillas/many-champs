@@ -17,7 +17,7 @@ const props = defineProps({
 // Refs
 const modal = ref(false);
 
-const initialStatePlayer = {
+const initialPlayer = {
     cedula: '',
     first_name: '',
     last_name: '',
@@ -27,15 +27,19 @@ const initialStatePlayer = {
 }
 
 // Reactive
-const player = reactive({ ...initialStatePlayer });
-const errors = reactive({ ...initialStatePlayer });
+const player = reactive({ ...initialPlayer });
+const errors = reactive({ ...initialPlayer });
 
-const resetForm = () => {
-    Object.assign(player, initialStatePlayer);
+const newPlayer = () => {
+    if (player.id !== undefined) {
+        delete player.id
+    }
+    Object.assign(player, initialPlayer);
+    toggle();
 }
 
 const resetError = () => {
-    Object.assign(errors, initialStatePlayer);
+    Object.assign(errors, initialPlayer);
 }
 
 const toggle = () => {
@@ -50,12 +54,10 @@ const save = () => {
             .post(route('players.store'), data)
             .then(() => {
                 toggle();
-                resetForm();
                 resetError();
 
                 router.reload({ only: ['players'] });
             }).catch(error => {
-
                 resetError();
 
                 Object.keys(error.response.data.errors).forEach(key => {
@@ -67,7 +69,6 @@ const save = () => {
             .put(route('players.update', player.id), player)
             .then(() => {
                 toggle();
-                resetForm();
                 resetError();
 
                 router.reload({ only: ['players'] });
@@ -125,7 +126,7 @@ const deletePlayer = (player) => {
             <!-- Card Header -->
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold">{{ `Jugadores de ${club.name}` }}</h2>
-                <button @click="toggle" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
+                <button @click="newPlayer" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
                     +
                 </button>
             </div>

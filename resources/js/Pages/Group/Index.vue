@@ -16,30 +16,28 @@ const props = defineProps({
 // Refs
 const modal = ref(false);
 
-const initialStateGroup = { name: '' }
+const initialGroup = { name: '' }
 
 // Forms
 
 // Reactives
-const group = reactive({ ...initialStateGroup });
-const errors = reactive({ ...initialStateGroup });
+const group = reactive({ ...initialGroup });
+const errors = reactive({ ...initialGroup });
 
-const resetForm = () => {
-    Object.assign(group, initialStateGroup);
+const newGroup = () => {
+    if (group.id !== undefined) {
+        delete group.id
+    }
+    Object.assign(group, initialGroup);
+    toggle();
 }
 
 const resetError = () => {
-    Object.assign(errors, initialStateGroup);
+    Object.assign(errors, initialGroup);
 }
 
 const toggle = () => {
     modal.value = !modal.value
-}
-
-const newGroup = () => {
-    resetForm();
-    resetError();
-    toggle();
 }
 
 const save = () => {
@@ -49,7 +47,6 @@ const save = () => {
             .post(route('groups.store'), { category_id: props.category.id, ...group })
             .then(() => {
                 toggle();
-                resetForm();
                 resetError();
 
                 router.reload({ only: ['groups'] });
@@ -65,7 +62,6 @@ const save = () => {
             .put(route('groups.update', group.id), group)
             .then(() => {
                 toggle();
-                resetForm();
                 resetError();
 
                 router.reload({ only: ['groups'] });

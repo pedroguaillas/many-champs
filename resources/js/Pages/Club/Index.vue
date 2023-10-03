@@ -1,4 +1,6 @@
 <script setup>
+
+// Imports
 import ModalClub from './ModalClub.vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { router, Link, useForm } from '@inertiajs/vue3';
@@ -6,29 +8,33 @@ import { reactive, ref } from 'vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
+// Props
 const props = defineProps({
     category: { type: Object, default: () => { } },
     clubs: { type: Array, default: () => [] },
     groups: { type: Array, default: () => [] }
 });
 
+// Refs
 const modal = ref(false);
 
-const initialStateClub = {
-    name: '',
-    address: '',
-    group_id: 0
-}
+const initialClub = { name: '', address: '', group_id: 0 }
 
-const club = reactive({ ...initialStateClub });
-const errorClub = reactive({ ...initialStateClub });
+const club = reactive({ ...initialClub });
+const errorClub = reactive({ ...initialClub });
 
-const resetForm = () => {
-    Object.assign(club, initialStateClub);
+const newCub = () => {
+    // Reinicio el formularios con valores vacios
+    if (club.id !== undefined) {
+        delete club.id
+    }
+    Object.assign(club, initialClub);
+    // Muestro el modal
+    toggle();
 }
 
 const resetErrorForm = () => {
-    Object.assign(errorClub, initialStateClub);
+    Object.assign(errorClub, initialClub);
 }
 
 const toggle = () => {
@@ -42,7 +48,6 @@ const save = () => {
             .post(route('clubs.store'), data)
             .then(() => {
                 toggle();
-                resetForm();
                 resetErrorForm();
 
                 router.reload({ only: ['clubs'] });
@@ -58,7 +63,6 @@ const save = () => {
             .put(route('clubs.update', club.id), club)
             .then(() => {
                 toggle();
-                resetForm();
                 resetErrorForm();
 
                 router.reload({ only: ['clubs'] });
@@ -106,7 +110,7 @@ const deleteClub = (id, name) => {
 </script>
 
 <template>
-    <AdminLayout :title="'Clubes'">
+    <AdminLayout title="Clubes">
 
         <!-- Card -->
         <div class="p-4 bg-white rounded drop-shadow-md">
@@ -114,7 +118,7 @@ const deleteClub = (id, name) => {
             <!-- Card Header -->
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold">Clubes</h2>
-                <button @click="toggle" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
+                <button @click="newCub" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
                     +
                 </button>
             </div>
