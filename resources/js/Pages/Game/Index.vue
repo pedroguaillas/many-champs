@@ -68,7 +68,7 @@ const deleteGame = (game) => {
                             <td>{{ i + 1 }}</td>
                             <td>{{ game.c1name }}</td>
                             <td>
-                                <span :class="game.state === 'planificado' ? 'bg-yellow-500' : null"
+                                <span :class="game.state === 'planificado' ? 'bg-yellow-500' : (game.state === 'finalizado' ?'bg-green-500':'')"
                                     class="rounded px-2 py-1">VS</span>
                             </td>
                             <td>{{ game.c2name }}</td>
