@@ -7,6 +7,7 @@ use App\Http\Controllers\GameItemController;
 use App\Http\Controllers\GenerateGamesController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PlayController;
 use App\Http\Controllers\PlayerController;
 use Illuminate\Foundation\Application;
@@ -67,4 +68,13 @@ Route::middleware([
     Route::get('juego/{game_id}/seleccionar-jugadores', [PlayController::class, 'index'])->name('games.select-players');
     Route::post('play/store/{game}', [PlayController::class, 'store'])->name('play.store');
     Route::get('partido/{game_id}', [GameItemController::class, 'index'])->name('playing.index');
+
+    // Durante el partido
+    Route::put('gameitems/{gameitem_id}/update', [GameItemController::class, 'update'])->name('gameitems.update');
+
+    // Traer losjugadores para el cambio o completar
+    Route::post('gameitems/{game}/players', [GameItemController::class, 'getPlayers'])->name('gameitems.players');
+
+    Route::get('club/{club}/pagos', [PaymentController::class, 'index'])->name('payments.index');
+    Route::resource('payments', PaymentController::class)->only(['store', 'update', 'destroy']);
 });

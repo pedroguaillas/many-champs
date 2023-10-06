@@ -144,6 +144,9 @@ const deleteClub = (id, name) => {
                             <td>{{ club.address }}</td>
                             <td>
                                 <div class="relative inline-flex [&>a>i]:text-white [&>button>i]:text-white">
+                                    <Link :href="route('payments.index', club.id)" class="mr-1 rounded px-2 py-1 bg-slate-500">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    </Link>
                                     <Link :href="route('players.index', club.id)" class="rounded px-2 py-1 bg-green-500">
                                     <i class="fa fa-users"></i>
                                     </Link>

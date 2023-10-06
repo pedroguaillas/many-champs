@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\GameItem;
 use App\Models\Player;
+use App\Models\Game;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class GameItemController extends Controller
 {
@@ -35,9 +37,36 @@ class GameItemController extends Controller
         return Inertia::render('Play/Playing', compact('c1_players', 'c2_players', 'game'));
     }
 
-    public function sumGol(GameItem $gameItem)
+    public function update(Request $request, int $gameitem_id)
     {
-        $gameItem->goals++;
-        $gameItem->save();
+        $gameItem = GameItem::findOrFail($gameitem_id);
+        // Registrar goles y targetas
+        $gameItem->update($request->all());
+    }
+
+    public function getPlayers(Request $request, Game $game)
+    {
+        // La consulta debe:
+        // EL juador no debe estar jugando
+        $players = Player::select(
+            'players.id',
+            'first_name',
+            'last_name',
+            DB::raw('(SELECT santion FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS santion'),
+            DB::raw('(SELECT card_black FROM game_items AS gi WHERE player_id = players.id AND card_black = 1 AND paid_black IS NULL LIMIT 1) AS black')
+        )
+            ->whereNotIn(
+                'id',
+                function ($query) use ($game) {
+                    $query->select('player_id')
+                        ->from(with(new GameItem)->getTable())
+                        ->where('game_id', $game->id);
+                }
+            )
+            // A demas el jugar debe ser del club1_id o club2_id
+            ->where('club_id', $game->{'club' . $request->type . '_id'})
+            ->get();
+
+        return response()->json(['res' => $players]);
     }
 }

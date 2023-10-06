@@ -2,64 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Club;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Club $club)
     {
-        //
+        $payments = Payment::where('club_id', $club->id)->get();
+
+        return Inertia::render('Payment/Index', compact('club', 'payments'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'amount' => 'required|numeric'
+        ]);
+
+        Payment::create($request->all());
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Payment $payment)
     {
-        //
+        $request->validate([
+            'amount' => 'required|numeric'
+        ]);
+
+        $payment->update($request->all());
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Payment $payment)
     {
-        //
+        $payment->delete();
     }
 }
