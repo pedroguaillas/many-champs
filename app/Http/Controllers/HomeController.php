@@ -29,7 +29,7 @@ class HomeController extends Controller
     {
         $date = Carbon::now();
 
-        $games = Game::select(DB::raw('DISTINCT games.id,c1.name AS c1name,c2.name AS c2name,games.state,games.date,games.time,c.name,g.name AS gname'))
+        $games = Game::select(DB::raw('games.id,c1.name AS c1name,c2.name AS c2name,games.state,games.date,games.time,c.name,g.name AS gname'))
             // $games = Game::select('games.id', 'c1.name AS c1name', 'c2.name AS c2name', 'games.state', 'games.date', 'games.time', 'c.name','g.name AS gname')
             ->join('clubs AS c1', 'games.club1_id', 'c1.id')
             ->join('clubs AS c2', 'games.club2_id', 'c2.id')
@@ -39,6 +39,7 @@ class HomeController extends Controller
             ->where('date', $date->toDateString())
             ->orderByDesc('date')
             ->orderBy('time')
+            ->groupBy('id', 'c1name', 'c2name', 'state', 'date', 'time', 'name', 'gname')
             ->get();
 
         return Inertia::render('Calendar', compact('games'));
