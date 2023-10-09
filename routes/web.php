@@ -80,5 +80,5 @@ Route::middleware([
     Route::resource('payments', PaymentController::class)->only(['store', 'update', 'destroy']);
 
     // Calendario
-    Route::get('calendario', [HomeController::class, 'calendar'])->name('calendar');
+    Route::get('calendario/{date?}', [HomeController::class, 'calendar'])->name('calendar');
 });
