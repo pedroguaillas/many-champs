@@ -70,6 +70,7 @@ Route::middleware([
     Route::get('partido/{game_id}', [GameItemController::class, 'index'])->name('playing.index');
 
     // Durante el partido
+    Route::post('gameitems/store', [GameItemController::class, 'store'])->name('gameitems.store');
     Route::put('gameitems/{gameitem_id}/update', [GameItemController::class, 'update'])->name('gameitems.update');
 
     // Traer losjugadores para el cambio o completar
@@ -77,4 +78,7 @@ Route::middleware([
 
     Route::get('club/{club}/pagos', [PaymentController::class, 'index'])->name('payments.index');
     Route::resource('payments', PaymentController::class)->only(['store', 'update', 'destroy']);
+
+    // Calendario
+    Route::get('calendario', [HomeController::class, 'calendar'])->name('calendar');
 });

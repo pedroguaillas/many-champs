@@ -26,7 +26,7 @@ defineProps({
                     </Link>
                 </li>
                 <li>
-                    <Link class="rounded hover:bg-slate-500" href='business'>
+                    <Link class="rounded hover:bg-slate-500" :href="route('calendar')">
                     <i class="fa fa-calendar"></i> Calendario
                     </Link>
                 </li>

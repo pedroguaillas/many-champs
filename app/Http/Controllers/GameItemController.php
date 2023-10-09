@@ -37,6 +37,11 @@ class GameItemController extends Controller
         return Inertia::render('Play/Playing', compact('c1_players', 'c2_players', 'game'));
     }
 
+    public function store(Request $request)
+    {
+        GameItem::create($request->all());
+    }
+
     public function update(Request $request, int $gameitem_id)
     {
         $gameItem = GameItem::findOrFail($gameitem_id);
@@ -67,6 +72,6 @@ class GameItemController extends Controller
             ->where('club_id', $game->{'club' . $request->type . '_id'})
             ->get();
 
-        return response()->json(['res' => $players]);
+        return response()->json(['result' => $players]);
     }
 }

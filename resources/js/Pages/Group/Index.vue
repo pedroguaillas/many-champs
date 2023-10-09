@@ -111,7 +111,7 @@ const deleteGroup = (item) => {
     <AdminLayout :title="`Grupos ${props.category.name} ${props.category.gender}`">
 
         <!-- Card -->
-        <div class="m-4 p-4 bg-white rounded drop-shadow-md">
+        <div class="p-4 bg-white rounded drop-shadow-md">
 
             <!-- Card header -->
             <div class="flex justify-between items-center">

@@ -4,7 +4,9 @@
 import { router } from '@inertiajs/vue3';
 import AdminLayout from '../../Layouts/AdminLayout.vue';
 import Swal from 'sweetalert2';
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
+import axios from 'axios';
+import SelectPlayersToChange from './SelectPlayersToChange.vue';
 
 // Props
 const props = defineProps({
@@ -14,7 +16,8 @@ const props = defineProps({
 })
 
 // Reactive
-const players = [];
+const modal = ref(false);
+const players = reactive([]);
 
 const sumGol = (gi) => {
 
@@ -155,13 +158,32 @@ const addCardRed = (gi) => {
 }
 
 const changePlayer = (type) => {
-    router.post(route('gameitems.players', props.game), { type }, {
-        onSuccess: (res) => {
-            console.log(res)
-            // players.value = players
-        },
-        onError: (err) => console.log(err)
-    })
+    axios.post(route('gameitems.players', props.game), { type })
+        .then(({ data: { result } }) => {
+            const iterator = result.keys()
+            for (const key of iterator) {
+                players.push(result[key]);
+            }
+            toggle()
+        })
+}
+
+const selectPlayer = (player_id) => {
+    router.post(route('gameitems.store'),
+        { player_id, game_id: props.game.id, entered_in: 'inicio' },
+        {
+            onFinish: () => {
+                router.reload(['c1_players', 'c2_players'])
+                toggle();
+            },
+            onError: () => {
+                console.log('Error al guardar los jugadores')
+            }
+        })
+}
+
+const toggle = () => {
+    modal.value = !modal.value
 }
 
 // Suma los goles
@@ -170,7 +192,7 @@ const total = (arr) => arr.reduce((sum, obj) => sum + obj.goals, 0);
 </script>
 
 <template>
-    <AdminLayout :title="'Seleccionar jugadores'">
+    <AdminLayout :title="'Jungando'">
 
         <div class="bg-white rounded drop-shadow-md">
 
@@ -193,7 +215,8 @@ const total = (arr) => arr.reduce((sum, obj) => sum + obj.goals, 0);
                             }}</button>
                             <button @click="$event => minusGol(c1)" class="px-3 py-1 bg-slate-500">-</button>
                         </div>
-                        <div class="h-8 p-1 border-slate-500 flex-auto">{{ `${c1.t_shirt !== null ? `(${c1.t_shirt})` : ''}
+                        <div class="h-9 p-1 border border-slate-500 flex-auto overflow-x-auto">{{ `${c1.t_shirt !== null ? `(${c1.t_shirt})`
+                            : ''}
                                                     ${c1.first_name} ${c1.last_name}`
                         }}
                         </div>
@@ -206,8 +229,10 @@ const total = (arr) => arr.reduce((sum, obj) => sum + obj.goals, 0);
                                 class="px-2 py-1"><i class="fa fa-check"></i></button>
                             <button @click="$event => addCardRed(c1)"
                                 :class="c1.santion === 'roja' ? 'bg-red-500 text-white' : 'border-2 border-red-500 text-red-500'"
-                                class="px-2 py-1"><i class="fa fa-check"></i></button>
-                            <button class="px-2 py-1 bg-blue-500 rounded-r"><i class="fa fa-exchange-alt"></i></button>
+                                class="px-2 py-1 rounded-r"><i class="fa fa-check"></i></button>
+                            <!-- <button class="px-2 py-1 bg-blue-500 rounded-r text-white">
+                                <i class="fa fa-exchange-alt"></i>
+                            </button> -->
                         </div>
                     </div>
                 </div>
@@ -236,7 +261,8 @@ const total = (arr) => arr.reduce((sum, obj) => sum + obj.goals, 0);
                             }}</button>
                             <button @click="$event => minusGol(c2)" class="px-3 py-1 bg-slate-500">-</button>
                         </div>
-                        <div class="h-8 p-1 border-slate-500 flex-auto">{{ `${c2.t_shirt !== null ? `(${c2.t_shirt})` : ''}
+                        <div class="h-9 p-1 border border-slate-500 flex-auto overflow-x-auto">{{ `${c2.t_shirt !== null ? `(${c2.t_shirt})`
+                            : ''}
                                                     ${c2.first_name} ${c2.last_name}`
                         }}
                         </div>
@@ -249,8 +275,10 @@ const total = (arr) => arr.reduce((sum, obj) => sum + obj.goals, 0);
                                 class="px-2 py-1"><i class="fa fa-check"></i></button>
                             <button @click="$event => addCardRed(c2)"
                                 :class="c2.santion === 'roja' ? 'bg-red-500 text-white' : 'border-2 border-red-500 text-red-500'"
-                                class="px-2 py-1"><i class="fa fa-check"></i></button>
-                            <button class="px-2 py-1 bg-blue-500 rounded-r"><i class="fa fa-exchange-alt"></i></button>
+                                class="px-2 py-1 rounded-r"><i class="fa fa-check"></i></button>
+                            <!-- <button class="px-2 py-1 bg-blue-500 rounded-r text-white">
+                                <i class="fa fa-exchange-alt"></i>
+                            </button> -->
                         </div>
                     </div>
                 </div>
@@ -258,4 +286,4 @@ const total = (arr) => arr.reduce((sum, obj) => sum + obj.goals, 0);
             </div>
         </div>
     </AdminLayout>
-</template>
+    <SelectPlayersToChange :players="players" :show="modal" @close="toggle" @selectPlayer="selectPlayer" /></template>
