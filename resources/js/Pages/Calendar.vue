@@ -48,7 +48,8 @@ defineProps({
                                 </td>
                                 <td>{{ game.c2name }}</td>
                                 <td>{{ game.time.substring(0, 2) }}</td>
-                                <td>{{ `${game.gname} | ${game.name}` }}</td>
+                                <td>{{ game.name }}</td>
+                                <!-- <td>{{ `${game.gname} | ${game.name}` }}</td> -->
                                 <td title="Jugar" class="w-1 text-white">
                                     <Link v-if="game.state === 'creado' || game.state === 'planificado'"
                                         :href="route('games.select-players', game.id)"
