@@ -190,6 +190,17 @@ const toggle = () => {
 // Suma los goles
 const total = (arr) => arr.reduce((sum, obj) => sum + obj.goals, 0);
 
+// Finalizar el partido
+const ended = () => {
+    router.put(route('games.ended', props.game.id),
+        { state: 'finalizado' },
+        {
+            onError: () => {
+                console.log('Error al guardar los jugadores')
+            }
+        })
+}
+
 </script>
 
 <template>
@@ -285,8 +296,21 @@ const total = (arr) => arr.reduce((sum, obj) => sum + obj.goals, 0);
                         </div>
                     </div>
                 </div>
-
             </div>
+        </div>
+
+        <!-- Finalizar el partido -->
+        <div class="mt-4 flex">
+            <!-- Switch Container -->
+            <div @click="$event => ended()"
+                :class="{ 'bg-green-300': game.state === 'finalizado', 'bg-gray-300': game.state !== 'finalizado' }"
+                class="w-10 h-6 flex items-center rounded-full p-1 cursor-pointer">
+
+                <!-- Switch -->
+                <div :class="{ 'translate-x-3': game.state === 'finalizado' }"
+                    class="bg-white w-5 h-5 rounded-full shadow-md ease-out duration-200"></div>
+            </div>
+            <div class="ml-4">Finalizar el partido</div>
         </div>
     </AdminLayout>
     <SelectPlayersToChange :players="players" :show="modal" @close="toggle" @selectPlayer="selectPlayer" />

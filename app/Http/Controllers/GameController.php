@@ -91,6 +91,13 @@ class GameController extends Controller
         return redirect(route('games.index', $club->category_id));
     }
 
+    public function ended(Request $request, Game $game)
+    {
+        $game->update($request->input());
+
+        return redirect(route('calendar'));
+    }
+
     public function destroy(Game $game)
     {
         $game->delete();

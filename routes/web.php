@@ -53,6 +53,10 @@ Route::middleware([
     Route::get('games/{game}/edit', [GameController::class, 'edit'])->name('games.edit');
     Route::put('games/{game}/update', [GameController::class, 'update'])->name('games.update');
     Route::delete('games/{game}/destroy', [GameController::class, 'destroy'])->name('games.destroy');
+
+    // Finalizar el partido
+    Route::put('games/{game}/ended', [GameController::class, 'ended'])->name('games.ended');
+
     Route::get('categories/{category}/groups', [GroupController::class, 'index'])->name('groups.index');
     Route::post('groups', [GroupController::class, 'store'])->name('groups.store');
     Route::put('groups/{group}/update', [GroupController::class, 'update'])->name('groups.update');

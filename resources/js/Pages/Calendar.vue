@@ -43,7 +43,7 @@ defineProps({
                                 <td>{{ i + 1 }}</td>
                                 <td class="text-center">{{ game.c1name }}</td>
                                 <td class="text-center">
-                                    <span class="p-1"
+                                    <span class="p-1 rounded"
                                         :class="game.state === 'finalizado' ? 'bg-green-500' : (game.state === 'planificado' ? 'bg-yellow-500' : '')">VS</span>
                                 </td>
                                 <td>{{ game.c2name }}</td>

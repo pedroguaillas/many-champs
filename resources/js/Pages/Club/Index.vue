@@ -17,11 +17,28 @@ const props = defineProps({
 
 // Refs
 const modal = ref(false);
+const group = ref('');
+const clubs = reactive(props.clubs);
 
 const initialClub = { name: '', address: '', group_id: 0 }
 
 const club = reactive({ ...initialClub });
 const errorClub = reactive({ ...initialClub });
+
+// Filter by Group
+const emitValue = (e) => {
+    let cont = 0
+    // clubs = clubs.value.filter(club => club.gname === e.target.value)
+    props.clubs.forEach(element => {
+        if (element.gname === e.target.value) {
+            cont++
+            clubs.push(element);
+        }
+    });
+    for (let i = 0; i < cont; i++) {
+        clubs.shift()
+    }
+}
 
 const newCub = () => {
     // Reinicio el formularios con valores vacios
@@ -118,6 +135,9 @@ const deleteClub = (id, name) => {
             <!-- Card Header -->
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold">Clubes</h2>
+                <select v-if="groups.length > 0" v-model="group" @change="emitValue">
+                    <option v-for="gr in groups" :value="gr.name">{{ gr.name }}</option>
+                </select>
                 <button @click="newCub" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
                     +
                 </button>
@@ -144,7 +164,8 @@ const deleteClub = (id, name) => {
                             <td>{{ club.address }}</td>
                             <td>
                                 <div class="relative inline-flex [&>a>i]:text-white [&>button>i]:text-white">
-                                    <Link :href="route('payments.index', club.id)" class="mr-1 rounded px-2 py-1 bg-slate-500">
+                                    <Link :href="route('payments.index', club.id)"
+                                        class="mr-1 rounded px-2 py-1 bg-slate-500">
                                     <i class="fas fa-money-bill-wave"></i>
                                     </Link>
                                     <Link :href="route('players.index', club.id)" class="rounded px-2 py-1 bg-green-500">
