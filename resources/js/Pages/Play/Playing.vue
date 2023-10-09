@@ -160,6 +160,7 @@ const addCardRed = (gi) => {
 const changePlayer = (type) => {
     axios.post(route('gameitems.players', props.game), { type })
         .then(({ data: { result } }) => {
+            players.length = 0;
             const iterator = result.keys()
             for (const key of iterator) {
                 players.push(result[key]);
@@ -215,7 +216,8 @@ const total = (arr) => arr.reduce((sum, obj) => sum + obj.goals, 0);
                             }}</button>
                             <button @click="$event => minusGol(c1)" class="px-3 py-1 bg-slate-500">-</button>
                         </div>
-                        <div class="h-9 p-1 border border-slate-500 flex-auto overflow-x-auto">{{ `${c1.t_shirt !== null ? `(${c1.t_shirt})`
+                        <div class="h-9 p-1 border border-slate-500 flex-auto overflow-x-auto">{{ `${c1.t_shirt !== null ?
+                            `(${c1.t_shirt})`
                             : ''}
                                                     ${c1.first_name} ${c1.last_name}`
                         }}
@@ -261,7 +263,8 @@ const total = (arr) => arr.reduce((sum, obj) => sum + obj.goals, 0);
                             }}</button>
                             <button @click="$event => minusGol(c2)" class="px-3 py-1 bg-slate-500">-</button>
                         </div>
-                        <div class="h-9 p-1 border border-slate-500 flex-auto overflow-x-auto">{{ `${c2.t_shirt !== null ? `(${c2.t_shirt})`
+                        <div class="h-9 p-1 border border-slate-500 flex-auto overflow-x-auto">{{ `${c2.t_shirt !== null ?
+                            `(${c2.t_shirt})`
                             : ''}
                                                     ${c2.first_name} ${c2.last_name}`
                         }}
@@ -286,4 +289,5 @@ const total = (arr) => arr.reduce((sum, obj) => sum + obj.goals, 0);
             </div>
         </div>
     </AdminLayout>
-    <SelectPlayersToChange :players="players" :show="modal" @close="toggle" @selectPlayer="selectPlayer" /></template>
+    <SelectPlayersToChange :players="players" :show="modal" @close="toggle" @selectPlayer="selectPlayer" />
+</template>
