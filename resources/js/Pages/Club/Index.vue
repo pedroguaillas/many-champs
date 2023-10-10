@@ -140,7 +140,7 @@ const deleteClub = (id, name) => {
                 <table class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
                     <thead>
                         <tr class="[&>th]:py-2">
-                            <th>N°</th>
+                            <th class="w-1">N°</th>
                             <th>Nombre</th>
                             <th>Grupo</th>
                             <th>Lugar</th>

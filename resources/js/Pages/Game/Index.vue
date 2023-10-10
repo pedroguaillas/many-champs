@@ -1,15 +1,29 @@
 <script setup>
+
+// Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
+import { reactive, ref, watch } from 'vue';
 
-defineProps({
+// Props
+const props = defineProps({
     category: { type: Object, default: () => { } },
     games: { type: Array, default: () => [] },
     groups: { type: Object, default: () => [] }
 });
 
+// Refs
+const group = ref('')
+
 const form = useForm({ id: '' });
+
+// Reactives
+let games = reactive(props.games)
+
+watch(group, () => {
+    games = group.value === '' ? props.games : props.games.filter(item => item.g_id === group.value);
+});
 
 const deleteGame = (game) => {
 
@@ -44,6 +58,10 @@ const deleteGame = (game) => {
             <!-- Card header -->
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold">{{ `${category.name} ${category.gender}` }}</h2>
+                <select v-if="groups.length > 0" v-model="group">
+                    <option value="">Todos</option>
+                    <option v-for="gr in groups" :value="gr.id">{{ gr.name }}</option>
+                </select>
                 <Link v-if="games.length > 0" :href="route('games.create', category.id)"
                     class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
                 +
@@ -56,7 +74,7 @@ const deleteGame = (game) => {
                 <table v-if="games.length > 0" class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
                     <thead>
                         <tr class="[&>th]:py-2">
-                            <th>N°</th>
+                            <th class="w-1">N°</th>
                             <th>Equipo 1</th>
                             <th>VS</th>
                             <th>Equipo 2</th>
@@ -68,7 +86,8 @@ const deleteGame = (game) => {
                             <td>{{ i + 1 }}</td>
                             <td>{{ game.c1name }}</td>
                             <td>
-                                <span :class="game.state === 'planificado' ? 'bg-yellow-500' : (game.state === 'finalizado' ?'bg-green-500':'')"
+                                <span
+                                    :class="game.state === 'planificado' ? 'bg-yellow-500' : (game.state === 'finalizado' ? 'bg-green-500' : '')"
                                     class="rounded px-2 py-1">VS</span>
                             </td>
                             <td>{{ game.c2name }}</td>

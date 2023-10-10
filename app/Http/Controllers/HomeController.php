@@ -27,21 +27,24 @@ class HomeController extends Controller
 
     public function calendar($date = null)
     {
-        $date = Carbon::now();
+        if ($date === null) {
+            $date = Carbon::now()->toDateString();
+        }
 
-        $games = Game::select(DB::raw('games.id,c1.name AS c1name,c2.name AS c2name,games.state,games.date,games.time,c.name'))
+        $games = Game::select(DB::raw('games.id,c1.name AS c1name,c2.name AS c2name,games.state,games.date,games.time,c.name,g.name AS g_name'))
             // $games = Game::select('games.id', 'c1.name AS c1name', 'c2.name AS c2name', 'games.state', 'games.date', 'games.time', 'c.name','g.name AS gname')
             ->join('clubs AS c1', 'games.club1_id', 'c1.id')
             ->join('clubs AS c2', 'games.club2_id', 'c2.id')
+            ->leftJoin('groups AS g', 'c2.group_id', 'g.id')
             ->join('categories AS c', 'c2.category_id', 'c.id')
             // ->join('groups AS g', 'g.category_id', 'c.id')
             // Si date es diferente de nulo permitir
-            ->where('date', $date->toDateString())
+            ->where('date', $date)
             ->orderByDesc('date')
             ->orderBy('time')
             // ->groupBy('gname')
             ->get();
 
-        return Inertia::render('Calendar', compact('games'));
+        return Inertia::render('Calendar', compact('games', 'date'));
     }
 }

@@ -21,10 +21,12 @@ class GameController extends Controller
             'c2.name AS c2name',
             'games.state',
             DB::raw('(SELECT SUM(goals) FROM game_items WHERE games.id = game_id AND player_id IN (SELECT id FROM players WHERE club_id = club1_id)) AS gols1'),
-            DB::raw('(SELECT SUM(goals) FROM game_items WHERE games.id = game_id AND player_id IN (SELECT id FROM players WHERE club_id = club2_id)) AS gols2')
+            DB::raw('(SELECT SUM(goals) FROM game_items WHERE games.id = game_id AND player_id IN (SELECT id FROM players WHERE club_id = club2_id)) AS gols2'),
+            'g.id AS g_id'
         )
             ->join('clubs AS c1', 'games.club1_id', 'c1.id')
             ->join('clubs AS c2', 'games.club2_id', 'c2.id')
+            ->leftJoin('groups AS g', 'c1.group_id', 'g.id')
             ->where('c1.category_id', $category->id)
             // ->where(function ($query) {
             //     $query->whereIn('c1.group_id', $this->filter_groups)
