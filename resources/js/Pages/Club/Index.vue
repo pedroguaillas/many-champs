@@ -4,7 +4,7 @@
 import ModalClub from './ModalClub.vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { router, Link, useForm } from '@inertiajs/vue3';
-import { reactive, ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
@@ -18,27 +18,17 @@ const props = defineProps({
 // Refs
 const modal = ref(false);
 const group = ref('');
-const clubs = reactive(props.clubs);
 
 const initialClub = { name: '', address: '', group_id: 0 }
 
+// Reactives
 const club = reactive({ ...initialClub });
 const errorClub = reactive({ ...initialClub });
+let clubs = reactive(props.clubs);
 
-// Filter by Group
-const emitValue = (e) => {
-    let cont = 0
-    // clubs = clubs.value.filter(club => club.gname === e.target.value)
-    props.clubs.forEach(element => {
-        if (element.gname === e.target.value) {
-            cont++
-            clubs.push(element);
-        }
-    });
-    for (let i = 0; i < cont; i++) {
-        clubs.shift()
-    }
-}
+watch(group, () => {
+    clubs = group.value === '' ? props.clubs : props.clubs.filter(item => item.gname === group.value);
+});
 
 const newCub = () => {
     // Reinicio el formularios con valores vacios
@@ -135,7 +125,8 @@ const deleteClub = (id, name) => {
             <!-- Card Header -->
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold">Clubes</h2>
-                <select v-if="groups.length > 0" v-model="group" @change="emitValue">
+                <select v-if="groups.length > 0" v-model="group">
+                    <option value="">Todos</option>
                     <option v-for="gr in groups" :value="gr.name">{{ gr.name }}</option>
                 </select>
                 <button @click="newCub" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
