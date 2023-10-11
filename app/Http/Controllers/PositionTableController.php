@@ -13,11 +13,11 @@ class PositionTableController extends Controller
     {
         $progress = Progress::first();
 
-        $query = "SELECT c.id AS club_id,c.name,c.extra_points,c.group_id,groups.name AS group_name,club_game.club1_id,club_game.club2_id,club_game.goles1,club_game.goles2 FROM clubs AS c ";
+        $query = "SELECT c.id AS club_id,c.name,c.extra_points,c.group_id,`groups`.name AS group_name,club_game.club1_id,club_game.club2_id,club_game.goles1,club_game.goles2 FROM clubs AS c ";
         $query .= "LEFT JOIN (SELECT club1_id,club2_id,(SELECT SUM(goals) FROM game_items AS gi WHERE gi.game_id=g.id AND gi.player_id IN (SELECT id FROM players WHERE ";
         $query .= "club_id=club1_id)) AS goles1, (SELECT SUM(goals) FROM game_items AS gi WHERE gi.game_id=g.id AND gi.player_id IN (SELECT id FROM players WHERE club_id=club2_id)) ";
         $query .= "AS goles2 FROM games AS g WHERE g.state='finalizado' AND g.progress_id = $progress->id) AS club_game ON c.id=club_game.club1_id OR c.id=club_game.club2_id ";
-        $query .= "LEFT JOIN groups ON groups.id=c.group_id WHERE c.category_id=" . $category->id . " ORDER BY c.id";
+        $query .= "LEFT JOIN `groups` ON `groups`.id=c.group_id WHERE c.category_id=" . $category->id . " ORDER BY c.id";
 
         $games = DB::select($query);
 
