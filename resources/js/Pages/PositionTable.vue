@@ -45,7 +45,7 @@ defineProps({
                             </tr>
 
                             <tr>
-                                <td class="w-4 sm:w-6 lg:w-10 text-left py-2">{{ i + 1 }}</td>
+                                <td class="w-4 sm:w-6 lg:w-10 text-left py-2">{{ club.index }}</td>
                                 <td class="text-left uppercase">{{ club.name }}</td>
                                 <td>{{ club.ganado + club.empate + club.perdido }}</td>
                                 <td>{{ club.ganado }}</td>

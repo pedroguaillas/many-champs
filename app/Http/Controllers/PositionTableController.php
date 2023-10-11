@@ -117,6 +117,17 @@ class PositionTableController extends Controller
 
         $clubs = array_reverse($clubs);
 
+        $cont = 0;
+        $index = 1;
+        // Determinando la posición del equipo
+        foreach ($clubs as $club) {
+            if ($cont === 0 || $club->group_id !== $clubs[$cont - 1]->group_id) {
+                $index = 1;
+            }
+            $club->index = $index++;
+            $cont++;
+        }
+
         return Inertia::render('PositionTable', compact('category', 'clubs'));
     }
 }
