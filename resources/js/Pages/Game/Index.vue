@@ -84,13 +84,13 @@ const deleteGame = (game) => {
                     <tbody>
                         <tr v-for="game, i in games" :key="game.id" class="border-t [&>td]:py-2">
                             <td>{{ i + 1 }}</td>
-                            <td>{{ game.c1name }}</td>
+                            <td>{{ `${game.c1name} ${game.state === 'finalizado' ? `(${game.gols1})` : ''}` }}</td>
                             <td>
                                 <span
                                     :class="game.state === 'planificado' ? 'bg-yellow-500' : (game.state === 'finalizado' ? 'bg-green-500' : '')"
                                     class="rounded px-2 py-1">VS</span>
                             </td>
-                            <td>{{ game.c2name }}</td>
+                            <td>{{ `${game.c2name} ${game.state === 'finalizado' ? `(${game.gols2})` : ''}` }}</td>
                             <td>
                                 <div class="relative inline-flex [&>a>i]:text-white [&>button>i]:text-white">
                                     <Link v-if="game.state === 'creado' || game.state === 'planificado'"
