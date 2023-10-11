@@ -25,7 +25,8 @@ class ClubController extends Controller
     {
         $request->validate([
             'name' => 'required|max:300',
-            'address' => 'required|max:300'
+            'address' => 'required|max:300',
+            'extra_points' => 'numeric|min:0,max:20',
         ]);
 
         $club = new Club($request->all());
@@ -36,7 +37,8 @@ class ClubController extends Controller
     {
         $request->validate([
             'name' => 'required|max:300',
-            'address' => 'required|max:300'
+            'address' => 'required|max:300',
+            'extra_points' => 'numeric|min:0,max:20'
         ]);
 
         $club->update($request->input());

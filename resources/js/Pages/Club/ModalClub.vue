@@ -41,6 +41,9 @@ defineEmits(['close', 'save'])
                         <option v-for="group in groups" :value="group.id">{{ group.name }}</option>
                     </select>
                     <InputError :message="error.group" class="mt-2" />
+                    
+                    <TextInput v-model="club.extra_points" type="number" class="mt-2 block w-full" placeholder="Puntos extras" />
+                    <InputError :message="error.extra_points" class="mt-2" />
                 </form>
             </div>
         </template>

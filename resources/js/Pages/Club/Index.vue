@@ -19,7 +19,7 @@ const props = defineProps({
 const modal = ref(false);
 const group = ref('');
 
-const initialClub = { name: '', address: '', group_id: 0 }
+const initialClub = { name: '', address: '', group_id: 0, extra_points: '' }
 
 // Reactives
 const club = reactive({ ...initialClub });
@@ -50,7 +50,7 @@ const toggle = () => {
 
 const save = () => {
     if (club.id === undefined) {
-        const data = { ...club, category_id: props.category.id, group_id: club.group_id > 0 ? club.group_id : null }
+        const data = { ...club, category_id: props.category.id, group_id: club.group_id > 0 ? club.group_id : null, extra_points: club.extra_points === '' ? 0 : club.extra_points }
         axios
             .post(route('clubs.store'), data)
             .then(() => {
@@ -58,6 +58,9 @@ const save = () => {
                 resetErrorForm();
 
                 router.reload({ only: ['clubs'] });
+                // setTimeout(() => {
+                //     clubs = group.value === '' ? props.clubs : props.clubs.filter(item => item.gname === group.value);
+                // }, 1000)
             }).catch(error => {
                 resetErrorForm();
 
@@ -67,7 +70,7 @@ const save = () => {
             })
     } else {
         axios
-            .put(route('clubs.update', club.id), club)
+            .put(route('clubs.update', club.id), { ...club, extra_points: club.extra_points === '' ? 0 : club.extra_points })
             .then(() => {
                 toggle();
                 resetErrorForm();
@@ -85,7 +88,12 @@ const save = () => {
 
 const edit = (clubEdit) => {
     Object.keys(clubEdit).forEach(key => {
-        club[key] = clubEdit[key]
+        if (key === 'extra_points') {
+            // Para convertir a string extra_points
+            club.extra_points = '' + (clubEdit[key] === 0 ? '' : clubEdit[key])
+        } else {
+            club[key] = clubEdit[key]
+        }
     });
     toggle();
 }

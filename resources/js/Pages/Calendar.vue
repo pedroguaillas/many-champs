@@ -33,9 +33,6 @@ const changeDate = (e) => {
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold">Calendario de juegos</h2>
                 <input v-model="date" type="date" @change="changeDate" />
-                <!-- <button @click="newGroup" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
-                    +
-                </button> -->
             </div>
 
             <!-- Resposive -->
@@ -62,7 +59,6 @@ const changeDate = (e) => {
                                 <td>{{ game.c2name }}</td>
                                 <td>{{ game.time.substring(0, 2) }}</td>
                                 <td>{{ `${game.g_name} | ${game.name}` }}</td>
-                                <!-- <td>{{ `${game.gname} | ${game.name}` }}</td> -->
                                 <td title="Jugar" class="w-1 text-white">
                                     <Link v-if="game.state === 'creado' || game.state === 'planificado'"
                                         :href="route('games.select-players', game.id)"
