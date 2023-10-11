@@ -32,7 +32,7 @@ defineProps({
                     </Link>
                 </li>
                 <li>
-                    <Link class="rounded hover:bg-slate-500" href='/business'>
+                    <Link class="rounded hover:bg-slate-500" :href="route('seleccionar.categoria', 'tabla-de-posiciones')">
                     <i class="fa fa-align-center"></i> Tabla de posiciones
                     </Link>
                 </li>

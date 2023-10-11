@@ -10,6 +10,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PlayController;
 use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\PositionTableController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -45,9 +46,11 @@ Route::middleware([
 
     Route::resource('categories', CategoryController::class);
     Route::get('seleccionar_categoria/{type}', [HomeController::class, 'sendRedirect'])->name('seleccionar.categoria');
-    Route::get('categories/{category}/clubs', [ClubController::class, 'index'])->name('clubs.index');
+
+    Route::get('categoria/{category}/clubs', [ClubController::class, 'index'])->name('clubs.index');
     Route::resource('clubs', ClubController::class)->only(['store', 'update', 'destroy']);
-    Route::get('categories/{category}/games', [GameController::class, 'index'])->name('games.index');
+
+    Route::get('categoria/{category}/juegos', [GameController::class, 'index'])->name('games.index');
     Route::get('categories/{category}/games/create', [GameController::class, 'create'])->name('games.create');
     Route::post('categories/{category}/games/store', [GameController::class, 'store'])->name('games.store');
     Route::get('games/{game}/edit', [GameController::class, 'edit'])->name('games.edit');
@@ -85,4 +88,7 @@ Route::middleware([
 
     // Calendario
     Route::get('calendario/{date?}', [HomeController::class, 'calendar'])->name('calendar');
+
+    // Tabla de posiciones
+    Route::get('categoria/{category}/tabla-de-posiciones', [PositionTableController::class, 'index'])->name('tabla-de-posiciones.index');
 });
