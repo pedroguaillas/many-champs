@@ -25,12 +25,14 @@ class PlayController extends Controller
             ->get()[0]), true);
 
         $q = '(SELECT santion FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS santion,';
-        $qblack = '(SELECT card_black FROM game_items AS gi WHERE player_id = players.id AND card_black = 1 AND paid_black IS NULL LIMIT 1) AS black';
+        $qId = '(SELECT id FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS gi_saction_id,';
+        $qblack = '(SELECT card_black FROM game_items AS gi WHERE player_id = players.id AND card_black = 1 AND paid_black IS NULL LIMIT 1) AS black, ';
+        $qblackId = '(SELECT id FROM game_items AS gi WHERE player_id = players.id AND card_black = 1 AND paid_black IS NULL LIMIT 1) AS gi_back_id';
 
-        $club1_players = Player::select(DB::raw('id,first_name,last_name,' . $q . $qblack))
+        $club1_players = Player::select(DB::raw('id,first_name,last_name,' . $q . $qId . $qblack . $qblackId))
             ->where('club_id', $game['club1_id'])->get();
 
-        $club2_players = Player::select(DB::raw('id,first_name,last_name,' . $q . $qblack))
+        $club2_players = Player::select(DB::raw('id,first_name,last_name,' . $q . $qId . $qblack . $qblackId))
             ->where('club_id', $game['club2_id'])->get();
 
         return Inertia::render('Play/SelectPlayersToPlay', compact('club1_players', 'club2_players', 'game'));

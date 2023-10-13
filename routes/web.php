@@ -11,6 +11,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PlayController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\PositionTableController;
+use App\Http\Controllers\SantionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -80,6 +81,9 @@ Route::middleware([
     Route::post('gameitems/store', [GameItemController::class, 'store'])->name('gameitems.store');
     Route::put('gameitems/{gameitem_id}/update', [GameItemController::class, 'update'])->name('gameitems.update');
 
+    // Patch
+    Route::patch('gameitems/{gameitem_id}/patch', [GameItemController::class, 'patch'])->name('gameitems.patch');
+
     // Traer losjugadores para el cambio o completar
     Route::post('gameitems/{game}/players', [GameItemController::class, 'getPlayers'])->name('gameitems.players');
 
@@ -91,4 +95,9 @@ Route::middleware([
 
     // Tabla de posiciones
     Route::get('categoria/{category}/tabla-de-posiciones', [PositionTableController::class, 'index'])->name('tabla-de-posiciones.index');
+
+    // Sanciones
+    Route::get('sanciones/{search?}', [SantionController::class, 'index'])->name('santions.index');
+    // Dario
+    Route::get('diario', [HomeController::class, 'diary'])->name('diary');
 });

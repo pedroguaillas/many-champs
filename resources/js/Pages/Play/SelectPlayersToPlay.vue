@@ -4,6 +4,7 @@
 import { ref } from 'vue';
 import AdminLayout from '../../Layouts/AdminLayout.vue';
 import { router } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
 // Props
 const props = defineProps({
@@ -52,10 +53,63 @@ const save = () => {
         })
 }
 
+const payBlack = (gi) => {
+
+    const alert = Swal.mixin({
+        buttonsStyling: true
+    });
+
+    alert.fire({
+        title: `Cobro de sanción`,
+        text: `¿Esta seguro cobrar la targeta negra a ${gi.first_name} ${gi.last_name}?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fa-solid fa-check"></i> Si, Cobrar',
+        cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.patch(route('gameitems.patch', gi.gi_back_id),
+                { patch: 'black' },
+                {
+                    onError: () => {
+                        console.log('Error al cobrar la sanción')
+                    }
+                })
+        }
+    });
+}
+
+const paySantion = (gi) => {
+
+    const alert = Swal.mixin({
+        buttonsStyling: true
+    });
+
+    alert.fire({
+        title: `Cobro de sanción`,
+        text: `¿Esta seguro cobrar la targete ${gi.santion} de ${gi.first_name} ${gi.last_name}?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fa-solid fa-check"></i> Si, Cobrar',
+        cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.patch(route('gameitems.patch', gi.gi_saction_id),
+                { patch: 'santion' },
+                {
+                    onError: () => {
+                        console.log('Error al cobrar la sanción')
+                    }
+                })
+        }
+    });
+}
+
 </script>
 
 <template>
     <AdminLayout :title="'Seleccionar jugadores'">
+
         <div class="p-4 bg-white rounded drop-shadow-md">
 
             <!-- Card header -->
@@ -80,8 +134,19 @@ const save = () => {
                             <td>{{ i + 1 }}</td>
                             <td>{{ `${c1.first_name} ${c1.last_name}` }}</td>
                             <td>
+                                <template v-if="c1.black === 1 || c1.santion !== null">
+                                    <button v-if="c1.black === 1" @click="$event => payBlack(c1)"
+                                        class="rounded px-2 py-1 ml-1 text-sm text-white bg-slate-500">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                    <button v-if="c1.santion !== null" @click="$event => paySantion(c1)"
+                                        class="rounded px-2 py-1 ml-1 text-sm text-white"
+                                        :class="c1.santion === 'roja' ? 'bg-red-500' : 'bg-yellow-500'">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                </template>
                                 <!-- Switch Container -->
-                                <div @click="$event => active1(c1.id)"
+                                <div v-else @click="$event => active1(c1.id)"
                                     :class="{ 'bg-green-300': contiene1(c1.id), 'bg-gray-300': !contiene1(c1.id) }"
                                     class="w-10 h-6 flex items-center rounded-full p-1 cursor-pointer">
 
@@ -121,8 +186,19 @@ const save = () => {
                             <td>{{ i + 1 }}</td>
                             <td>{{ `${c2.first_name} ${c2.last_name}` }}</td>
                             <td>
+                                <template v-if="c2.black === 1 || c2.santion !== null">
+                                    <button v-if="c2.black === 1" @click="$event => payBlack(c2)"
+                                        class="rounded px-2 py-1 ml-1 text-sm text-white bg-slate-500">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                    <button v-if="c2.santion !== null" @click="$event => paySantion(c2)"
+                                        class="rounded px-2 py-1 ml-1 text-sm text-white"
+                                        :class="c2.santion === 'roja' ? 'bg-red-500' : 'bg-yellow-500'">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                </template>
                                 <!-- Switch Container -->
-                                <div @click="$event => active2(c2.id)"
+                                <div v-else @click="$event => active2(c2.id)"
                                     :class="{ 'bg-green-300': contiene2(c2.id), 'bg-gray-300': !contiene2(c2.id) }"
                                     class="w-10 h-6 flex items-center rounded-full p-1 cursor-pointer">
 

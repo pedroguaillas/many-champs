@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\GameItem;
 use App\Models\Player;
 use App\Models\Game;
+use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -47,6 +48,19 @@ class GameItemController extends Controller
         $gameItem = GameItem::findOrFail($gameitem_id);
         // Registrar goles y targetas
         $gameItem->update($request->all());
+    }
+
+    // Para pagos
+    public function patch(Request $request, int $gameitem_id)
+    {
+        $gameItem = GameItem::findOrFail($gameitem_id);
+
+        $carbon = Carbon::now();
+        if ($request->patch === 'santion') {
+            $gameItem->update(['paid_santion' => $carbon->toDateString()]);
+        } else {
+            $gameItem->update(['paid_black' => $carbon->toDateString()]);
+        }
     }
 
     public function getPlayers(Request $request, Game $game)

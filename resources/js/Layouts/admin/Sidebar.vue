@@ -37,13 +37,14 @@ defineProps({
                     </Link>
                 </li>
                 <li>
-                    <Link class="rounded hover:bg-slate-500" :href="route('dashboard')"
-                        :class="route().current('dashboard') ? 'bg-slate-500' : null">
+                    <Link class="rounded hover:bg-slate-500" :href="route('santions.index')"
+                        :class="route().current('santions.index') ? 'bg-slate-500' : null">
                     <i class="fa fa-bell"></i> Sanciones
                     </Link>
                 </li>
                 <li>
-                    <Link class="rounded hover:bg-slate-500" href='/business'>
+                    <Link class="rounded hover:bg-slate-500" :href="route('diary')"
+                        :class="route().current('diary') ? 'bg-slate-500' : null">
                     <i class="fa fa-money-bill"></i> Económico
                     </Link>
                 </li>

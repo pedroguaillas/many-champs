@@ -47,4 +47,8 @@ class HomeController extends Controller
 
         return Inertia::render('Calendar', compact('games', 'date'));
     }
+    
+    public function diary(){
+        return Inertia::render('Diary');
+    }
 }
