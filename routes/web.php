@@ -41,9 +41,8 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+
+    Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard');
 
     Route::resource('categories', CategoryController::class);
     Route::get('seleccionar_categoria/{type}', [HomeController::class, 'sendRedirect'])->name('seleccionar.categoria');

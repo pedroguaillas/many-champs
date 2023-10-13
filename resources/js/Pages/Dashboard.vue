@@ -1,5 +1,16 @@
 <script setup>
+
+// Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+
+// Props
+defineProps({
+    players: { type: Number, default: () => 0 },
+    clubs: { type: Number, default: () => 0 },
+    games: { type: Number, default: () => 0 },
+    sanctions: { type: Number, default: () => 0 }
+})
+
 </script>
 
 <template>
@@ -11,7 +22,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
             <!-- Card 1-->
             <div class="p-4 bg-green-600 rounded drop-shadow-md flex items-center gap-2">
                 <div class="flex flex-col justify-end">
-                    <h2 class="text-3xl font-bold">622</h2>
+                    <h2 class="text-3xl font-bold">{{ players }}</h2>
                     <p class="text-xl">Jugadores</p>
                 </div>
                 <i class="fa fa-users text-6xl"></i>
@@ -20,7 +31,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
             <!-- Card 2-->
             <div class="p-4 bg-green-400 rounded drop-shadow-md flex items-center gap-4">
                 <div class="flex flex-col justify-end">
-                    <h2 class="text-3xl font-bold">82</h2>
+                    <h2 class="text-3xl font-bold">{{ clubs }}</h2>
                     <p class="text-xl">Clubes</p>
                 </div>
                 <i class="fa fa-medal text-6xl"></i>
@@ -29,7 +40,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
             <!-- Card 3-->
             <div class="p-4 bg-yellow-500 rounded drop-shadow-md flex items-center gap-4">
                 <div class="flex flex-col justify-end">
-                    <h2 class="text-3xl font-bold">225</h2>
+                    <h2 class="text-3xl font-bold">{{ games }}</h2>
                     <p class="text-xl">Partidos</p>
                 </div>
                 <i class="far fa-futbol text-6xl"></i>
@@ -38,7 +49,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
             <!-- Card 4-->
             <div class="p-4 bg-red-600 rounded drop-shadow-md flex items-center gap-4">
                 <div class="flex flex-col justify-end">
-                    <h2 class="text-3xl font-bold">142</h2>
+                    <h2 class="text-3xl font-bold">{{ sanctions }}</h2>
                     <p class="text-xl">Sanciones</p>
                 </div>
                 <i class="fa fa-bell text-6xl"></i>

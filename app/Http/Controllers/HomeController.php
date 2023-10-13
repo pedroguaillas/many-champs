@@ -2,14 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Club;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Game;
+use App\Models\GameItem;
+use App\Models\Player;
 use Carbon\Carbon;
 use Inertia\Inertia;
 
 class HomeController extends Controller
 {
+    public function index()
+    {
+        $players = Player::all()->count();
+        $clubs = Club::all()->count();
+        $games = Game::all()->count();
+        $players = Player::all()->count();
+        $sanctions = GameItem::whereNotNull('santion')->count();
+
+        return Inertia::render('Dashboard', compact('players', 'clubs', 'games', 'sanctions'));
+    }
+
     public function sendRedirect($type)
     {
         $user = Auth::user();
@@ -47,8 +61,9 @@ class HomeController extends Controller
 
         return Inertia::render('Calendar', compact('games', 'date'));
     }
-    
-    public function diary(){
+
+    public function diary()
+    {
         return Inertia::render('Diary');
     }
 }
