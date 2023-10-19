@@ -1,15 +1,19 @@
 <script setup>
+
+// Imports
 import { Link, router } from '@inertiajs/vue3';
 
-const emit = defineEmits(['toggle']);
+// Emits
+defineEmits(['toggle']);
 
+// Props
 defineProps({
     menu: Boolean
 });
 
-const toggle = () => {
-    emit('toggle');
-}
+// const toggle = () => {
+//     emit('toggle');
+// }
 
 const logout = () => {
     router.post(route('logout'));
@@ -18,9 +22,8 @@ const logout = () => {
 </script>
 
 <template>
-    <header :class="{ 'sm:ml-[16em] sm:w-[calc(100% - 16em)]': menu, 'ml-0 w-full': !menu }"
-        class="ease-out duration-300 h-[4em] bg-slate-800 z-50 fixed flex justify-between items-center px-2">
-        <button @click="toggle" class="cursor-pointer">
+    <header class="ease-out duration-300 w-full h-[50px] bg-slate-800 z-50 flex justify-between items-center px-2">
+        <button @click="$emit('toggle')" class="cursor-pointer">
             <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" class="w-6 h-6 stroke-white">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>

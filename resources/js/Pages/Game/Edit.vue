@@ -40,7 +40,7 @@ const save = () => {
 <template>
     <AdminLayout :title="'Registrar juego'">
         <!-- Card -->
-        <div class="m-4 p-4 bg-white rounded drop-shadow-md">
+        <div class="p-4 bg-white rounded drop-shadow-md">
 
             <h4 class="mb-4 text-center font-bold">Registrar partido</h4>
 
