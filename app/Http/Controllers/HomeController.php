@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Game;
 use App\Models\GameItem;
+use App\Models\Payment;
 use App\Models\Player;
 use Carbon\Carbon;
 use Inertia\Inertia;
@@ -36,6 +37,7 @@ class HomeController extends Controller
             ->where('team_id', $user->currentTeam->id)
             ->get();
 
+        $type = $type === 'partidos' ? 'games' : $type;
         return Inertia::render('SelectCategory', compact('categories', 'type'));
     }
 
@@ -64,6 +66,38 @@ class HomeController extends Controller
 
     public function diary()
     {
-        return Inertia::render('Diary');
+        $date = Carbon::now()->toDateString();
+
+        $payments = Payment::join('clubs AS c', 'c.id', 'club_id')
+            ->whereDate('payments.created_at', $date)
+            ->get();
+
+        $cardred = GameItem::select(DB::raw('COUNT(*) AS red'))
+            ->where('santion', 'roja')
+            ->whereDate('paid_santion', $date)
+            ->first()->red;
+
+        $cardyellow = GameItem::select(DB::raw('COUNT(*) AS yellow'))
+            ->where('santion', 'amarilla')
+            ->whereDate('paid_santion', $date)
+            ->first()->yellow;
+
+        $cardblack = GameItem::select(DB::raw('COUNT(*) AS black'))
+            ->where('card_black', 1)
+            ->whereDate('paid_black', $date)
+            ->first()->black;
+
+        // $games = Game::whereDate('ref1_payment_date', $date)
+        //     ->orWhereDate('ref2_payment_date', $date)
+        //     ->get();
+
+        // $sumreferee = 0;
+
+        // foreach ($games as $game) {
+        //     $sumreferee += $game->referee1_payment;
+        //     $sumreferee += $game->referee2_payment;
+        // }
+
+        return Inertia::render('Diary', compact('payments', 'cardred', 'cardyellow', 'cardblack'));
     }
 }

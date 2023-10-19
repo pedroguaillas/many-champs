@@ -1,8 +1,11 @@
 <script setup>
+
+// Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
+// Props
 defineProps({
     categories: { type: Array, default: () => [] },
     type: { type: String, default: () => '' },
@@ -25,7 +28,7 @@ const colorSTrans = ref(['bg-blue-900', 'bg-blue-800', 'bg-blue-700']);
                 class="rounded [&>div]:justify-between drop-shadow-md flex flex-col gap-2">
                 <div class="flex px-4 pt-4">
                     <div class="flex flex-col">
-                        <h2 class="text-3xl font-bold">622</h2>
+                        <h2 class="text-3xl font-bold">{{ category.count }}</h2>
                         <p class="text-xl">{{ category.name }}</p>
                     </div>
                     <i class="fa fa-users text-6xl"></i>

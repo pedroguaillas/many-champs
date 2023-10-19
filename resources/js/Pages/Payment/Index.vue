@@ -83,6 +83,7 @@ const edit = (paymentEdit) => {
     Object.keys(paymentEdit).forEach(key => {
         payment[key] = paymentEdit[key]
     });
+    payment.amount = '' + parseFloat(paymentEdit.amount)
     toggle();
 }
 
@@ -96,7 +97,7 @@ const deletePlayer = (payment) => {
     });
 
     alert.fire({
-        title: `¿Esta seguro eliminar el pago de ${payment.amount}?`,
+        title: `¿Esta seguro eliminar el pago de $${payment.amount}?`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: '<i class="fa-solid fa-check"></i> Si, Eliminar',

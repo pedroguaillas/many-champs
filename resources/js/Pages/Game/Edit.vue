@@ -1,4 +1,6 @@
 <script setup>
+
+// Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import TextInput from '@/Components/TextInput.vue';
 import SelectClub from './SelectClub.vue';
@@ -6,6 +8,7 @@ import { useForm } from '@inertiajs/vue3';
 import { reactive } from 'vue';
 import InputError from '@/Components/InputError.vue';
 
+// Props
 const props = defineProps({
     category: { type: Object, default: () => { } },
     clubs: { type: Array, default: () => [] },

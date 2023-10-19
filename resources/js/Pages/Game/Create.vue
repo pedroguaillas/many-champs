@@ -48,7 +48,7 @@ const save = () => {
 <template>
     <AdminLayout :title="'Registrar juego'">
         <!-- Card -->
-        <div class="m-4 p-4 bg-white rounded drop-shadow-md">
+        <div class="p-4 bg-white rounded drop-shadow-md">
 
             <h4 class="mb-4 text-center font-bold">Registrar partido</h4>
 
@@ -66,6 +66,7 @@ const save = () => {
             <TextInput v-model="form.time" type="time" class="mt-2 block w-full" />
             <InputError :message="error.time" class="mt-2" />
 
+            <label class="mt-3 mb-0 block">Fase</label>
             <select v-model="form.progress_id" class="mt-2 block w-full rounded border-gray-300">
                 <option v-for="p in progress" :key="p.id" :value="p.id">{{ p.description }}</option>
             </select>

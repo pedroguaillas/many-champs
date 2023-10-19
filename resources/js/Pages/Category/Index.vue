@@ -76,6 +76,7 @@ const edit = (cat) => {
     Object.keys(cat).forEach(key => {
         category[key] = cat[key]
     });
+    category.inscription = '' + parseFloat(category.inscription)
     toggle();
 }
 

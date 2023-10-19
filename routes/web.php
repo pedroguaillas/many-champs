@@ -44,9 +44,9 @@ Route::middleware([
 
     Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard');
 
-    Route::resource('categories', CategoryController::class);
-    Route::get('seleccionar_categoria/{type}', [HomeController::class, 'sendRedirect'])->name('seleccionar.categoria');
+    Route::get('seleccionar-categoria/{type}', [HomeController::class, 'sendRedirect'])->name('select.category');
 
+    // Clubs
     Route::get('categoria/{category}/clubs', [ClubController::class, 'index'])->name('clubs.index');
     Route::resource('clubs', ClubController::class)->only(['store', 'update', 'destroy']);
 
@@ -59,11 +59,6 @@ Route::middleware([
 
     // Finalizar el partido
     Route::put('games/{game}/ended', [GameController::class, 'ended'])->name('games.ended');
-
-    Route::get('categories/{category}/groups', [GroupController::class, 'index'])->name('groups.index');
-    Route::post('groups', [GroupController::class, 'store'])->name('groups.store');
-    Route::put('groups/{group}/update', [GroupController::class, 'update'])->name('groups.update');
-    Route::delete('groups/{group}/destroy', [GroupController::class, 'destroy'])->name('groups.destroy');
 
     Route::get('club/{club}/jugadores', [PlayerController::class, 'index'])->name('players.index');
     Route::resource('players', PlayerController::class)->only(['store', 'update', 'destroy']);
@@ -99,4 +94,12 @@ Route::middleware([
     Route::get('sanciones/{search?}', [SantionController::class, 'index'])->name('santions.index');
     // Dario
     Route::get('diario', [HomeController::class, 'diary'])->name('diary');
+
+    // Categorias
+    Route::get('categorias', [CategoryController::class, 'index'])->name('categories.index');
+    Route::resource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
+
+    // Grupos
+    Route::get('categoria/{category}/grupos', [GroupController::class, 'index'])->name('groups.index');
+    Route::resource('groups', GroupController::class)->only(['store', 'update', 'destroy']);
 });
