@@ -24,11 +24,11 @@ const initialClub = { name: '', address: '', group_id: 0, extra_points: '' }
 // Reactives
 const club = reactive({ ...initialClub });
 const errorClub = reactive({ ...initialClub });
-let clubs = reactive(props.clubs);
+// let clubs = reactive(props.clubs);
 
-watch(group, () => {
-    clubs = group.value === '' ? props.clubs : props.clubs.filter(item => item.gname === group.value);
-});
+// watch(group, () => {
+//     clubs = group.value === '' ? props.clubs : props.clubs.filter(item => item.gname === group.value);
+// });
 
 const newCub = () => {
     // Reinicio el formularios con valores vacios

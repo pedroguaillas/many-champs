@@ -31,7 +31,7 @@ defineEmits(['close', 'save'])
                         minlength="3" maxlength="50" />
                     <InputError :message="error.name" class="mt-2" />
 
-                    <TextInput v-model="club.address" type="text" class="mt-2 block w-full" placeholder="Comunidad"
+                    <TextInput v-model="club.address" type="text" class="mt-2 block w-full" placeholder="Dirección"
                         minlength="3" maxlength="50" />
                     <InputError :message="error.address" class="mt-2" />
 
