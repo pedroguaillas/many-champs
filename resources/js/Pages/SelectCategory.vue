@@ -20,7 +20,7 @@ const colorSTrans = ref(['bg-blue-900', 'bg-blue-800', 'bg-blue-700']);
     <AdminLayout :title="'Seleccionar Categoría'">
 
         <!-- Contenedor de targetas -->
-        <div
+        <div v-if="categories.length > 0"
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 [&>div]:justify-between text-white">
 
             <!-- Card 1-->
@@ -38,5 +38,9 @@ const colorSTrans = ref(['bg-blue-900', 'bg-blue-800', 'bg-blue-700']);
                 </Link>
             </div>
         </div>
+        <p v-else class="text-slate-800 dark:text-white">Debe crear las categorias para ver los {{
+            type === 'games' ? 'juegos' : 'clubes' }} o haz clic
+            <Link class="text-indigo-500" :href="route('categories.index')">aqui</Link>
+        </p>
     </AdminLayout>
 </template>

@@ -16,11 +16,27 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $players = Player::all()->count();
-        $clubs = Club::all()->count();
-        $games = Game::all()->count();
-        $players = Player::all()->count();
-        $sanctions = GameItem::whereNotNull('santion')->count();
+        // Del campeonato(team_id) actual donde se encuentra logeado el usuario
+        $currentTeamId = Auth::user()->currentTeam->id;
+
+        $players = Player::where('team_id', $currentTeamId)->count();
+
+        $clubs = Club::join('categories AS c', function ($query) use ($currentTeamId) {
+            $query->on('c.id', 'category_id')
+                ->where('team_id', $currentTeamId);
+        })->count();
+
+        $games = Game::join('clubs AS c2', 'games.club2_id', 'c2.id')
+            ->join('categories AS c', function ($query) use ($currentTeamId) {
+                $query->on('c.id', 'category_id')
+                    ->where('team_id', $currentTeamId);
+            })->count();
+
+        // Falta restringir para nosotros las targetas negras
+        $sanctions = GameItem::join('players AS p', function ($query) use ($currentTeamId) {
+            $query->on('p.id', 'player_id')
+                ->where('team_id', $currentTeamId);
+        })->whereNotNull('santion')->count();
 
         return Inertia::render('Dashboard', compact('players', 'clubs', 'games', 'sanctions'));
     }
