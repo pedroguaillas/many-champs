@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Club;
+use App\Models\Game;
 use App\Models\Group;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -46,6 +47,18 @@ class ClubController extends Controller
 
     public function destroy(Club $club)
     {
+        // Si el club ya esta restrado en un partido
+        $gamesCount = Game::where('club1_id', $club->id)
+            ->orWhere('club2_id', $club->id)
+            ->count();
+
+        if ($gamesCount) {
+            return response()->json(
+                ['msm' => 'No se puede eliminar el club ' . $club->name . ' ya que esta registrado en un partido'],
+                422
+            );
+        }
+
         $club->delete();
     }
 }

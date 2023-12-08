@@ -116,6 +116,7 @@ const deleteClub = (id, name) => {
     }).then((result) => {
         if (result.isConfirmed) {
             form.delete(route('clubs.destroy', id), {
+                onError: (error) => console.log(error),
                 onFinish: () => router.reload({ only: ['clubs'] })
             });
         }
