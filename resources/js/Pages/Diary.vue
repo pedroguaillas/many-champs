@@ -43,20 +43,26 @@ defineProps({
                         </tr>
                         <tr class="border-t [&>td]:py-2">
                             <td>{{ payments.length + 1 }}</td>
-                            <td>Targetas negras</td>
-                            <td>{{ (cardblack ?? 0) * .5 }}</td>
+                            <td>Targetas amarillas</td>
+                            <td>{{ (cardyellow ?? 0) * .5 }}</td>
                         </tr>
                         <tr class="border-t [&>td]:py-2">
                             <td>{{ payments.length + 2 }}</td>
-                            <td>Targetas amarillas</td>
-                            <td>{{ (cardblack ?? 0) * .5 }}</td>
-                        </tr>
-                        <tr class="border-t [&>td]:py-2">
-                            <td>{{ payments.length + 3 }}</td>
                             <td>Targetas rojas</td>
                             <td>{{ cardred ?? 0 }}</td>
                         </tr>
+                        <!-- <tr class="border-t [&>td]:py-2">
+                            <td>{{ payments.length + 3 }}</td>
+                            <td>Targetas negras</td>
+                            <td>{{ (cardblack ?? 0) * .5 }}</td>
+                        </tr> -->
                     </tbody>
+                    <!-- <tfoot>
+                        <tr>
+                            <th colspan="2">TOTAL</th>
+                            <th>{{ payments.sum(p => p.amount) }}</th>
+                        </tr>
+                    </tfoot> -->
                 </table>
             </div>
         </div>

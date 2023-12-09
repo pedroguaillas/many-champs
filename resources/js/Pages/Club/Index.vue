@@ -4,7 +4,7 @@
 import ModalClub from './ModalClub.vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { router, Link, useForm } from '@inertiajs/vue3';
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref } from 'vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 

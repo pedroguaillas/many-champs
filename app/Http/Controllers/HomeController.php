@@ -63,7 +63,7 @@ class HomeController extends Controller
             $date = Carbon::now()->toDateString();
         }
 
-        $games = Game::select(DB::raw('games.id,c1.name AS c1name,c2.name AS c2name,games.state,games.date,games.time,c.name,g.name AS g_name'))
+        $games = Game::selectRaw('games.id,c1.name AS c1name,c2.name AS c2name,games.state,games.date,games.time,c.name,g.name AS g_name')
             // $games = Game::select('games.id', 'c1.name AS c1name', 'c2.name AS c2name', 'games.state', 'games.date', 'games.time', 'c.name','g.name AS gname')
             ->join('clubs AS c1', 'games.club1_id', 'c1.id')
             ->join('clubs AS c2', 'games.club2_id', 'c2.id')
@@ -82,37 +82,31 @@ class HomeController extends Controller
 
     public function diary()
     {
+        $user = Auth::user();
         $date = Carbon::now()->toDateString();
 
         $payments = Payment::join('clubs AS c', 'c.id', 'club_id')
+            ->join('categories AS ca', function ($query) use ($user) {
+                $query->on('ca.id', 'category_id')
+                    ->where('team_id', $user->currentTeam->id);
+            })
             ->whereDate('payments.created_at', $date)
             ->get();
 
-        $cardred = GameItem::select(DB::raw('COUNT(*) AS red'))
+        $cardred = GameItem::join('players AS p', 'p.id', 'player_id')
             ->where('santion', 'roja')
             ->whereDate('paid_santion', $date)
-            ->first()->red;
+            ->count();
 
-        $cardyellow = GameItem::select(DB::raw('COUNT(*) AS yellow'))
+        $cardyellow = GameItem::join('players AS p', 'p.id', 'player_id')
             ->where('santion', 'amarilla')
             ->whereDate('paid_santion', $date)
-            ->first()->yellow;
+            ->count();
 
-        $cardblack = GameItem::select(DB::raw('COUNT(*) AS black'))
+        $cardblack = GameItem::join('players AS p', 'p.id', 'player_id')
             ->where('card_black', 1)
             ->whereDate('paid_black', $date)
-            ->first()->black;
-
-        // $games = Game::whereDate('ref1_payment_date', $date)
-        //     ->orWhereDate('ref2_payment_date', $date)
-        //     ->get();
-
-        // $sumreferee = 0;
-
-        // foreach ($games as $game) {
-        //     $sumreferee += $game->referee1_payment;
-        //     $sumreferee += $game->referee2_payment;
-        // }
+            ->count();
 
         return Inertia::render('Diary', compact('payments', 'cardred', 'cardyellow', 'cardblack'));
     }

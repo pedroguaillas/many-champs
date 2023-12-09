@@ -234,9 +234,9 @@ const ended = () => {
                         }}
                         </div>
                         <div class="flex">
-                            <button @click="$event => addCardBlack(c1)"
+                            <!-- <button @click="$event => addCardBlack(c1)"
                                 :class="c1.card_black ? 'bg-slate-500 text-white' : 'border-2 border-slate-500 text-slate-500'"
-                                class="px-2 py-1"><i class="fa fa-check"></i></button>
+                                class="px-2 py-1"><i class="fa fa-check"></i></button> -->
                             <button @click="$event => addCardYellow(c1)"
                                 :class="c1.santion === 'amarilla' ? 'bg-yellow-500 text-white' : 'border-2 border-yellow-500 text-yellow-500'"
                                 class="px-2 py-1"><i class="fa fa-check"></i></button>
@@ -281,9 +281,9 @@ const ended = () => {
                         }}
                         </div>
                         <div class="flex">
-                            <button @click="$event => addCardBlack(c2)"
+                            <!-- <button @click="$event => addCardBlack(c2)"
                                 :class="c2.card_black ? 'bg-slate-500 text-white' : 'border-2 border-slate-500 text-slate-500'"
-                                class="px-2 py-1"><i class="fa fa-check"></i></button>
+                                class="px-2 py-1"><i class="fa fa-check"></i></button> -->
                             <button @click="$event => addCardYellow(c2)"
                                 :class="c2.santion === 'amarilla' ? 'bg-yellow-500 text-white' : 'border-2 border-yellow-500 text-yellow-500'"
                                 class="px-2 py-1"><i class="fa fa-check"></i></button>
