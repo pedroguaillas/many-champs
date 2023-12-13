@@ -47,7 +47,7 @@ Route::middleware([
     Route::get('seleccionar-categoria/{type}', [HomeController::class, 'sendRedirect'])->name('select.category');
 
     // Clubs
-    Route::get('categoria/{category}/clubs', [ClubController::class, 'index'])->name('clubs.index');
+    Route::get('categoria/{category}/clubs/{search?}', [ClubController::class, 'index'])->name('clubs.index');
     Route::resource('clubs', ClubController::class)->only(['store', 'update', 'destroy']);
 
     Route::get('categoria/{category}/juegos', [GameController::class, 'index'])->name('games.index');

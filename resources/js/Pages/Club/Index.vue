@@ -3,8 +3,8 @@
 // Imports
 import ModalClub from './ModalClub.vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { router, Link, useForm } from '@inertiajs/vue3';
-import { reactive, ref } from 'vue';
+import { router, Link } from '@inertiajs/vue3';
+import { reactive, ref, watch } from 'vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
@@ -17,18 +17,22 @@ const props = defineProps({
 
 // Refs
 const modal = ref(false);
-const group = ref('');
 
 const initialClub = { name: '', address: '', group_id: 0, extra_points: '' }
 
 // Reactives
 const club = reactive({ ...initialClub });
 const errorClub = reactive({ ...initialClub });
-// let clubs = reactive(props.clubs);
 
-// watch(group, () => {
-//     clubs = group.value === '' ? props.clubs : props.clubs.filter(item => item.gname === group.value);
-// });
+// Seccion filtro ..... Inicio
+const search = ref('');
+
+const url = route('clubs.index', props.category.id);
+
+watch(search, (value) => {
+    router.get(url, { search: value }, { preserveState: true, preserveScroll: true, only: ['clubs'] })
+}, 300);
+// Seccion filtro ..... Fin
 
 const newCub = () => {
     // Reinicio el formularios con valores vacios
@@ -58,9 +62,6 @@ const save = () => {
                 resetErrorForm();
 
                 router.reload({ only: ['clubs'] });
-                // setTimeout(() => {
-                //     clubs = group.value === '' ? props.clubs : props.clubs.filter(item => item.gname === group.value);
-                // }, 1000)
             }).catch(error => {
                 resetErrorForm();
 
@@ -98,27 +99,35 @@ const edit = (clubEdit) => {
     toggle();
 }
 
-// Utilizado para eliminar un club
-const form = useForm({ id: '' });
-
-const deleteClub = (id, name) => {
+const deleteClub = (clubDelete) => {
 
     const alert = Swal.mixin({
         buttonsStyling: true
-    });
+    })
+
+    if (clubDelete.game_id !== null || clubDelete.payment_id !== null || clubDelete.player_id !== null) {
+        alert.fire({
+            title: 'No se permite anular el club, ya que puede contener juegos, jugadores o pagos',
+            icon: 'error'
+        })
+        return
+    }
 
     alert.fire({
-        title: `¿Esta seguro eliminar el club ${name}?`,
+        title: `¿Esta seguro eliminar el club ${clubDelete.name}?`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: '<i class="fa-solid fa-check"></i> Si, Eliminar',
         cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            form.delete(route('clubs.destroy', id), {
-                onError: (error) => console.log(error),
-                onFinish: () => router.reload({ only: ['clubs'] })
-            });
+            axios
+                .delete(route('clubs.destroy', clubDelete.id))
+                .then(() => {
+                    router.reload({ only: ['clubs'] })
+                }).catch(error => {
+                    console.log(error.response.data.msm)
+                })
         }
     });
 }
@@ -134,7 +143,7 @@ const deleteClub = (id, name) => {
             <!-- Card Header -->
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold">Clubes</h2>
-                <select v-if="groups.length > 0" v-model="group">
+                <select v-if="groups.length > 0" v-model="search">
                     <option value="">Todos</option>
                     <option v-for="gr in groups" :value="gr.name">{{ gr.name }}</option>
                 </select>
@@ -174,7 +183,7 @@ const deleteClub = (id, name) => {
                                     <button @click="edit(club)" class="mx-1 rounded px-2 py-1 bg-blue-500">
                                         <i class="fa fa-edit"></i>
                                     </button>
-                                    <button @click="deleteClub(club.id, club.name)" class="rounded px-2 py-1 bg-red-500">
+                                    <button @click="deleteClub(club)" class="rounded px-2 py-1 bg-red-500">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </div>
