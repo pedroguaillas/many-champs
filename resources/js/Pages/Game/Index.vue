@@ -2,9 +2,9 @@
 
 // Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Link, router, useForm } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
 import Swal from 'sweetalert2';
-import { reactive, ref, watch } from 'vue';
 
 // Props
 const props = defineProps({
@@ -13,17 +13,15 @@ const props = defineProps({
     groups: { type: Object, default: () => [] }
 });
 
-// Refs
-const group = ref('')
+// Seccion filtro ..... Inicio
+const search = ref('');
 
-const form = useForm({ id: '' });
+const url = route('games.index', props.category.id);
 
-// Reactives
-let games = reactive(props.games)
-
-watch(group, () => {
-    games = group.value === '' ? props.games : props.games.filter(item => item.g_id === group.value);
-});
+watch(search, (value) => {
+    router.get(url, { search: value }, { preserveState: true, preserveScroll: true, only: ['games'] })
+}, 300);
+// Seccion filtro ..... Fin
 
 const deleteGame = (game) => {
 
@@ -39,11 +37,10 @@ const deleteGame = (game) => {
         cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            form.delete(route('games.destroy', game.id), {
-                onFinish: () => {
-                    router.reload({ only: ['clubs'] });
-                }
-            })
+            axios
+                .delete(route('games.destroy', game.id))
+                .then(() => router.reload({ only: ['games'] })
+                ).catch(error => console.log(error.response.data.msm))
         }
     });
 }
@@ -58,7 +55,7 @@ const deleteGame = (game) => {
             <!-- Card header -->
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold">{{ `${category.name} ${category.gender}` }}</h2>
-                <select v-if="groups.length > 0" v-model="group">
+                <select v-if="groups.length > 0" v-model="search">
                     <option value="">Todos</option>
                     <option v-for="gr in groups" :value="gr.id">{{ gr.name }}</option>
                 </select>

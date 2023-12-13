@@ -50,7 +50,7 @@ Route::middleware([
     Route::get('categoria/{category}/clubs/{search?}', [ClubController::class, 'index'])->name('clubs.index');
     Route::resource('clubs', ClubController::class)->only(['store', 'update', 'destroy']);
 
-    Route::get('categoria/{category}/juegos', [GameController::class, 'index'])->name('games.index');
+    Route::get('categoria/{category}/juegos/{search?}', [GameController::class, 'index'])->name('games.index');
     Route::get('categories/{category}/games/create', [GameController::class, 'create'])->name('games.create');
     Route::post('categories/{category}/games/store', [GameController::class, 'store'])->name('games.store');
     Route::get('games/{game}/edit', [GameController::class, 'edit'])->name('games.edit');
