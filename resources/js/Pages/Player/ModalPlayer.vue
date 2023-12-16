@@ -4,6 +4,7 @@
 import DialogModal from '@/Components/DialogModal.vue';
 import InputError from '@/Components/InputError.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { ref } from 'vue';
 
 // Props
 defineProps({
@@ -13,7 +14,15 @@ defineProps({
 });
 
 // Emits
-defineEmits(['close', 'save'])
+const emit = defineEmits(['close', 'save', 'loadImage'])
+
+const imagePreviewURL = ref(null);
+
+const previewImage = (event) => {
+    const file = event.target.files[0];
+    imagePreviewURL.value = URL.createObjectURL(file);
+    emit('loadImage', file)
+}
 
 </script>
 
@@ -24,6 +33,12 @@ defineEmits(['close', 'save'])
         </template>
         <template #content>
             <div class="mt-4">
+
+                <label :for="'photo'">Foto tamaño carnet</label>
+                <div class="w-full">
+                    <input type="file" @change="previewImage" accept="image/*">
+                    <img :src="imagePreviewURL" class="mt-2 rounded mx-auto" v-if="player.photo" alt="Image Preview">
+                </div>
 
                 <TextInput v-model="player.cedula" type="text" class="mt-2 block w-full" placeholder="Cédula" minlength="10"
                     maxlength="10" />

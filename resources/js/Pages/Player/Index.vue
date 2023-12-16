@@ -23,7 +23,8 @@ const initialPlayer = {
     last_name: '',
     date_of_birth: '',
     t_shirt: '',
-    phone: ''
+    phone: '',
+    photo: null
 }
 
 // Reactive
@@ -46,12 +47,20 @@ const toggle = () => {
     modal.value = !modal.value
 }
 
+const loadImage = (file) => {
+    player.photo = file
+}
+
 const save = () => {
 
     if (player.id === undefined) {
         const data = { ...player, club_id: props.club.id }
         axios
-            .post(route('players.store'), data)
+            .post(route('players.store'), data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
             .then(() => {
                 toggle();
                 resetError();
@@ -138,6 +147,7 @@ const deletePlayer = (player) => {
                     <thead>
                         <tr class="[&>th]:py-2">
                             <th class="w-1">N°</th>
+                            <th></th>
                             <th>Nombre</th>
                             <th>Apellido</th>
                             <th>Camiseta</th>
@@ -147,6 +157,10 @@ const deletePlayer = (player) => {
                     <tbody>
                         <tr v-for="player, i in players" :key="player.id" class="border-t [&>td]:py-2">
                             <td>{{ i + 1 }}</td>
+                            <td class="w-10">
+                                <img v-if="player.photo" :src="`/storage/avatars/${player.photo}`" class="rounded"
+                                    alt="Avatar" />
+                            </td>
                             <td>{{ player.first_name }}</td>
                             <td>{{ player.last_name }}</td>
                             <td>{{ player.t_shirt }}</td>
@@ -166,5 +180,5 @@ const deletePlayer = (player) => {
             </div>
         </div>
     </AdminLayout>
-    <ModalPlayer :player="player" :error="errors" :show="modal" @close="toggle" @save="save" />
+    <ModalPlayer :player="player" :error="errors" :show="modal" @close="toggle" @save="save" @loadImage="loadImage" />
 </template>

@@ -27,7 +27,15 @@ class PlayerController extends Controller
             'phone' => 'nullable|max:10'
         ]);
 
-        $inputs = $request->input();
+        $inputs = $request->except('photo');
+
+        if ($request->photo !== null) {
+            $image = $request->file('photo');
+            $imagename = uniqid() . '.' . $image->getClientOriginalExtension();
+            $request->file('photo')->storeAs('avatars', $imagename, 'public');
+
+            $inputs += ['photo' => $imagename];
+        }
 
         $user = Auth::user();
 
