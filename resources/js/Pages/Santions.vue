@@ -72,14 +72,14 @@ const payBlack = (gi) => {
 
             <!-- Card header -->
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold uppercase">Sanciones</h2>
+                <h2 class="text-sm sm:text-lg font-bold uppercase">Sanciones</h2>
             </div>
 
             <!-- Resposive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
                 <table v-if="sanctions.length > 0"
-                    class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
+                    class="mt-4 text-xs sm:text-sm table-auto w-full text-center text-gray-700">
                     <thead>
                         <tr>
                             <th>Jugador</th>

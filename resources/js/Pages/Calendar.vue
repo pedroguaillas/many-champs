@@ -31,7 +31,7 @@ const changeDate = (e) => {
 
             <!-- Card header -->
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">Calendario de juegos</h2>
+                <h2 class="text-sm sm:text-lg font-bold">Calendario de juegos</h2>
                 <input v-model="date" type="date" @change="changeDate" />
             </div>
 
@@ -39,7 +39,7 @@ const changeDate = (e) => {
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
                 <table v-if="games.length > 0" class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
-                    <tbody>
+                    <tbody class="text-xs sm:text-sm">
                         <tr class="[&>th]:py-2">
                             <th colspan="8" class="text-center">{{ games[0].date }}</th>
                         </tr>

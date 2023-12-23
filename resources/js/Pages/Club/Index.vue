@@ -142,7 +142,7 @@ const deleteClub = (clubDelete) => {
 
             <!-- Card Header -->
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">Clubes</h2>
+                <h2 class="text-sm sm:text-lg font-bold">Clubes</h2>
                 <select v-if="groups.length > 0" v-model="search">
                     <option value="">Todos</option>
                     <option v-for="gr in groups" :value="gr.name">{{ gr.name }}</option>
@@ -155,7 +155,7 @@ const deleteClub = (clubDelete) => {
             <!-- Resposive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
+                <table class="mt-4 text-xs sm:text-sm table-auto w-full text-center text-gray-700">
                     <thead>
                         <tr class="[&>th]:py-2">
                             <th class="w-1">N°</th>

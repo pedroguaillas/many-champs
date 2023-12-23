@@ -21,13 +21,13 @@ defineProps({
 
             <!-- Card header -->
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold uppercase">Diario</h2>
+                <h2 class="text-sm sm:text-lg font-bold uppercase">Diario</h2>
             </div>
 
             <!-- Resposive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
+                <table class="mt-4 text-xs sm:text-sm table-auto w-full text-center text-gray-700">
                     <thead>
                         <tr class="[&>th]:py-2">
                             <th class="w-1">N°</th>

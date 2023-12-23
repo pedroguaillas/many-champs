@@ -51,6 +51,12 @@ defineProps({
                     </Link>
                 </li>
                 <li>
+                    <Link class="rounded hover:bg-sky-900" :href="route('select.category', 'tabla-de-goleadores')"
+                        :class="route().current('select.category', 'tabla-de-goleadores') || route().current('tabla-de-goleadores.index') ? 'bg-slate-500' : null">
+                    <i class="fa fa-align-right"></i> Goleadores
+                    </Link>
+                </li>
+                <li>
                     <Link class="rounded hover:bg-sky-900" :href="route('santions.index')"
                         :class="route().current('santions.index') ? 'bg-slate-500' : null">
                     <i class="fa fa-bell"></i> Sanciones

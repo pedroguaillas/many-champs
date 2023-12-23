@@ -19,20 +19,20 @@ defineProps({
 
             <!-- Card header -->
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold uppercase">TABLA DE POSICIONES {{ category.name }}</h2>
+                <h2 class="text-sm sm:text-lg font-bold uppercase">TABLA DE POSICIONES {{ category.name }}</h2>
             </div>
 
             <!-- Resposive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table v-if="clubs.length > 0" class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
+                <table v-if="clubs.length > 0" class="mt-4 table-auto w-full text-center text-gray-700">
                     <!-- <table class="table table-sm table-striped table-borderless"> -->
-                    <tbody>
+                    <tbody class="text-xs sm:text-sm">
 
                         <template v-for="club, i in clubs" :key="club.id">
 
-                            <tr v-if="i === 0 || club.group_id !== clubs[i - 1].group_id">
-                                <th colspan="2" class="text-left">{{ `GRUPO ${club.group_name}` }}</th>
+                            <tr v-if="i === 0 || club.group_id !== clubs[i - 1].group_id" class="[&>th]:w-10">
+                                <th colspan="2" class="text-left w-4">{{ `GRUPO ${club.group_name}` }}</th>
                                 <th>PJ</th>
                                 <th>G</th>
                                 <th>E</th>
@@ -44,8 +44,8 @@ defineProps({
                                 <th>Pts</th>
                             </tr>
 
-                            <tr>
-                                <td class="w-4 sm:w-6 lg:w-10 text-left py-2">{{ club.index }}</td>
+                            <tr class="[&>td]:w-10">
+                                <td class="w-4 sm:w-6 lg:w-10 xl:w-14 text-left py-2">{{ club.index }}</td>
                                 <td class="text-left uppercase">{{ club.name }}</td>
                                 <td>{{ club.ganado + club.empate + club.perdido }}</td>
                                 <td>{{ club.ganado }}</td>

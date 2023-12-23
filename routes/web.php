@@ -7,6 +7,7 @@ use App\Http\Controllers\GameItemController;
 use App\Http\Controllers\GenerateGamesController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\KickersTableController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PlayController;
 use App\Http\Controllers\PlayerController;
@@ -89,6 +90,9 @@ Route::middleware([
 
     // Tabla de posiciones
     Route::get('categoria/{category}/tabla-de-posiciones', [PositionTableController::class, 'index'])->name('tabla-de-posiciones.index');
+
+    // Tabla de goleadores
+    Route::get('categoria/{category}/tabla-de-goleadores', [KickersTableController::class, 'index'])->name('tabla-de-goleadores.index');
 
     // Sanciones
     Route::get('sanciones/{search?}', [SantionController::class, 'index'])->name('santions.index');

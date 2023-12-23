@@ -54,7 +54,7 @@ const deleteGame = (game) => {
 
             <!-- Card header -->
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">{{ `${category.name} ${category.gender}` }}</h2>
+                <h2 class="text-sm sm:text-lg font-bold">{{ `${category.name} ${category.gender}` }}</h2>
                 <select v-if="groups.length > 0" v-model="search">
                     <option value="">Todos</option>
                     <option v-for="gr in groups" :value="gr.id">{{ gr.name }}</option>
@@ -68,7 +68,7 @@ const deleteGame = (game) => {
             <!-- Resposive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table v-if="games.length > 0" class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
+                <table v-if="games.length > 0" class="mt-4 text-xs sm:text-sm table-auto w-full text-center text-gray-700">
                     <thead>
                         <tr class="[&>th]:py-2">
                             <th class="w-1">N°</th>

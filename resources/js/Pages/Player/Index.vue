@@ -3,6 +3,7 @@
 // Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import ModalPlayer from './ModalPlayer.vue';
+import ModalViewPlayer from './ModalViewPlayer.vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { reactive, ref } from 'vue';
 import axios from 'axios';
@@ -10,12 +11,14 @@ import Swal from 'sweetalert2';
 
 // Props
 const props = defineProps({
+    auth: { type: Object, default: () => ({}) },
     club: { type: Object, default: () => { } },
     players: { type: Array, default: () => [] }
 })
 
 // Refs
 const modal = ref(false);
+const modalView = ref(false);
 
 const initialPlayer = {
     cedula: '',
@@ -124,6 +127,17 @@ const deletePlayer = (player) => {
 
 }
 
+const toggleView = () => {
+    modalView.value = !modalView.value
+}
+
+const viewPlayer = (playerView) => {
+    Object.keys(playerView).forEach(key => {
+        player[key] = playerView[key]
+    });
+    toggleView();
+}
+
 </script>
 
 <template>
@@ -134,7 +148,7 @@ const deletePlayer = (player) => {
 
             <!-- Card Header -->
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">{{ `Jugadores de ${club.name}` }}</h2>
+                <h2 class="text-sm sm:text-lg font-bold">{{ `Jugadores de ${club.name}` }}</h2>
                 <button @click="newPlayer" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
                     +
                 </button>
@@ -143,7 +157,7 @@ const deletePlayer = (player) => {
             <!-- Resposive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
+                <table class="mt-4 text-xs sm:text-sm table-auto w-full text-center text-gray-700">
                     <thead>
                         <tr class="[&>th]:py-2">
                             <th class="w-1">N°</th>
@@ -166,6 +180,9 @@ const deletePlayer = (player) => {
                             <td>{{ player.t_shirt }}</td>
                             <td>
                                 <div class="relative inline-flex [&>a>i]:text-white [&>button>i]:text-white">
+                                    <button @click="viewPlayer(player)" class="rounded px-2 py-1 bg-yellow-500">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
                                     <button @click="edit(player)" class="mx-1 rounded px-2 py-1 bg-blue-500">
                                         <i class="fa fa-edit"></i>
                                     </button>
@@ -180,5 +197,7 @@ const deletePlayer = (player) => {
             </div>
         </div>
     </AdminLayout>
+
     <ModalPlayer :player="player" :error="errors" :show="modal" @close="toggle" @save="save" @loadImage="loadImage" />
+    <ModalViewPlayer :show="modalView" :player="player" :auth="auth" :club="club" @close="toggleView" />
 </template>

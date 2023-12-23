@@ -114,14 +114,14 @@ const paySantion = (gi) => {
 
             <!-- Card header -->
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">{{ `${game.c1_name} ($${game.paid1 === null ? 0 : game.paid1})` }}</h2>
+                <h2 class="text-sm sm:text-lg font-bold">{{ `${game.c1_name} ($${game.paid1 === null ? 0 : game.paid1})` }}</h2>
             </div>
 
             <!-- Resposive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
                 <table v-if="club1_players.length > 0"
-                    class="mt-4 text-sm sm:text-xs table-auto w-full text-gray-700 [&>thead>tr>th]:text-left">
+                    class="mt-4 text-xs sm:text-sm table-auto w-full text-gray-700 [&>thead>tr>th]:text-left">
                     <thead>
                         <tr class="[&>th]:py-2">
                             <th class="w-1">N°</th>
@@ -166,14 +166,14 @@ const paySantion = (gi) => {
 
             <!-- Card header -->
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">{{ `${game.c2_name} ($${game.paid2 === null ? 0 : game.paid2})` }}</h2>
+                <h2 class="text-sm sm:text-lg font-bold">{{ `${game.c2_name} ($${game.paid2 === null ? 0 : game.paid2})` }}</h2>
             </div>
 
             <!-- Resposive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
                 <table v-if="club2_players.length > 0"
-                    class="mt-4 text-sm sm:text-xs table-auto w-full text-gray-700 [&>thead>tr>th]:text-left">
+                    class="mt-4 text-xs sm:text-sm table-auto w-full text-gray-700 [&>thead>tr>th]:text-left">
                     <thead>
                         <tr class="[&>th]:py-2">
                             <th class="w-1">N°</th>
@@ -215,7 +215,7 @@ const paySantion = (gi) => {
         </div>
 
         <div class="py-2">
-            <button @click="save" class="bg-green-500 px-3 py-1 rounded text-white">Jugar</button>
+            <button @click="save" class="bg-green-500 px-3 py-1 rounded text-sm sm:text-lg text-white">Jugar</button>
         </div>
     </AdminLayout>
 </template>

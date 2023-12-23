@@ -209,8 +209,8 @@ const ended = () => {
         <div class="bg-white rounded drop-shadow-md">
 
             <!-- Card header -->
-            <div class="flex px-4 py-2 justify-between items-center rounded-t bg-blue-500">
-                <h2 class="text-xl text-white font-bold">{{ `${game.c1_name} (${total(props.c1_players)})` }}</h2>
+            <div class="flex px-2 sm:px-4 py-1 sm:py-2 justify-between items-center rounded-t bg-blue-500">
+                <h2 class="text-sm sm:text-lg text-white font-bold">{{ `${game.c1_name} (${total(props.c1_players)})` }}</h2>
                 <button @click="$event => changePlayer('1')" class="text-2xl text-white">+</button>
             </div>
 
@@ -227,7 +227,7 @@ const ended = () => {
                             }}</button>
                             <button @click="$event => minusGol(c1)" class="px-3 py-1 bg-slate-500">-</button>
                         </div>
-                        <div class="h-9 p-1 border border-slate-500 flex-auto overflow-x-auto">{{ `${c1.t_shirt !== null ?
+                        <div class="h-9 p-1 border border-slate-500 flex-auto overflow-x-auto text-xs sm:text-sm">{{ `${c1.t_shirt !== null ?
                             `(${c1.t_shirt})`
                             : ''}
                                                     ${c1.first_name} ${c1.last_name}`
@@ -256,8 +256,8 @@ const ended = () => {
         <div class="mt-4 bg-white rounded drop-shadow-md">
 
             <!-- Card header -->
-            <div class="flex px-4 py-2 justify-between items-center rounded-t bg-blue-500">
-                <h2 class="text-xl text-white font-bold">{{ `${game.c2_name} (${total(props.c2_players)})` }}</h2>
+            <div class="flex px-2 sm:px-4 py-1 sm:py-2 justify-between items-center rounded-t bg-blue-500">
+                <h2 class="text-sm sm:text-lg text-white font-bold">{{ `${game.c2_name} (${total(props.c2_players)})` }}</h2>
                 <button @click="$event => changePlayer('2')" class="text-2xl text-white">+</button>
             </div>
 
@@ -274,7 +274,7 @@ const ended = () => {
                             }}</button>
                             <button @click="$event => minusGol(c2)" class="px-3 py-1 bg-slate-500">-</button>
                         </div>
-                        <div class="h-9 p-1 border border-slate-500 flex-auto overflow-x-auto">{{ `${c2.t_shirt !== null ?
+                        <div class="h-9 p-1 border border-slate-500 flex-auto overflow-x-auto text-xs sm:text-sm">{{ `${c2.t_shirt !== null ?
                             `(${c2.t_shirt})`
                             : ''}
                                                     ${c2.first_name} ${c2.last_name}`
@@ -310,7 +310,7 @@ const ended = () => {
                 <div :class="{ 'translate-x-3': game.state === 'finalizado' }"
                     class="bg-white w-5 h-5 rounded-full shadow-md ease-out duration-200"></div>
             </div>
-            <div class="ml-4">Finalizar el partido</div>
+            <div class="ml-4 text-xs sm:text-sm">Finalizar el partido</div>
         </div>
     </AdminLayout>
     <SelectPlayersToChange :players="players" :show="modal" @close="toggle" @selectPlayer="selectPlayer" />

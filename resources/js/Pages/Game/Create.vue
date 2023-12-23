@@ -50,7 +50,7 @@ const save = () => {
         <!-- Card -->
         <div class="p-4 bg-white rounded drop-shadow-md">
 
-            <h4 class="mb-4 text-center font-bold">Registrar partido</h4>
+            <h4 class="mb-4 text-sm sm:text-lg text-center font-bold">Registrar partido</h4>
 
             <!-- Centraliza el contenido a visualizar -->
 

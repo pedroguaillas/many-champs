@@ -115,7 +115,7 @@ const deleteGroup = (item) => {
 
             <!-- Card header -->
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">{{ `Grupos ${props.category.name} ${props.category.gender}` }}</h2>
+                <h2 class="text-sm sm:text-lg font-bold">{{ `Grupos ${props.category.name} ${props.category.gender}` }}</h2>
                 <button @click="newGroup" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
                     +
                 </button>
@@ -124,7 +124,7 @@ const deleteGroup = (item) => {
             <!-- Resposive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="mt-4 text-sm sm:text-xs table-auto w-full text-center text-gray-700">
+                <table class="mt-4 text-xs sm:text-sm table-auto w-full text-center text-gray-700">
                     <thead>
                         <tr class="[&>th]:py-2">
                             <th>N°</th>
