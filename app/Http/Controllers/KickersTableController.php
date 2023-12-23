@@ -22,7 +22,7 @@ class KickersTableController extends Controller
             ->where('team_id', $currentTeamId)
             ->groupBy('first_name', 'last_name', 'club')
             ->orderBy('goals', 'desc')
-            ->paginate(10);
+            ->paginate();
 
         return Inertia::render('KickersTable', compact('category', 'players'));
     }
