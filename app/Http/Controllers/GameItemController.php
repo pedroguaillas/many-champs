@@ -21,14 +21,14 @@ class GameItemController extends Controller
             ->where('g.id', $game_id)
             ->get()[0]), true);
 
-        $c1_players = Player::select('players.*', 'gi.id AS gi_id', 'gi.goals', 'gi.santion', 'gi.paid_santion', 'gi.change_player_id', 'gi.card_black')
+        $c1_players = Player::select('players.*', 'gi.id AS gi_id', 'goals', 'santion', 'paid_santion', 'change_player_id', 'card_black')
             ->join('game_items AS gi', 'players.id', 'player_id')
             ->where([
                 'game_id' => $game['id'],
                 'club_id' => $game['club1_id']
             ])->get();
 
-        $c2_players = Player::select('players.*', 'gi.id AS gi_id', 'gi.goals', 'gi.santion', 'gi.paid_santion', 'gi.change_player_id', 'gi.card_black')
+        $c2_players = Player::select('players.*', 'gi.id AS gi_id', 'goals', 'santion', 'paid_santion', 'change_player_id', 'card_black')
             ->join('game_items AS gi', 'players.id', 'player_id')
             ->where([
                 'game_id' => $game['id'],
@@ -40,7 +40,18 @@ class GameItemController extends Controller
 
     public function store(Request $request)
     {
-        GameItem::create($request->all());
+        $gameItemNew = GameItem::create($request->except('change_player_id'));
+
+        // Si es cambio
+        if ($request->has('change_player_id')) {
+
+            $gameItem = GameItem::where([
+                'player_id' => $request->change_player_id,
+                'game_id' => $request->game_id
+            ])->first();
+
+            $gameItem->update(['change_player_id' => $gameItemNew->player_id]);
+        }
     }
 
     public function update(Request $request, int $gameitem_id)
@@ -72,6 +83,7 @@ class GameItemController extends Controller
             'first_name',
             'last_name',
             DB::raw('(SELECT santion FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS santion'),
+            DB::raw('(SELECT gi.id FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS gi_santion_id'),
             DB::raw('(SELECT card_black FROM game_items AS gi WHERE player_id = players.id AND card_black = 1 AND paid_black IS NULL LIMIT 1) AS black')
         )
             ->whereNotIn(

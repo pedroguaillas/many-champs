@@ -1,6 +1,6 @@
 <script setup>
 
-import DialogModal from '@/Components/DialogModal.vue';
+import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 
 const emit = defineEmits(['close', 'select'])
@@ -13,12 +13,12 @@ defineProps({
 </script>
 
 <template>
-    <DialogModal :show="show" maxWidth="lg" @close="$emit('close')">
-        <template #title>
-            <h2>Selecionar club</h2>
-        </template>
-        <template #content>
-            <table class="w-full">
+    <Modal :show="show" maxWidth="lg" @close="$emit('close')">
+
+        <div class="p-2 sm:p-4">
+            <h2 class="text-sm sm:text-lg font-bold text-center">Selecionar club</h2>
+
+            <table class="w-full text-xs sm:text-sm">
                 <thead>
                     <tr>
                         <th>N°</th>
@@ -38,6 +38,6 @@ defineProps({
                     </tr>
                 </tbody>
             </table>
-        </template>
-    </DialogModal>
+        </div>
+    </Modal>
 </template>

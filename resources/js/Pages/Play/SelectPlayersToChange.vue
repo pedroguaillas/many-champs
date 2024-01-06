@@ -1,7 +1,7 @@
 <script setup>
 
 // Imports
-import DialogModal from '@/Components/DialogModal.vue';
+import Modal from '@/Components/Modal.vue';
 
 // Props
 const props = defineProps({
@@ -10,32 +10,37 @@ const props = defineProps({
 })
 
 // Emits
-defineEmits(['close', 'selectPlayer'])
+defineEmits(['close', 'selectPlayer', 'paySantion'])
 
 </script>
 
 <template>
-    <DialogModal :show="show" maxWidth="lg" @close="$emit('close')">
-        <template #title>
-            Seleccionar jugador
-        </template>
-        <template #content>
-            <div class="w-full overflow-x-auto mt-4">
+    <Modal :show="show" maxWidth="lg" @close="$emit('close')">
+
+        <div class="p-2 sm:p-4">
+            <h1 class="text-sm sm:text-lg font-bold text-center">Seleccionar jugador</h1>
+
+            <div class="w-full overflow-x-auto mt-2 sm:mt-4">
                 <table class="mt-4 text-xs sm:text-sm table-auto w-full text-center text-gray-700">
                     <thead>
                         <tr class="[&>th]:py-2">
-                            <th>N°</th>
-                            <th>Equipo</th>
+                            <th class="w-1 sm:w-2">N°</th>
+                            <th class="text-left">Jugador</th>
                             <th class="w-1"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="player, i in players" :key="player.id" class="border-t [&>td]:py-2">
-                            <td>{{ i + 1 }}</td>
-                            <td>{{ `${player.first_name} ${player.last_name}` }}</td>
+                            <td class="text-center">{{ i + 1 }}</td>
+                            <td class="text-left">{{ `${player.first_name} ${player.last_name}` }}</td>
                             <td>
-                                <button @click="$event => $emit('selectPlayer', player.id)"
-                                    class="rounded px-2 py-1 ml-1 bg-indigo-500 text-xl text-white">
+                                <button v-if="player.santion" @click="$event => $emit('paySantion', player)"
+                                    class="rounded px-2 py-1 ml-1 text-sm sm:text-lg text-white"
+                                    :class="player.santion === 'roja' ? 'bg-red-500' : 'bg-yellow-500'">
+                                    <i class="fa fa-dollar"></i>
+                                </button>
+                                <button v-else @click="$event => $emit('selectPlayer', player.id)"
+                                    class="rounded px-2 py-1 ml-1 bg-indigo-500 text-sm sm:text-lg text-white">
                                     <i class="fa fa-check"></i>
                                 </button>
                             </td>
@@ -43,6 +48,6 @@ defineEmits(['close', 'selectPlayer'])
                     </tbody>
                 </table>
             </div>
-        </template>
-    </DialogModal>
+        </div>
+    </Modal>
 </template>

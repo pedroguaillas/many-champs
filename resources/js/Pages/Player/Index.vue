@@ -149,8 +149,8 @@ const viewPlayer = (playerView) => {
             <!-- Card Header -->
             <div class="flex justify-between items-center">
                 <h2 class="text-sm sm:text-lg font-bold">{{ `Jugadores de ${club.name}` }}</h2>
-                <button @click="newPlayer" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
-                    +
+                <button @click="newPlayer" class="px-2 py-1 sm:p-2 bg-green-500 sm:text-xl text-white rounded font-bold">
+                    <i class="fa fa-user-plus"></i>
                 </button>
             </div>
 
@@ -164,7 +164,7 @@ const viewPlayer = (playerView) => {
                             <th></th>
                             <th>Nombre</th>
                             <th>Apellido</th>
-                            <th>Camiseta</th>
+                            <th>Dorsal</th>
                             <th class="w-1"></th>
                         </tr>
                     </thead>
@@ -184,7 +184,7 @@ const viewPlayer = (playerView) => {
                                         <i class="fa fa-eye"></i>
                                     </button>
                                     <button @click="edit(player)" class="mx-1 rounded px-2 py-1 bg-blue-500">
-                                        <i class="fa fa-edit"></i>
+                                        <i class="fa fa-user-edit"></i>
                                     </button>
                                     <button @click="deletePlayer(player)" class="rounded px-2 py-1 bg-red-500">
                                         <i class="fa fa-trash"></i>

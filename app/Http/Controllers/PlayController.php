@@ -29,10 +29,10 @@ class PlayController extends Controller
         $qblack = '(SELECT card_black FROM game_items AS gi WHERE player_id = players.id AND card_black = 1 AND paid_black IS NULL LIMIT 1) AS black, ';
         $qblackId = '(SELECT id FROM game_items AS gi WHERE player_id = players.id AND card_black = 1 AND paid_black IS NULL LIMIT 1) AS gi_back_id';
 
-        $club1_players = Player::select(DB::raw('id,first_name,last_name,' . $q . $qId . $qblack . $qblackId))
+        $club1_players = Player::selectRaw('id,first_name,last_name,' . $q . $qId . $qblack . $qblackId)
             ->where('club_id', $game['club1_id'])->get();
 
-        $club2_players = Player::select(DB::raw('id,first_name,last_name,' . $q . $qId . $qblack . $qblackId))
+        $club2_players = Player::selectRaw('id,first_name,last_name,' . $q . $qId . $qblack . $qblackId)
             ->where('club_id', $game['club2_id'])->get();
 
         return Inertia::render('Play/SelectPlayersToPlay', compact('club1_players', 'club2_players', 'game'));
