@@ -20,6 +20,11 @@ class GenerateGamesController extends Controller
 
     public function generate(Request $request, Category $category)
     {
+        $request->validate([
+            'date' => 'required|date',
+            'time' => 'required|date_format:H:i',
+        ]);
+
         // Verificar que todos los equipos de esa categoria pertenezcan a un grupo
         // Pedir que seleccionen un dia especifico
         // Pedir que seleccionen una hora especifico

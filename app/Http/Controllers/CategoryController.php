@@ -27,12 +27,13 @@ class CategoryController extends Controller
             'gender' => 'required|max:20'
         ]);
 
-        $inputs = $request->input();
+        // SEGURIDAD: Usar only() para prevenir mass assignment
+        $inputs = $request->only(['name', 'inscription', 'gender']);
 
         $user = Auth::user();
 
         // Agregar el id del Campeonato actual donde se encuentra logeado el usuario
-        $inputs += ['team_id' => $user->currentTeam->id];
+        $inputs['team_id'] = $user->currentTeam->id;
 
         $category = new Category($inputs);
         $category->save();
@@ -46,7 +47,8 @@ class CategoryController extends Controller
             'gender' => 'required|max:20'
         ]);
 
-        $category = $category->update($request->input());
+        // SEGURIDAD: Usar only() para prevenir mass assignment
+        $category->update($request->only(['name', 'inscription', 'gender']));
     }
 
     public function destroy(Category $category)

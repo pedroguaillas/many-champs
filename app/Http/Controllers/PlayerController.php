@@ -24,23 +24,28 @@ class PlayerController extends Controller
             'last_name' => 'required|max:50',
             'date_of_birth' => 'nullable|date',
             't_shirt' => 'nullable|numeric',
-            'phone' => 'nullable|max:10'
+            'phone' => 'nullable|max:10',
+            'club_id' => 'required|integer|exists:clubs,id',
+            // SEGURIDAD: Validar tipo de archivo y tamaño para prevenir upload de archivos maliciosos
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        $inputs = $request->except('photo');
+        // SEGURIDAD: Usar only() para prevenir mass assignment
+        $inputs = $request->only(['cedula', 'first_name', 'last_name', 'date_of_birth', 't_shirt', 'phone', 'club_id']);
 
-        if ($request->photo !== null) {
+        if ($request->hasFile('photo')) {
             $image = $request->file('photo');
-            $imagename = uniqid() . '.' . $image->getClientOriginalExtension();
-            $request->file('photo')->storeAs('avatars', $imagename, 'public');
+            // SEGURIDAD: Usar nombre generado sin la extensión original del cliente
+            $imagename = uniqid() . '.' . $image->guessExtension();
+            $image->storeAs('avatars', $imagename, 'public');
 
-            $inputs += ['photo' => $imagename];
+            $inputs['photo'] = $imagename;
         }
 
         $user = Auth::user();
 
         // Agregar el id del Campeonato actual donde se encuentra logeado el usuario
-        $inputs += ['team_id' => $user->currentTeam->id];
+        $inputs['team_id'] = $user->currentTeam->id;
 
         Player::create($inputs);
     }
@@ -56,7 +61,8 @@ class PlayerController extends Controller
             'phone' => 'nullable|max:10'
         ]);
 
-        $player->update($request->all());
+        // SEGURIDAD: Usar only() para prevenir mass assignment
+        $player->update($request->only(['cedula', 'first_name', 'last_name', 'date_of_birth', 't_shirt', 'phone']));
     }
 
     public function destroy(Player $player)

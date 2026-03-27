@@ -43,6 +43,10 @@ class HomeController extends Controller
 
     public function sendRedirect($type)
     {
+        // SEGURIDAD: Validar que type sea un valor permitido para prevenir inyección en el frontend
+        $allowedTypes = ['clubs', 'partidos', 'games', 'grupos', 'tabla-de-posiciones', 'tabla-de-goleadores'];
+        abort_if(!in_array($type, $allowedTypes), 404);
+
         $user = Auth::user();
 
         $categories = DB::table('categories AS c')
@@ -61,8 +65,15 @@ class HomeController extends Controller
     {
         $currentTeamId = Auth::user()->currentTeam->id;
 
+        // SEGURIDAD: Validar formato de fecha para prevenir inyección
         if ($date === null) {
             $date = Carbon::now()->toDateString();
+        } else {
+            try {
+                $date = Carbon::createFromFormat('Y-m-d', $date)->toDateString();
+            } catch (\Exception $e) {
+                $date = Carbon::now()->toDateString();
+            }
         }
 
         $games = Game::selectRaw('games.id,c1.name AS c1name,c2.name AS c2name,games.state,games.date,games.time,c.name,g.name AS g_name')

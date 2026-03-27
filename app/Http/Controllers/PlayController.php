@@ -10,9 +10,10 @@ use Inertia\Inertia;
 
 class PlayController extends Controller
 {
-    public function index($game_id)
+    public function index(int $game_id)
     {
-        $game = json_decode(json_encode(DB::table('games AS g')
+        // SEGURIDAD: Validar que game_id es un entero y existe
+        $game = DB::table('games AS g')
             ->select(
                 'g.*',
                 'c1.name AS c1_name',
@@ -22,7 +23,11 @@ class PlayController extends Controller
             ->join('clubs AS c1', 'club1_id', 'c1.id')
             ->join('clubs AS c2', 'club2_id', 'c2.id')
             ->where('g.id', $game_id)
-            ->get()[0]), true);
+            ->first();
+
+        abort_if(!$game, 404);
+
+        $game = json_decode(json_encode($game), true);
 
         $q = '(SELECT santion FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS santion,';
         $qId = '(SELECT id FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS gi_saction_id,';
@@ -40,6 +45,13 @@ class PlayController extends Controller
 
     public function store(Request $request, Game $game)
     {
+        $request->validate([
+            'clubs1' => 'required|array|min:1',
+            'clubs1.*' => 'required|integer|exists:players,id',
+            'clubs2' => 'required|array|min:1',
+            'clubs2.*' => 'required|integer|exists:players,id',
+        ]);
+
         $game_items = [];
 
         // Formar un nuevo array para insertar en game_items

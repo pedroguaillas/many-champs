@@ -53,23 +53,26 @@ class GameController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'club1_id' => 'required|different:club2_id',
-            'club2_id' => 'required',
-            'date' => 'required',
+            'club1_id' => 'required|integer|exists:clubs,id|different:club2_id',
+            'club2_id' => 'required|integer|exists:clubs,id',
+            'date' => 'required|date',
             'time' => 'required',
-            'progress_id' => 'required'
+            'progress_id' => 'required|integer|exists:progress,id'
         ]);
 
-        Game::create($request->input());
+        // SEGURIDAD: Usar only() para prevenir mass assignment
+        Game::create($request->only(['club1_id', 'club2_id', 'date', 'time', 'progress_id']));
 
         $club = Club::find($request->club1_id);
 
         return redirect(route('games.index', $club->category_id));
     }
 
-    public function edit(Category $category, Game $game)
+    public function edit(Game $game)
     {
-        $club = Club::find($game->club1_id);
+        $club = Club::findOrFail($game->club1_id);
+
+        $category = Category::findOrFail($club->category_id);
 
         $clubs = Club::where('category_id', $club->category_id)->get();
 
@@ -81,14 +84,15 @@ class GameController extends Controller
     public function update(Request $request, Game $game)
     {
         $request->validate([
-            'club1_id' => 'required|different:club2_id',
-            'club2_id' => 'required',
-            'date' => 'required',
+            'club1_id' => 'required|integer|exists:clubs,id|different:club2_id',
+            'club2_id' => 'required|integer|exists:clubs,id',
+            'date' => 'required|date',
             'time' => 'required',
-            'progress_id' => 'required'
+            'progress_id' => 'required|integer|exists:progress,id'
         ]);
 
-        $game->update($request->input());
+        // SEGURIDAD: Usar only() para prevenir mass assignment
+        $game->update($request->only(['club1_id', 'club2_id', 'date', 'time', 'progress_id']));
 
         $club = Club::find($request->club1_id);
 
@@ -97,7 +101,12 @@ class GameController extends Controller
 
     public function ended(Request $request, Game $game)
     {
-        $game->update($request->input());
+        $request->validate([
+            'state' => 'required|in:creado,planificado,jugando,finalizado',
+        ]);
+
+        // SEGURIDAD: Solo permitir actualizar el campo state
+        $game->update($request->only(['state']));
 
         return redirect(route('calendar'));
     }

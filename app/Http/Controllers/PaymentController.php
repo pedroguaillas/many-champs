@@ -19,19 +19,24 @@ class PaymentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'amount' => 'required|numeric'
+            'amount' => 'required|numeric|min:0|max:999999',
+            'club_id' => 'required|integer|exists:clubs,id',
+            'note' => 'nullable|string|max:500',
         ]);
 
-        Payment::create($request->all());
+        // SEGURIDAD: Usar only() para prevenir mass assignment
+        Payment::create($request->only(['club_id', 'amount', 'note']));
     }
 
     public function update(Request $request, Payment $payment)
     {
         $request->validate([
-            'amount' => 'required|numeric'
+            'amount' => 'required|numeric|min:0|max:999999',
+            'note' => 'nullable|string|max:500',
         ]);
 
-        $payment->update($request->all());
+        // SEGURIDAD: Usar only() para prevenir mass assignment
+        $payment->update($request->only(['amount', 'note']));
     }
 
     public function destroy(Payment $payment)

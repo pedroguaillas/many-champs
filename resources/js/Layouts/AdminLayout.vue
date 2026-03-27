@@ -1,48 +1,53 @@
 <script setup>
-
-// Imports
 import Header from './admin/Header.vue';
 import Sidebar from './admin/Sidebar.vue';
 import { Head } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
-// Props
-defineProps({
+const props = defineProps({
     title: String
 });
 
-// Refs
-const divRef = ref(null);
-const menu = ref(false);
+const sidebarOpen = ref(false);
 
-const toggle = () => {
-    menu.value = !menu.value;
+const toggleSidebar = () => {
+    sidebarOpen.value = !sidebarOpen.value;
 };
 
-watch(divRef, () => {
-    if (divRef.value.getBoundingClientRect().width > 640) {
-        toggle();
-    }
-    // divRef si altura del main mas altura del Header > h-screen ? h-full : h-screen
-})
+const closeSidebar = () => {
+    sidebarOpen.value = false;
+};
 
+const handleKeydown = (e) => {
+    if (e.key === 'Escape' && sidebarOpen.value) {
+        closeSidebar();
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('keydown', handleKeydown);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('keydown', handleKeydown);
+});
 </script>
 
 <template>
     <Head :title="title" />
 
-    <div ref="divRef" class="w-screen h-screen flex">
-
+    <div class="flex h-screen w-screen overflow-hidden bg-slate-900">
         <!-- Sidebar -->
-        <Sidebar :menu="menu" @toggle="toggle" />
+        <Sidebar :open="sidebarOpen" @toggle="toggleSidebar" @close="closeSidebar" />
 
-        <!-- Main -->
-        <div class="w-full h-full">
-            <Header :menu="menu" @toggle="toggle" />
-            <div class="h-[calc(100vh-50px)] bg-slate-200 p-4 overflow-y-auto">
-                <slot />
-
-            </div>
+        <!-- Main area -->
+        <div class="flex flex-col flex-1 min-w-0">
+            <Header :open="sidebarOpen" :title="title" @toggle="toggleSidebar" />
+            <main class="flex-1 overflow-y-auto bg-slate-200">
+                <div class="p-4 sm:p-6">
+                    <slot />
+                </div>
+            </main>
         </div>
     </div>
 </template>

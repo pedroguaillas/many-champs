@@ -23,7 +23,8 @@ class GroupController extends Controller
             'category_id' => 'exists:App\Models\Category,id'
         ]);
 
-        Group::create($request->all());
+        // SEGURIDAD: Usar only() para prevenir mass assignment
+        Group::create($request->only(['name', 'category_id']));
     }
 
     public function update(Request $request, Group $group)
@@ -33,7 +34,8 @@ class GroupController extends Controller
             'category_id' => 'exists:App\Models\Category,id'
         ]);
 
-        $group->update($request->all());
+        // SEGURIDAD: Usar only() para prevenir mass assignment
+        $group->update($request->only(['name', 'category_id']));
     }
 
     public function destroy(Group $group)

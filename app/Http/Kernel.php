@@ -21,6 +21,8 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        // SEGURIDAD: Headers de seguridad HTTP en todas las respuestas
+        \App\Http\Middleware\SecurityHeaders::class,
     ];
 
     /**
@@ -35,6 +37,8 @@ class Kernel extends HttpKernel
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
+            // SEGURIDAD: Rate limiting para prevenir abuso (OWASP A04:2021)
+            \Illuminate\Routing\Middleware\ThrottleRequests::class.':web',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,

@@ -60,10 +60,11 @@ class ClubController extends Controller
         $request->validate([
             'name' => 'required|max:300',
             'address' => 'required|max:300',
-            'extra_points' => 'numeric|min:0,max:20',
+            'extra_points' => 'nullable|numeric|min:0|max:20',
         ]);
 
-        $club = new Club($request->all());
+        // SEGURIDAD: Usar only() en lugar de all() para prevenir mass assignment (OWASP A03:2021)
+        $club = new Club($request->only(['name', 'address', 'extra_points', 'category_id', 'group_id']));
         $club->save();
     }
 
@@ -75,7 +76,8 @@ class ClubController extends Controller
             'extra_points' => 'numeric|min:0,max:20'
         ]);
 
-        $club->update($request->input());
+        // SEGURIDAD: Usar only() para prevenir mass assignment
+        $club->update($request->only(['name', 'address', 'extra_points', 'group_id']));
     }
 
     public function destroy(Club $club)

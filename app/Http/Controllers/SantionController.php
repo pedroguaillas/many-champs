@@ -12,16 +12,23 @@ class SantionController extends Controller
     {
         $user = Auth::user();
 
-        $query = 'select game_items.*, p.club_id as player_club_id, c1.id as c1id, c2.id as c2id, c1.name as c1name,';
-        $query .= 'c2.name as c2name, first_name, last_name, c.name as category_name from game_items inner join games as g on ';
-        $query .= 'g.id = game_id inner join players as p on p.id = player_id inner join clubs as c1 on c1.id = club1_id inner ';
-        $query .= 'join clubs as c2 on c2.id = club2_id inner join categories as c on c.id = c1.category_id and c.team_id = ' . $user->currentTeam->id;
-        $query .= ' where ((santion is not ';
-        // Mostrar solo los que no estan cobrados
-        $query .= "null and paid_santion is null) or (card_black = 1 and paid_black is null)) and first_name LIKE '%$search%'";
-        $query .= " order by first_name asc";
+        // SEGURIDAD: Se reemplazó la interpolación directa de variables en SQL
+        // por consultas parametrizadas para prevenir SQL Injection (OWASP A03:2021)
+        $sanctions = DB::select(
+            'SELECT game_items.*, p.club_id AS player_club_id, c1.id AS c1id, c2.id AS c2id, c1.name AS c1name, '
+            . 'c2.name AS c2name, first_name, last_name, c.name AS category_name '
+            . 'FROM game_items '
+            . 'INNER JOIN games AS g ON g.id = game_id '
+            . 'INNER JOIN players AS p ON p.id = player_id '
+            . 'INNER JOIN clubs AS c1 ON c1.id = club1_id '
+            . 'INNER JOIN clubs AS c2 ON c2.id = club2_id '
+            . 'INNER JOIN categories AS c ON c.id = c1.category_id AND c.team_id = ? '
+            . 'WHERE ((santion IS NOT NULL AND paid_santion IS NULL) OR (card_black = 1 AND paid_black IS NULL)) '
+            . 'AND first_name LIKE ? '
+            . 'ORDER BY first_name ASC',
+            [$user->currentTeam->id, '%' . ($search ?? '') . '%']
+        );
 
-        $sanctions = DB::select($query);
         $sanctions = json_decode(json_encode($sanctions));
 
         return Inertia::render('Santions', compact('sanctions'));

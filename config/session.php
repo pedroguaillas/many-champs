@@ -46,7 +46,8 @@ return [
     |
     */
 
-    'encrypt' => false,
+    // SEGURIDAD: Encriptar datos de sesión para proteger información sensible
+    'encrypt' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -168,7 +169,8 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    // SEGURIDAD: En producción las cookies deben enviarse solo por HTTPS
+    'secure' => env('SESSION_SECURE_COOKIE', true),
 
     /*
     |--------------------------------------------------------------------------
