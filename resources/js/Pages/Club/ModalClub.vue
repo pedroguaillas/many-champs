@@ -35,9 +35,9 @@ defineEmits(['close', 'save'])
                         minlength="3" maxlength="50" />
                     <InputError :message="error.address" class="mt-2" />
 
-                    <label :for="'Grupo'" class="mt-4 inline-block">Grupo</label>
+                    <label for="Grupo" class="mt-4 inline-block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Grupo</label>
                     <select v-if="groups.length > 0" v-model="club.group_id"
-                        class="mt-2 block w-full rounded border-gray-300">
+                        class="mt-2 block w-full px-3.5 py-2.5 rounded-lg bg-slate-900/80 border border-white/[0.08] text-[13px] text-slate-200 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-colors duration-200">
                         <option v-for="group in groups" :value="group.id">{{ group.name }}</option>
                     </select>
                     <InputError :message="error.group" class="mt-2" />
@@ -48,7 +48,7 @@ defineEmits(['close', 'save'])
             </div>
         </template>
         <template #footer>
-            <button @click="$emit('save')" class="px-6 py-2 ml-2 bg-blue-600 text-blue-100 rounded">Guardar</button>
+            <button @click="$emit('save')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 text-xs font-semibold text-white hover:bg-emerald-400 transition-all duration-200">Guardar</button>
         </template>
     </DialogModal>
 </template>

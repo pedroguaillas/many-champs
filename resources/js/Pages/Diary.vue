@@ -17,44 +17,45 @@ defineProps({
     <AdminLayout title="Ingresos diarios">
 
         <!-- Card -->
-        <div class="p-4 bg-white rounded drop-shadow-md">
+        <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">
 
             <!-- Card header -->
-            <div class="flex justify-between items-center">
-                <h2 class="text-sm sm:text-lg font-bold uppercase">Diario</h2>
+            <div class="px-5 py-4 border-b border-gray-200 dark:border-white/[0.06] flex items-center gap-2">
+                <i class="fa fa-coins text-emerald-400 text-sm"></i>
+                <h2 class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white uppercase">Diario</h2>
             </div>
 
-            <!-- Resposive -->
+            <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="mt-4 text-xs sm:text-sm table-auto w-full text-center text-gray-700">
+                <table class="table-auto w-full text-center">
                     <thead>
-                        <tr class="[&>th]:py-2">
-                            <th class="w-1">N°</th>
-                            <th>Nombre</th>
-                            <th>Monto</th>
+                        <tr class="border-b border-gray-200 dark:border-white/[0.06]">
+                            <th class="w-1 px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">N°</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Nombre</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Monto</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="payment, i in payments" :key="payment.id" class="border-t [&>td]:py-2">
-                            <td>{{ i + 1 }}</td>
-                            <td>{{ payment.name }}</td>
-                            <td>{{ payment.amount }}</td>
+                        <tr v-for="payment, i in payments" :key="payment.id" class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
+                            <td class="px-5 py-3 text-[13px] text-gray-400 dark:text-slate-500 tabular-nums">{{ i + 1 }}</td>
+                            <td class="px-5 py-3 text-[13px] text-gray-700 dark:text-slate-200">{{ payment.name }}</td>
+                            <td class="px-5 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ payment.amount }}</td>
                         </tr>
-                        <tr class="border-t [&>td]:py-2">
-                            <td>{{ payments.length + 1 }}</td>
-                            <td>Targetas amarillas</td>
-                            <td>{{ (cardyellow ?? 0) * .5 }}</td>
+                        <tr class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
+                            <td class="px-5 py-3 text-[13px] text-gray-400 dark:text-slate-500 tabular-nums">{{ payments.length + 1 }}</td>
+                            <td class="px-5 py-3 text-[13px] text-gray-700 dark:text-slate-200">Targetas amarillas</td>
+                            <td class="px-5 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ (cardyellow ?? 0) * .5 }}</td>
                         </tr>
-                        <tr class="border-t [&>td]:py-2">
-                            <td>{{ payments.length + 2 }}</td>
-                            <td>Targetas rojas</td>
-                            <td>{{ cardred ?? 0 }}</td>
+                        <tr class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
+                            <td class="px-5 py-3 text-[13px] text-gray-400 dark:text-slate-500 tabular-nums">{{ payments.length + 2 }}</td>
+                            <td class="px-5 py-3 text-[13px] text-gray-700 dark:text-slate-200">Targetas rojas</td>
+                            <td class="px-5 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ cardred ?? 0 }}</td>
                         </tr>
-                        <!-- <tr class="border-t [&>td]:py-2">
-                            <td>{{ payments.length + 3 }}</td>
-                            <td>Targetas negras</td>
-                            <td>{{ (cardblack ?? 0) * .5 }}</td>
+                        <!-- <tr class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
+                            <td class="px-5 py-3 text-[13px] text-gray-400 dark:text-slate-500 tabular-nums">{{ payments.length + 3 }}</td>
+                            <td class="px-5 py-3 text-[13px] text-gray-700 dark:text-slate-200">Targetas negras</td>
+                            <td class="px-5 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ (cardblack ?? 0) * .5 }}</td>
                         </tr> -->
                     </tbody>
                     <!-- <tfoot>

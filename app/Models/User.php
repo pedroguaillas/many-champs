@@ -26,8 +26,13 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'is_superadmin',
     ];
+
+    public function isSuperAdmin(): bool
+    {
+        return (bool) $this->is_superadmin;
+    }
 
     /**
      * The attributes that should be hidden for serialization.

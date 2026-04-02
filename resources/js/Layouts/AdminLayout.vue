@@ -36,14 +36,14 @@ onUnmounted(() => {
 <template>
     <Head :title="title" />
 
-    <div class="flex h-screen w-screen overflow-hidden bg-slate-900">
+    <div class="flex h-screen w-screen overflow-hidden bg-gray-50 dark:bg-slate-900">
         <!-- Sidebar -->
         <Sidebar :open="sidebarOpen" @toggle="toggleSidebar" @close="closeSidebar" />
 
         <!-- Main area -->
         <div class="flex flex-col flex-1 min-w-0">
             <Header :open="sidebarOpen" :title="title" @toggle="toggleSidebar" />
-            <main class="flex-1 overflow-y-auto bg-slate-200">
+            <main class="flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-900">
                 <div class="p-4 sm:p-6">
                     <slot />
                 </div>

@@ -15,47 +15,46 @@ defineProps({
     <AdminLayout title="Tabla de posciones">
 
         <!-- Card -->
-        <div class="p-4 bg-white rounded drop-shadow-md">
+        <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">
 
             <!-- Card header -->
-            <div class="flex justify-between items-center">
-                <h2 class="text-sm sm:text-lg font-bold uppercase">TABLA DE POSICIONES {{ category.name }}</h2>
+            <div class="px-5 py-4 border-b border-gray-200 dark:border-white/[0.06]">
+                <h2 class="text-sm font-semibold tracking-tight text-white uppercase">Tabla de posiciones {{ category.name }}</h2>
             </div>
 
-            <!-- Resposive -->
+            <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table v-if="clubs.length > 0" class="mt-4 table-auto w-full text-center text-gray-700">
-                    <!-- <table class="table table-sm table-striped table-borderless"> -->
-                    <tbody class="text-xs sm:text-sm">
+                <table v-if="clubs.length > 0" class="table-auto w-full text-center">
+                    <tbody>
 
                         <template v-for="club, i in clubs" :key="club.id">
 
-                            <tr v-if="i === 0 || club.group_id !== clubs[i - 1].group_id" class="[&>th]:w-10">
-                                <th colspan="2" class="text-left w-4">{{ `GRUPO ${club.group_name}` }}</th>
-                                <th>PJ</th>
-                                <th>G</th>
-                                <th>E</th>
-                                <th>P</th>
-                                <th>GF</th>
-                                <th>GC</th>
-                                <th>DG</th>
-                                <th>PE</th>
-                                <th>Pts</th>
+                            <tr v-if="i === 0 || club.group_id !== clubs[i - 1].group_id" class="bg-gray-100 dark:bg-slate-700/30">
+                                <th colspan="2" class="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">{{ `GRUPO ${club.group_name}` }}</th>
+                                <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">PJ</th>
+                                <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">G</th>
+                                <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">E</th>
+                                <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">P</th>
+                                <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">GF</th>
+                                <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">GC</th>
+                                <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">DG</th>
+                                <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">PE</th>
+                                <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Pts</th>
                             </tr>
 
-                            <tr class="[&>td]:w-10">
-                                <td class="w-4 sm:w-6 lg:w-10 xl:w-14 text-left py-2">{{ club.index }}</td>
-                                <td class="text-left uppercase">{{ club.name }}</td>
-                                <td>{{ club.ganado + club.empate + club.perdido }}</td>
-                                <td>{{ club.ganado }}</td>
-                                <td>{{ club.empate }}</td>
-                                <td>{{ club.perdido }}</td>
-                                <td>{{ club.golf ? club.golf : 0 }}</td>
-                                <td>{{ club.golc ? club.golc : 0 }}</td>
-                                <td>{{ club.golf - club.golc }}</td>
-                                <td>{{ parseFloat(club.extra_points) }}</td>
-                                <td>{{ club.extra_points + (club.ganado * 3) + club.empate }}
+                            <tr class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
+                                <td class="px-5 py-3 text-left text-[13px] text-gray-400 dark:text-slate-500 tabular-nums">{{ club.index }}</td>
+                                <td class="px-3 py-3 text-left text-[13px] text-gray-700 dark:text-slate-200 uppercase tabular-nums">{{ club.name }}</td>
+                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.ganado + club.empate + club.perdido }}</td>
+                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.ganado }}</td>
+                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.empate }}</td>
+                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.perdido }}</td>
+                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.golf ? club.golf : 0 }}</td>
+                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.golc ? club.golc : 0 }}</td>
+                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.golf - club.golc }}</td>
+                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ parseFloat(club.extra_points) }}</td>
+                                <td class="px-3 py-3 text-[13px] text-white font-semibold tabular-nums">{{ club.extra_points + (club.ganado * 3) + club.empate }}
                                 </td>
                             </tr>
                         </template>

@@ -40,9 +40,9 @@ const select = (club) => {
 <template>
     <div class="flex" :class="class">
         <input ref="input" :placeholder="placeholder"
-            class="border-gray-300 w-full dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-l-md shadow-sm"
+            class="w-full px-3.5 py-2.5 rounded-l-lg bg-white dark:bg-slate-900/80 border border-gray-300 dark:border-white/[0.08] text-[13px] text-gray-700 dark:text-slate-200 placeholder-gray-400 dark:placeholder-slate-600 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-colors duration-200"
             :value="modelText" />
-        <button @click="toggle" class="py-2 px-3 bg-indigo-500 rounded-r text-white">
+        <button @click="toggle" class="px-3 py-2.5 bg-gray-300 dark:bg-slate-700/60 border border-gray-300 dark:border-white/[0.08] rounded-r-lg text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-300 dark:bg-slate-700 transition-colors duration-200">
             <i class="fa fa-search"></i>
         </button>
     </div>

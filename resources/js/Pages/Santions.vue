@@ -68,54 +68,54 @@ const payBlack = (gi) => {
     <AdminLayout title="Sanciones">
 
         <!-- Card -->
-        <div class="p-4 bg-white rounded drop-shadow-md">
+        <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">
 
             <!-- Card header -->
-            <div class="flex justify-between items-center">
-                <h2 class="text-sm sm:text-lg font-bold uppercase">Sanciones</h2>
+            <div class="px-5 py-4 border-b border-gray-200 dark:border-white/[0.06]">
+                <h2 class="text-sm font-semibold tracking-tight text-white uppercase">Sanciones</h2>
             </div>
 
-            <!-- Resposive -->
+            <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
                 <table v-if="sanctions.length > 0"
-                    class="mt-4 text-xs sm:text-sm table-auto w-full text-center text-gray-700">
+                    class="table-auto w-full text-center">
                     <thead>
-                        <tr>
-                            <th>Jugador</th>
-                            <th>Club</th>
-                            <th>Tarjeta</th>
-                            <th>Categoría</th>
-                            <th class="w-1"></th>
+                        <tr class="border-b border-gray-200 dark:border-white/[0.06]">
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Jugador</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Club</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Tarjeta</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Categoría</th>
+                            <th class="w-1 px-5 py-3"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="sanction in sanctions">
-                            <td class="text-left">{{ `${sanction.first_name} ${sanction.last_name}` }}</td>
-                            <td class="text-left">{{ sanction.player_team_id === sanction.c1id ? sanction.c1name :
+                        <tr v-for="sanction in sanctions" class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
+                            <td class="px-5 py-3 text-left text-[13px] text-gray-700 dark:text-slate-200">{{ `${sanction.first_name} ${sanction.last_name}` }}</td>
+                            <td class="px-5 py-3 text-left text-[13px] text-gray-500 dark:text-slate-400">{{ sanction.player_team_id === sanction.c1id ? sanction.c1name :
                                 sanction.c2name }}
                             </td>
-                            <td>
-                                <span v-if="sanction.card_black" class="bg-black p-1 rounded text-white">
+                            <td class="px-5 py-3">
+                                <span v-if="sanction.card_black" class="bg-slate-200 text-slate-900 text-[10px] px-2 py-0.5 rounded-md font-medium">
                                     negra
                                 </span>
-                                <span v-if="sanction.santion !== null" class="p-1 rounded"
-                                    :class="sanction.santion === 'roja' ? 'bg-red-500' : 'bg-yellow-500'">
+                                <span v-if="sanction.santion !== null" class="text-[10px] px-2 py-0.5 rounded-md font-medium"
+                                    :class="sanction.santion === 'roja' ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'">
                                     {{ sanction.santion }}
                                 </span>
                             </td>
-                            <td>{{ sanction.category_name }}</td>
-                            <td>
-                                <div class="flex">
+                            <td class="px-5 py-3 text-[13px] text-gray-500 dark:text-slate-400">{{ sanction.category_name }}</td>
+                            <td class="px-5 py-3">
+                                <div class="flex gap-1">
                                     <button v-if="sanction.card_black === 1 && sanction.paid_black === null"
                                         @click="$event => payBlack(sanction)"
-                                        class="rounded px-2 py-1 ml-1 text-sm text-white bg-slate-500">
-                                        <i class="fa fa-check"></i>
+                                        class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-200/20 text-gray-600 dark:text-slate-300 hover:bg-slate-200/30 transition-colors duration-200">
+                                        <i class="fa fa-check text-xs"></i>
                                     </button>
                                     <button v-if="sanction.santion !== null && sanction.paid_santion === null"
-                                        @click="$event => pay(sanction)" class="rounded px-2 py-1 ml-1 text-sm text-white"
-                                        :class="sanction.santion === 'roja' ? 'bg-red-500' : 'bg-yellow-500'">
-                                        <i class="fa fa-check"></i>
+                                        @click="$event => pay(sanction)" class="inline-flex items-center justify-center w-7 h-7 rounded-lg transition-colors duration-200"
+                                        :class="sanction.santion === 'roja' ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'">
+                                        <i class="fa fa-check text-xs"></i>
                                     </button>
                                 </div>
                             </td>

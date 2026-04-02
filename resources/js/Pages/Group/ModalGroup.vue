@@ -31,7 +31,7 @@ defineEmits(['close', 'save'])
             </div>
         </template>
         <template #footer>
-            <button @click="$emit('save')" class="px-6 py-2 ml-2 bg-blue-600 text-blue-100 rounded">Guardar</button>
+            <button @click="$emit('save')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 text-xs font-semibold text-white hover:bg-emerald-400 transition-all duration-200">Guardar</button>
         </template>
     </DialogModal>
 </template>

@@ -138,53 +138,66 @@ const deleteClub = (clubDelete) => {
     <AdminLayout title="Clubes">
 
         <!-- Card -->
-        <div class="p-4 bg-white rounded drop-shadow-md">
+        <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">
 
             <!-- Card Header -->
-            <div class="flex justify-between items-center">
-                <h2 class="text-sm sm:text-lg font-bold">Clubes</h2>
-                <select v-if="groups.length > 0" v-model="search">
-                    <option value="">Todos</option>
-                    <option v-for="gr in groups" :value="gr.name">{{ gr.name }}</option>
-                </select>
-                <button @click="newCub" class="px-2 bg-green-500 text-2xl text-white rounded font-bold">
-                    +
-                </button>
+            <div class="px-5 py-4 border-b border-gray-200 dark:border-white/[0.06] flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                        <i class="fa-solid fa-shield-halved text-blue-400 text-[11px]"></i>
+                    </div>
+                    <h2 class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white">Clubes</h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <select v-if="groups.length > 0" v-model="search"
+                        class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] text-[12px] text-gray-600 dark:text-slate-300 focus:outline-none focus:border-emerald-500/40">
+                        <option value="">Todos</option>
+                        <option v-for="gr in groups" :value="gr.name">{{ gr.name }}</option>
+                    </select>
+                    <button @click="newCub"
+                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all duration-200">
+                        <i class="fa-solid fa-plus text-[11px]"></i> Agregar
+                    </button>
+                </div>
             </div>
 
-            <!-- Resposive -->
+            <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="mt-4 text-xs sm:text-sm table-auto w-full text-center text-gray-700">
+                <table class="w-full text-left">
                     <thead>
-                        <tr class="[&>th]:py-2">
-                            <th class="w-1">N°</th>
-                            <th>Nombre</th>
-                            <th>Grupo</th>
-                            <th>Lugar</th>
-                            <th class="w-1"></th>
+                        <tr>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1">N°</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Nombre</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Grupo</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Lugar</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="club, i in clubs" :key="club.id" class="border-t [&>td]:py-2">
-                            <td>{{ i + 1 }}</td>
-                            <td>{{ club.name }}</td>
-                            <td>{{ club.gname }}</td>
-                            <td>{{ club.address }}</td>
-                            <td>
-                                <div class="relative inline-flex [&>a>i]:text-white [&>button>i]:text-white">
+                        <tr v-for="club, i in clubs" :key="club.id"
+                            class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
+                            <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ i + 1 }}</td>
+                            <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ club.name }}</td>
+                            <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ club.gname }}</td>
+                            <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ club.address }}</td>
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center gap-1">
                                     <Link :href="route('payments.index', club.id)"
-                                        class="mr-1 rounded px-2 py-1 bg-slate-500">
-                                    <i class="fas fa-money-bill-wave"></i>
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors duration-150">
+                                        <i class="fas fa-money-bill-wave text-[11px]"></i>
                                     </Link>
-                                    <Link :href="route('players.index', club.id)" class="rounded px-2 py-1 bg-green-500">
-                                    <i class="fa fa-users"></i>
+                                    <Link :href="route('players.index', club.id)"
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors duration-150">
+                                        <i class="fa fa-users text-[11px]"></i>
                                     </Link>
-                                    <button @click="edit(club)" class="mx-1 rounded px-2 py-1 bg-blue-500">
-                                        <i class="fa fa-edit"></i>
+                                    <button @click="edit(club)"
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-700/50 transition-colors duration-150">
+                                        <i class="fa fa-edit text-[11px]"></i>
                                     </button>
-                                    <button @click="deleteClub(club)" class="rounded px-2 py-1 bg-red-500">
-                                        <i class="fa fa-trash"></i>
+                                    <button @click="deleteClub(club)"
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors duration-150">
+                                        <i class="fa fa-trash text-[11px]"></i>
                                     </button>
                                 </div>
                             </td>

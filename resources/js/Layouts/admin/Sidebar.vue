@@ -25,7 +25,10 @@ const closeMobile = () => {
     emit('close');
 };
 
-const navGroups = [
+const isSuperAdmin = computed(() => page.props.is_superadmin ?? false);
+
+const navGroups = computed(() => {
+    const groups = [
     {
         label: 'Principal',
         items: [
@@ -101,6 +104,23 @@ const navGroups = [
         ],
     },
 ];
+
+    if (isSuperAdmin.value) {
+        groups.push({
+            label: 'Super Admin',
+            items: [
+                {
+                    label: 'Campeonatos',
+                    icon: 'fa-solid fa-trophy',
+                    href: () => route('admin.championships.index'),
+                    active: () => isLinkActive([['admin.championships.index'], ['admin.championships.create']]),
+                },
+            ],
+        });
+    }
+
+    return groups;
+});
 </script>
 
 <template>
@@ -122,23 +142,23 @@ const navGroups = [
 
     <!-- Sidebar -->
     <aside
-        class="fixed sm:sticky top-0 left-0 z-50 h-screen w-[280px] sm:w-[260px] flex flex-col bg-slate-950 border-r border-white/[0.08] transform transition-transform duration-300 ease-in-out sm:translate-x-0 sm:flex-shrink-0"
+        class="fixed sm:sticky top-0 left-0 z-50 h-screen w-[280px] sm:w-[260px] flex flex-col bg-white dark:bg-slate-950 border-r border-gray-200 dark:border-white/[0.08] transform transition-transform duration-300 ease-in-out sm:translate-x-0 sm:flex-shrink-0"
         :class="open ? 'translate-x-0' : '-translate-x-full'"
     >
         <!-- Brand -->
-        <div class="flex items-center justify-between px-5 py-5 border-b border-white/[0.08]">
+        <div class="flex items-center justify-between px-5 py-5 border-b border-gray-200 dark:border-white/[0.08]">
             <Link :href="route('dashboard')" class="flex items-center gap-3 group" @click="closeMobile">
                 <div class="w-9 h-9 rounded-lg bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:shadow-emerald-500/40 transition-shadow duration-300">
                     <span class="text-white font-bold text-sm tracking-tighter">5IV</span>
                 </div>
                 <div>
-                    <span class="text-white font-semibold tracking-tight text-[15px]">Many Champs</span>
-                    <span class="block text-[10px] text-slate-500 font-medium uppercase tracking-widest">Sport Manager</span>
+                    <span class="text-gray-900 dark:text-white font-semibold tracking-tight text-[15px]">Many Champs</span>
+                    <span class="block text-[10px] text-gray-400 dark:text-slate-500 font-medium uppercase tracking-widest">Sport Manager</span>
                 </div>
             </Link>
             <button
                 @click="closeMobile"
-                class="sm:hidden w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors duration-200"
+                class="sm:hidden w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors duration-200"
             >
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
@@ -147,7 +167,7 @@ const navGroups = [
         <!-- Navigation -->
         <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-6 scrollbar-thin">
             <div v-for="group in navGroups" :key="group.label">
-                <p class="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                <p class="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">
                     {{ group.label }}
                 </p>
                 <ul class="space-y-0.5">
@@ -157,8 +177,8 @@ const navGroups = [
                             @click="closeMobile"
                             class="group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200"
                             :class="item.active()
-                                ? 'text-white bg-slate-800/80'
-                                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'"
+                                ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-slate-800/80'
+                                : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800/50'"
                         >
                             <!-- Active indicator bar -->
                             <span
@@ -170,8 +190,8 @@ const navGroups = [
                                     item.icon,
                                     'w-5 text-center text-sm transition-colors duration-200',
                                     item.active()
-                                        ? 'text-emerald-400'
-                                        : 'text-slate-500 group-hover:text-slate-300'
+                                        ? 'text-emerald-500 dark:text-emerald-400'
+                                        : 'text-gray-400 dark:text-slate-500 group-hover:text-gray-600 dark:group-hover:text-slate-300'
                                 ]"
                             ></i>
                             <span>{{ item.label }}</span>
@@ -188,8 +208,8 @@ const navGroups = [
         </nav>
 
         <!-- Footer -->
-        <div class="px-5 py-4 border-t border-white/[0.08]">
-            <div class="flex items-center gap-2 text-[11px] text-slate-600">
+        <div class="px-5 py-4 border-t border-gray-200 dark:border-white/[0.08]">
+            <div class="flex items-center gap-2 text-[11px] text-gray-400 dark:text-slate-600">
                 <i class="fa-solid fa-futbol text-emerald-600/50"></i>
                 <span>5IV Sport &copy; {{ new Date().getFullYear() }}</span>
             </div>

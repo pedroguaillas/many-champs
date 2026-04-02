@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ChampionshipController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\GameController;
@@ -106,4 +107,14 @@ Route::middleware([
     // Grupos
     Route::get('categoria/{category}/grupos', [GroupController::class, 'index'])->name('groups.index');
     Route::resource('groups', GroupController::class)->only(['store', 'update', 'destroy']);
+
+    // Admin: Campeonatos (solo superadmin)
+    Route::middleware('superadmin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('campeonatos', [ChampionshipController::class, 'index'])->name('championships.index');
+        Route::get('campeonatos/crear', [ChampionshipController::class, 'create'])->name('championships.create');
+        Route::post('campeonatos/buscar-usuario', [ChampionshipController::class, 'searchUser'])->name('championships.search-user');
+        Route::post('campeonatos', [ChampionshipController::class, 'store'])->name('championships.store');
+        Route::put('campeonatos/{team}', [ChampionshipController::class, 'update'])->name('championships.update');
+        Route::delete('campeonatos/{team}', [ChampionshipController::class, 'destroy'])->name('championships.destroy');
+    });
 });

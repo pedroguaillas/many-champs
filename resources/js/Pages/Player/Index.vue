@@ -116,7 +116,11 @@ const deletePlayer = (player) => {
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: '<i class="fa-solid fa-check"></i> Si, Eliminar',
-        cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar'
+        cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar',
+        background: '#1e293b',
+        color: '#e2e8f0',
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#334155',
     }).then((result) => {
         if (result.isConfirmed) {
             form.delete(route('players.destroy', player.id), {
@@ -144,50 +148,60 @@ const viewPlayer = (playerView) => {
     <AdminLayout :title="`Jugadores de ${club.name}`">
 
         <!-- Card -->
-        <div class="p-4 bg-white rounded drop-shadow-md">
+        <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">
 
             <!-- Card Header -->
-            <div class="flex justify-between items-center">
-                <h2 class="text-sm sm:text-lg font-bold">{{ `Jugadores de ${club.name}` }}</h2>
-                <button @click="newPlayer" class="px-2 py-1 sm:p-2 bg-green-500 sm:text-xl text-white rounded font-bold">
-                    <i class="fa fa-user-plus"></i>
+            <div class="px-5 py-4 border-b border-gray-200 dark:border-white/[0.06] flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                        <i class="fa fa-users text-blue-400 text-[11px]"></i>
+                    </div>
+                    <h2 class="text-sm font-semibold tracking-tight text-white">{{ `Jugadores de ${club.name}` }}</h2>
+                </div>
+                <button @click="newPlayer"
+                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all duration-200">
+                    <i class="fa fa-user-plus text-[11px]"></i> Agregar
                 </button>
             </div>
 
-            <!-- Resposive -->
+            <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="mt-4 text-xs sm:text-sm table-auto w-full text-center text-gray-700">
+                <table class="w-full text-center">
                     <thead>
-                        <tr class="[&>th]:py-2">
-                            <th class="w-1">N°</th>
-                            <th></th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Dorsal</th>
-                            <th class="w-1"></th>
+                        <tr>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1">N°</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500"></th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Nombre</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Apellido</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Dorsal</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="player, i in players" :key="player.id" class="border-t [&>td]:py-2">
-                            <td>{{ i + 1 }}</td>
-                            <td class="w-10">
-                                <img v-if="player.photo" :src="`/storage/avatars/${player.photo}`" class="rounded"
-                                    alt="Avatar" />
+                        <tr v-for="player, i in players" :key="player.id"
+                            class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
+                            <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ i + 1 }}</td>
+                            <td class="px-5 py-3.5 w-10">
+                                <img v-if="player.photo" :src="`/storage/avatars/${player.photo}`"
+                                    class="w-8 h-8 rounded-lg object-cover border border-gray-200 dark:border-white/[0.06]" alt="Avatar" />
                             </td>
-                            <td>{{ player.first_name }}</td>
-                            <td>{{ player.last_name }}</td>
-                            <td>{{ player.t_shirt }}</td>
-                            <td>
-                                <div class="relative inline-flex [&>a>i]:text-white [&>button>i]:text-white">
-                                    <button @click="viewPlayer(player)" class="rounded px-2 py-1 bg-yellow-500">
-                                        <i class="fa fa-eye"></i>
+                            <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ player.first_name }}</td>
+                            <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ player.last_name }}</td>
+                            <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ player.t_shirt }}</td>
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center gap-1">
+                                    <button @click="viewPlayer(player)"
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 transition-colors duration-150">
+                                        <i class="fa fa-eye text-[11px]"></i>
                                     </button>
-                                    <button @click="edit(player)" class="mx-1 rounded px-2 py-1 bg-blue-500">
-                                        <i class="fa fa-user-edit"></i>
+                                    <button @click="edit(player)"
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:hover:bg-gray-200 dark:bg-slate-700/50 transition-colors duration-150">
+                                        <i class="fa fa-user-edit text-[11px]"></i>
                                     </button>
-                                    <button @click="deletePlayer(player)" class="rounded px-2 py-1 bg-red-500">
-                                        <i class="fa fa-trash"></i>
+                                    <button @click="deletePlayer(player)"
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors duration-150">
+                                        <i class="fa fa-trash text-[11px]"></i>
                                     </button>
                                 </div>
                             </td>

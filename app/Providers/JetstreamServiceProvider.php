@@ -45,17 +45,25 @@ class JetstreamServiceProvider extends ServiceProvider
     {
         Jetstream::defaultApiTokenPermissions(['read']);
 
-        Jetstream::role('admin', 'Administrator', [
+        Jetstream::role('superadmin', 'Super Administrador', [
             'create',
             'read',
             'update',
             'delete',
-        ])->description('Administrator users can perform any action.');
+            'manage-championships',
+        ])->description('Super administrador con acceso total al sistema.');
+
+        Jetstream::role('admin', 'Administrador', [
+            'create',
+            'read',
+            'update',
+            'delete',
+        ])->description('Administrador del campeonato, puede gestionar categorías, clubes y partidos.');
 
         Jetstream::role('editor', 'Editor', [
             'read',
             'create',
             'update',
-        ])->description('Editor users have the ability to read, create, and update.');
+        ])->description('Editor puede leer, crear y actualizar datos del campeonato.');
     }
 }

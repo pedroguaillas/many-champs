@@ -36,6 +36,7 @@ class HandleInertiaRequests extends Middleware
                     'location' => $request->url(),
                 ]);
             },
+            'is_superadmin' => fn () => $request->user()?->isSuperAdmin() ?? false,
         ]);
     }
 }
