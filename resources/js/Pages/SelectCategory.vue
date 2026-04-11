@@ -21,10 +21,10 @@ defineProps({
 
             <!-- Card -->
             <div v-for="(category, i) in categories" :key="category.id"
-                class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden hover:bg-slate-800/80 transition-colors duration-200 group">
+                class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden hover:bg-gray-50 dark:hover:bg-slate-800/80 transition-colors duration-200 group">
                 <div class="p-5 flex justify-between items-start">
                     <div class="flex flex-col gap-1">
-                        <span class="text-2xl font-bold text-white">{{ category.count }}</span>
+                        <span class="text-2xl font-bold text-gray-900 dark:text-white">{{ category.count }}</span>
                         <span class="text-[13px] text-gray-600 dark:text-slate-300">{{ category.name }}</span>
                     </div>
                     <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">

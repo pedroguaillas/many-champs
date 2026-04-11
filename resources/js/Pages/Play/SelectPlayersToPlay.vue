@@ -119,7 +119,7 @@ const paySantion = (gi) => {
                     <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
                         <i class="fa-solid fa-shield-halved text-emerald-400 text-[11px]"></i>
                     </div>
-                    <h2 class="text-sm font-semibold tracking-tight text-white">{{ `${game.c1_name} ($${game.paid1 === null ? 0 : game.paid1})` }}</h2>
+                    <h2 class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white">{{ `${game.c1_name} ($${game.paid1 === null ? 0 : game.paid1})` }}</h2>
                 </div>
             </div>
 
@@ -155,7 +155,7 @@ const paySantion = (gi) => {
                                 </template>
                                 <!-- Switch Container -->
                                 <div v-else @click="$event => active1(c1.id)"
-                                    :class="contiene1(c1.id) ? 'bg-emerald-500' : 'bg-slate-700'"
+                                    :class="contiene1(c1.id) ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-slate-700'"
                                     class="w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-200">
                                     <div :class="{ 'translate-x-3': contiene1(c1.id) }"
                                         class="bg-white w-5 h-5 rounded-full shadow-md ease-out duration-200"></div>
@@ -177,7 +177,7 @@ const paySantion = (gi) => {
                     <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
                         <i class="fa-solid fa-shield-halved text-blue-400 text-[11px]"></i>
                     </div>
-                    <h2 class="text-sm font-semibold tracking-tight text-white">{{ `${game.c2_name} ($${game.paid2 === null ? 0 : game.paid2})` }}</h2>
+                    <h2 class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white">{{ `${game.c2_name} ($${game.paid2 === null ? 0 : game.paid2})` }}</h2>
                 </div>
             </div>
 
@@ -213,7 +213,7 @@ const paySantion = (gi) => {
                                 </template>
                                 <!-- Switch Container -->
                                 <div v-else @click="$event => active2(c2.id)"
-                                    :class="contiene2(c2.id) ? 'bg-emerald-500' : 'bg-slate-700'"
+                                    :class="contiene2(c2.id) ? 'bg-emerald-500' : 'bg-gray-300 dark:bg-slate-700'"
                                     class="w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-200">
                                     <div :class="{ 'translate-x-3': contiene2(c2.id) }"
                                         class="bg-white w-5 h-5 rounded-full shadow-md ease-out duration-200"></div>
