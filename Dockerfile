@@ -5,7 +5,7 @@ COPY database/ database/
 COPY composer.json composer.lock ./
 RUN composer install \
     --no-dev --no-interaction --no-progress --no-scripts \
-    --prefer-dist --optimize-autoloader --ignore-platform-req=ext-gd
+    --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
 FROM node:22-alpine AS assets
 WORKDIR /app
