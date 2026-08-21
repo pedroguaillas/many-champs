@@ -1,0 +1,34 @@
+services:
+  app:
+    build: .
+    image: many-champs:prod
+    container_name: otra_app
+    restart: unless-stopped
+    mem_limit: 384m
+    cpus: 1.0
+    expose:
+      - '80'
+    env_file:
+      - .env
+    volumes:
+      - app_storage:/var/www/html/storage
+    networks:
+      - shared_net
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+# postgres y redis NO se definen aqui: corren una sola vez en el droplet
+# (docker-compose.shared.yml) y ambas apps se conectan por esta red externa.
+# Crear una sola vez: docker network create shared_net
+# En .env de esta app: DB_HOST=shared_postgres, REDIS_HOST=shared_redis,
+# DB_DATABASE=many_champs (unico), REDIS_DB=1 (sign-app usa 0, no repetir).
+networks:
+  shared_net:
+    external: true
+
+volumes:
+  app_storage:
+    driver: local
