@@ -12,4 +12,8 @@ class Payment extends Model
     protected $fillable = [
         'club_id', 'amount', 'note'
     ];
+
+    protected $casts = [
+        'amount' => 'decimal:2',
+    ];
 }

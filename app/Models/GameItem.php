@@ -14,4 +14,10 @@ class GameItem extends Model
         'change_player_id', 'goals', 'santion',
         'paid_santion', 'card_black', 'paid_black', 'note'
     ];
+
+    protected $casts = [
+        'card_black' => 'boolean',
+        'paid_santion' => 'date:Y-m-d',
+        'paid_black' => 'date:Y-m-d',
+    ];
 }

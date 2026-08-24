@@ -28,16 +28,16 @@ docker run --rm \
 
 ```bash
 # Frontend dev server (hot reload on port 5173)
-./vendor/bin/sail npm run dev
+./vendor/bin/sail pnpm run dev
 
 # Build frontend for production (includes SSR build)
-./vendor/bin/sail npm run build
+./vendor/bin/sail pnpm run build
 
 # Install/update PHP dependencies
 ./vendor/bin/sail composer install
 
 # Install/update Node dependencies
-./vendor/bin/sail npm install
+./vendor/bin/sail pnpm install
 
 # Run database migrations
 ./vendor/bin/sail artisan migrate

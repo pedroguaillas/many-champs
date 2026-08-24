@@ -113,7 +113,7 @@ class GameItemController extends Controller
             'last_name',
             DB::raw('(SELECT santion FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS santion'),
             DB::raw('(SELECT gi.id FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS gi_santion_id'),
-            DB::raw('(SELECT card_black FROM game_items AS gi WHERE player_id = players.id AND card_black = 1 AND paid_black IS NULL LIMIT 1) AS black')
+            DB::raw('(SELECT card_black FROM game_items AS gi WHERE player_id = players.id AND card_black = true AND paid_black IS NULL LIMIT 1) AS black')
         )
             ->whereNotIn(
                 'id',

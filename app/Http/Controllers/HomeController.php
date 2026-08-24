@@ -119,7 +119,7 @@ class HomeController extends Controller
             ->count();
 
         $cardblack = GameItem::join('players AS p', 'p.id', 'player_id')
-            ->where('card_black', 1)
+            ->where('card_black', true)
             ->whereDate('paid_black', $date)
             ->count();
 

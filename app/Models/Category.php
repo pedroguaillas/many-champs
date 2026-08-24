@@ -10,4 +10,8 @@ class Category extends Model
     use HasFactory;
 
     protected $fillable = ['team_id', 'name', 'inscription', 'gender'];
+
+    protected $casts = [
+        'inscription' => 'decimal:2',
+    ];
 }

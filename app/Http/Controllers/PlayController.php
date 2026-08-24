@@ -31,8 +31,8 @@ class PlayController extends Controller
 
         $q = '(SELECT santion FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS santion,';
         $qId = '(SELECT id FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS gi_saction_id,';
-        $qblack = '(SELECT card_black FROM game_items AS gi WHERE player_id = players.id AND card_black = 1 AND paid_black IS NULL LIMIT 1) AS black, ';
-        $qblackId = '(SELECT id FROM game_items AS gi WHERE player_id = players.id AND card_black = 1 AND paid_black IS NULL LIMIT 1) AS gi_back_id';
+        $qblack = '(SELECT card_black FROM game_items AS gi WHERE player_id = players.id AND card_black = true AND paid_black IS NULL LIMIT 1) AS black, ';
+        $qblackId = '(SELECT id FROM game_items AS gi WHERE player_id = players.id AND card_black = true AND paid_black IS NULL LIMIT 1) AS gi_back_id';
 
         $club1_players = Player::selectRaw('id,first_name,last_name,' . $q . $qId . $qblack . $qblackId)
             ->where('club_id', $game['club1_id'])->get();

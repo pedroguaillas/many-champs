@@ -23,7 +23,7 @@ class SantionController extends Controller
             . 'INNER JOIN clubs AS c1 ON c1.id = club1_id '
             . 'INNER JOIN clubs AS c2 ON c2.id = club2_id '
             . 'INNER JOIN categories AS c ON c.id = c1.category_id AND c.team_id = ? '
-            . 'WHERE ((santion IS NOT NULL AND paid_santion IS NULL) OR (card_black = 1 AND paid_black IS NULL)) '
+            . 'WHERE ((santion IS NOT NULL AND paid_santion IS NULL) OR (card_black = true AND paid_black IS NULL)) '
             . 'AND first_name LIKE ? '
             . 'ORDER BY first_name ASC',
             [$user->currentTeam->id, '%' . ($search ?? '') . '%']

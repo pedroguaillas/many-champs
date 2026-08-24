@@ -15,6 +15,10 @@ class Player extends Model
         'date_of_birth', 't_shirt', 'phone'
     ];
 
+    protected $casts = [
+        'date_of_birth' => 'date:Y-m-d',
+    ];
+
     public function gameitems()
     {
         return $this->hasMany(GameItem::class);

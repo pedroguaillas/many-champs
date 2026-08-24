@@ -17,6 +17,11 @@ class Game extends Model
         'time', 'state'
     ];
 
+    protected $casts = [
+        'date' => 'date:Y-m-d',
+        'time' => 'datetime:H:i:s',
+    ];
+
     public function gameitems()
     {
         return $this->hasMany(GameItem::class);
