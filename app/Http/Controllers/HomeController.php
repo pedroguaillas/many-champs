@@ -52,7 +52,7 @@ class HomeController extends Controller
         $categories = DB::table('categories AS c')
             ->select(DB::raw('c.id,c.name,COUNT(clubs.id) AS count'))
             ->leftJoin('clubs', 'c.id', 'category_id')
-            ->groupBy('id', 'name')
+            ->groupBy('c.id', 'c.name')
             // Del campeonato(team_id) actual donde se encuentra logeado el usuario
             ->where('team_id', $user->currentTeam->id)
             ->get();

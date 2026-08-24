@@ -15,7 +15,7 @@ class PositionTableController extends Controller
 
         // SEGURIDAD: Se reemplazó la interpolación directa de variables en SQL
         // por consultas parametrizadas para prevenir SQL Injection (OWASP A03:2021)
-        $query = "SELECT c.id AS club_id, c.name, c.extra_points, c.group_id, `groups`.name AS group_name, "
+        $query = "SELECT c.id AS club_id, c.name, c.extra_points, c.group_id, grp.name AS group_name, "
             . "club_game.club1_id, club_game.club2_id, club_game.goles1, club_game.goles2 "
             . "FROM clubs AS c "
             . "LEFT JOIN (SELECT club1_id, club2_id, "
@@ -23,7 +23,7 @@ class PositionTableController extends Controller
             . "(SELECT SUM(goals) FROM game_items AS gi WHERE gi.game_id = g.id AND gi.player_id IN (SELECT id FROM players WHERE club_id = club2_id)) AS goles2 "
             . "FROM games AS g WHERE g.state = 'finalizado' AND g.progress_id = ?) AS club_game "
             . "ON c.id = club_game.club1_id OR c.id = club_game.club2_id "
-            . "LEFT JOIN `groups` ON `groups`.id = c.group_id "
+            . "LEFT JOIN groups AS grp ON grp.id = c.group_id "
             . "WHERE c.category_id = ? ORDER BY c.id";
 
         $games = DB::select($query, [$progress->id, $category->id]);
