@@ -23,6 +23,33 @@ watch(search, (value) => {
 }, 300);
 // Seccion filtro ..... Fin
 
+const menuOpen = ref(false);
+
+const regenerateGames = () => {
+    menuOpen.value = false;
+
+    const alert = Swal.mixin({
+        buttonsStyling: true
+    });
+
+    alert.fire({
+        title: '¿Esta seguro de volver a crear todos los partidos?',
+        text: 'Esto eliminara permanentemente todos los partidos existentes de esta categoria y los volvera a generar.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fa-solid fa-check"></i> Si, Continuar',
+        cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar',
+        background: '#1e293b',
+        color: '#e2e8f0',
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#334155',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.get(route('games.vgenerate', props.category.id));
+        }
+    });
+}
+
 const deleteGame = (game) => {
 
     const alert = Swal.mixin({
@@ -74,10 +101,26 @@ const deleteGame = (game) => {
                         <option value="">Todos</option>
                         <option v-for="gr in groups" :value="gr.id">{{ gr.name }}</option>
                     </select>
-                    <Link v-if="games.length > 0" :href="route('games.create', category.id)"
-                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all duration-200">
-                        <i class="fa-solid fa-plus text-[11px]"></i> Crear
-                    </Link>
+                    <div v-if="games.length > 0" class="relative">
+                        <button @click="menuOpen = !menuOpen"
+                            class="w-9 h-9 rounded-lg flex items-center justify-center text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all duration-200">
+                            <i class="fa-solid fa-ellipsis-vertical text-[13px]"></i>
+                        </button>
+
+                        <div v-if="menuOpen" class="fixed inset-0 z-10" @click="menuOpen = false"></div>
+
+                        <div v-if="menuOpen"
+                            class="absolute right-0 mt-2 w-56 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-white/[0.06] shadow-lg z-20 overflow-hidden">
+                            <Link :href="route('games.create', category.id)" @click="menuOpen = false"
+                                class="flex items-center gap-2 px-4 py-2.5 text-[12px] text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors duration-150">
+                                <i class="fa-solid fa-plus text-[11px] w-4 text-emerald-400"></i> Crear un partido
+                            </Link>
+                            <button @click="regenerateGames"
+                                class="w-full flex items-center gap-2 px-4 py-2.5 text-[12px] text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors duration-150">
+                                <i class="fa-solid fa-rotate-right text-[11px] w-4 text-red-400"></i> Volver a crear todos los partidos
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 

@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Club;
 use App\Models\Game;
+use App\Models\GameItem;
 use App\Models\Group;
 use App\Models\Progress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class GenerateGamesController extends Controller
@@ -32,12 +34,22 @@ class GenerateGamesController extends Controller
         // Posterior si hay algun requerimiento de algun cliente 
         // generar los partidos de vuelta
 
-        $groups = Group::where('category_id', $category->id)->get();
+        DB::transaction(function () use ($request, $category) {
+            // Elimina fisicamente los partidos existentes de la categoria antes de regenerarlos
+            $existingGameIds = Game::join('clubs AS c1', 'games.club1_id', 'c1.id')
+                ->where('c1.category_id', $category->id)
+                ->pluck('games.id');
 
-        // Recorre todos los grupos de esa categoria
-        foreach ($groups as $group) {
-            $this->generateByGroup($group->id, $request->date, $request->time);
-        }
+            GameItem::whereIn('game_id', $existingGameIds)->delete();
+            Game::whereIn('id', $existingGameIds)->delete();
+
+            $groups = Group::where('category_id', $category->id)->get();
+
+            // Recorre todos los grupos de esa categoria
+            foreach ($groups as $group) {
+                $this->generateByGroup($group->id, $request->date, $request->time);
+            }
+        });
 
         return redirect(route('games.index', $category->id));
     }
