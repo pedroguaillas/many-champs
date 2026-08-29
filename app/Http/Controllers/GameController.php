@@ -88,11 +88,12 @@ class GameController extends Controller
             'club2_id' => 'required|integer|exists:clubs,id',
             'date' => 'required|date',
             'time' => 'required',
-            'progress_id' => 'required|integer|exists:progress,id'
+            'progress_id' => 'required|integer|exists:progress,id',
+            'state' => 'required|in:creado,planificado,jugando,finalizado'
         ]);
 
         // SEGURIDAD: Usar only() para prevenir mass assignment
-        $game->update($request->only(['club1_id', 'club2_id', 'date', 'time', 'progress_id']));
+        $game->update($request->only(['club1_id', 'club2_id', 'date', 'time', 'progress_id', 'state']));
 
         $club = Club::find($request->club1_id);
 

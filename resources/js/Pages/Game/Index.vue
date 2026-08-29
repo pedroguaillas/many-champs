@@ -5,6 +5,7 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Link, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import Swal from 'sweetalert2';
+import { gameState } from '@/Composables/gameState';
 
 // Props
 const props = defineProps({
@@ -143,8 +144,7 @@ const deleteGame = (game) => {
                             <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ i + 1 }}</td>
                             <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ `${game.c1name} ${game.state === 'finalizado' ? `(${game.gols1 ?? 0})` : ''}` }}</td>
                             <td class="px-5 py-3.5">
-                                <span
-                                    :class="game.state === 'planificado' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : (game.state === 'finalizado' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-gray-200 dark:bg-slate-700/50 text-gray-500 dark:text-slate-400 border border-gray-200 dark:border-white/[0.06]')"
+                                <span :class="gameState(game.state).badge"
                                     class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium">VS</span>
                             </td>
                             <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ `${game.c2name} ${game.state === 'finalizado' ? `(${game.gols2 ?? 0})` : ''}` }}</td>

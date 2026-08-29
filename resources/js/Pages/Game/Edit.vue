@@ -93,7 +93,6 @@ const save = () => {
                         <option value="creado" :selected="form.state === 'creado'">Creado</option>
                         <option value="planificado" :selected="form.state === 'planificado'">Planificado</option>
                         <option value="jugando" :selected="form.state === 'jugando'">Jugando</option>
-                        <option value="suspendido" :selected="form.state === 'suspendido'">Suspendido</option>
                         <option value="finalizado" :selected="form.state === 'finalizado'">Finalizado</option>
                     </select>
                     <InputError :message="error.state" class="mt-2" />

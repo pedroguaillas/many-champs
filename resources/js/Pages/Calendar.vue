@@ -4,6 +4,7 @@
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Link, router } from '@inertiajs/vue3';
 import { reactive, ref } from 'vue';
+import { gameState } from '@/Composables/gameState';
 
 // Props
 const props = defineProps({
@@ -42,20 +43,20 @@ const changeDate = (e) => {
                 <table v-if="games.length > 0" class="table-auto w-full text-center">
                     <tbody>
                         <tr class="bg-gray-100 dark:bg-slate-700/30">
-                            <th colspan="8" class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-emerald-400">{{ games[0].date }}</th>
+                            <th colspan="7" class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-emerald-400">{{ games[0].date }}</th>
                         </tr>
                         <template v-for="game, i in games" :key="i">
 
                             <tr v-if="i > 0 && games[i - 1].date !== game.date" class="bg-gray-100 dark:bg-slate-700/30">
-                                <th colspan="8" class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-emerald-400">{{ game.date }}</th>
+                                <th colspan="7" class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-emerald-400">{{ game.date }}</th>
                             </tr>
 
                             <tr class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
                                 <td class="px-3 py-3 text-[13px] text-gray-400 dark:text-slate-500">{{ i + 1 }}</td>
                                 <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 text-center">{{ game.c1name }}</td>
                                 <td class="px-3 py-3 text-center">
-                                    <span class="rounded-md text-[10px] px-2 py-0.5 font-medium"
-                                        :class="game.state === 'finalizado' ? 'bg-emerald-500/20 text-emerald-400' : (game.state === 'planificado' ? 'bg-amber-500/20 text-amber-400' : 'text-gray-400 dark:text-slate-500')">VS</span>
+                                    <span :class="gameState(game.state).badge"
+                                        class="rounded-md text-[10px] px-2 py-0.5 font-medium">VS</span>
                                 </td>
                                 <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200">{{ game.c2name }}</td>
                                 <td class="px-3 py-3 text-[13px] text-gray-400 dark:text-slate-500">{{ game.time.substring(0, 2) }}</td>
