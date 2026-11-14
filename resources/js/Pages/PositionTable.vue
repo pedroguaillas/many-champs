@@ -2,6 +2,7 @@
 
 // Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import BackLink from '@/Components/BackLink.vue';
 
 // Props
 defineProps({
@@ -12,7 +13,8 @@ defineProps({
 </script>
 
 <template>
-    <AdminLayout title="Tabla de posciones">
+    <AdminLayout title="Tabla de posiciones">
+        <BackLink :href="route('select.category', 'tabla-de-posiciones')" label="Cambiar categoría" />
 
         <!-- Card -->
         <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">
@@ -25,7 +27,7 @@ defineProps({
             <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table v-if="clubs.length > 0" class="table-auto w-full text-center">
+                <table v-if="clubs.length > 0" class="data-table table-auto w-full text-center">
                     <tbody>
 
                         <template v-for="club, i in clubs" :key="club.id">
@@ -36,10 +38,10 @@ defineProps({
                                 <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">G</th>
                                 <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">E</th>
                                 <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">P</th>
-                                <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">GF</th>
-                                <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">GC</th>
+                                <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">GF</th>
+                                <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">GC</th>
                                 <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">DG</th>
-                                <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">PE</th>
+                                <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">PE</th>
                                 <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Pts</th>
                             </tr>
 
@@ -50,10 +52,10 @@ defineProps({
                                 <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.ganado }}</td>
                                 <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.empate }}</td>
                                 <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.perdido }}</td>
-                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.golf ? club.golf : 0 }}</td>
-                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.golc ? club.golc : 0 }}</td>
+                                <td class="hidden sm:table-cell px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.golf ? club.golf : 0 }}</td>
+                                <td class="hidden sm:table-cell px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.golc ? club.golc : 0 }}</td>
                                 <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ club.golf - club.golc }}</td>
-                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ parseFloat(club.extra_points) }}</td>
+                                <td class="hidden sm:table-cell px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 tabular-nums">{{ parseFloat(club.extra_points) }}</td>
                                 <td class="px-3 py-3 text-[13px] text-white font-semibold tabular-nums">{{ club.extra_points + (club.ganado * 3) + club.empate }}
                                 </td>
                             </tr>

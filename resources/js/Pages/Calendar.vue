@@ -40,7 +40,7 @@ const changeDate = (e) => {
             <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table v-if="games.length > 0" class="table-auto w-full text-center">
+                <table v-if="games.length > 0" class="data-table table-auto w-full text-center">
                     <tbody>
                         <tr class="bg-gray-100 dark:bg-slate-700/30">
                             <th colspan="7" class="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-emerald-400">{{ games[0].date }}</th>
@@ -52,15 +52,23 @@ const changeDate = (e) => {
                             </tr>
 
                             <tr class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
-                                <td class="px-3 py-3 text-[13px] text-gray-400 dark:text-slate-500">{{ i + 1 }}</td>
-                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 text-center">{{ game.c1name }}</td>
-                                <td class="px-3 py-3 text-center">
+                                <td class="hidden sm:table-cell px-3 py-3 text-[13px] text-gray-400 dark:text-slate-500">{{ i + 1 }}</td>
+                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200 text-center">
+                                    {{ game.c1name }}
+                                    <div class="sm:hidden mt-1 flex items-center justify-center gap-2">
+                                        <span :class="gameState(game.state).badge"
+                                            class="px-1.5 py-px rounded text-[10px] font-medium">VS</span>
+                                        <span>{{ game.c2name }}</span>
+                                    </div>
+                                    <div class="sm:hidden mt-1 text-[11px] text-gray-500 dark:text-slate-400">{{ `${game.g_name} · ${game.name}` }}</div>
+                                </td>
+                                <td class="hidden sm:table-cell px-3 py-3 text-center">
                                     <span :class="gameState(game.state).badge"
                                         class="rounded-md text-[10px] px-2 py-0.5 font-medium">VS</span>
                                 </td>
-                                <td class="px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200">{{ game.c2name }}</td>
+                                <td class="hidden sm:table-cell px-3 py-3 text-[13px] text-gray-700 dark:text-slate-200">{{ game.c2name }}</td>
                                 <td class="px-3 py-3 text-[13px] text-gray-400 dark:text-slate-500">{{ game.time.substring(0, 2) }}</td>
-                                <td class="px-3 py-3 text-[13px] text-gray-500 dark:text-slate-400">{{ `${game.g_name} | ${game.name}` }}</td>
+                                <td class="hidden sm:table-cell px-3 py-3 text-[13px] text-gray-500 dark:text-slate-400">{{ `${game.g_name} | ${game.name}` }}</td>
                                 <td class="px-3 py-3 w-1">
                                     <Link v-if="game.state === 'creado' || game.state === 'planificado'"
                                         :href="route('games.select-players', game.id)"

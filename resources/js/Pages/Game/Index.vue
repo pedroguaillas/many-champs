@@ -2,6 +2,7 @@
 
 // Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import BackLink from '@/Components/BackLink.vue';
 import { Link, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import Swal from 'sweetalert2';
@@ -81,6 +82,7 @@ const deleteGame = (game) => {
 
 <template>
     <AdminLayout :title="'Partidos'">
+        <BackLink :href="route('select.category', 'partidos')" label="Cambiar categoría" />
 
         <!-- Card -->
         <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">
@@ -104,7 +106,7 @@ const deleteGame = (game) => {
                     </select>
                     <div v-if="games.length > 0" class="relative">
                         <button @click="menuOpen = !menuOpen"
-                            class="w-9 h-9 rounded-lg flex items-center justify-center text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all duration-200">
+                            class="w-9 h-9 rounded-lg flex items-center justify-center text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition duration-200">
                             <i class="fa-solid fa-ellipsis-vertical text-[13px]"></i>
                         </button>
 
@@ -128,43 +130,50 @@ const deleteGame = (game) => {
             <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table v-if="games.length > 0" class="w-full text-center">
+                <table v-if="games.length > 0" class="data-table w-full text-center">
                     <thead>
                         <tr>
-                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1">N°</th>
-                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Equipo 1</th>
-                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">VS</th>
-                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Equipo 2</th>
+                            <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1">N°</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500"><span class="sm:hidden">Partido</span><span class="hidden sm:inline">Equipo 1</span></th>
+                            <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">VS</th>
+                            <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Equipo 2</th>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="game, i in games" :key="game.id"
                             class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
-                            <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ i + 1 }}</td>
-                            <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ `${game.c1name} ${game.state === 'finalizado' ? `(${game.gols1 ?? 0})` : ''}` }}</td>
-                            <td class="px-5 py-3.5">
+                            <td class="hidden sm:table-cell px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ i + 1 }}</td>
+                            <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">
+                                {{ `${game.c1name} ${game.state === 'finalizado' ? `(${game.gols1 ?? 0})` : ''}` }}
+                                <div class="sm:hidden mt-1 flex items-center justify-center gap-2">
+                                    <span :class="gameState(game.state).badge"
+                                        class="px-1.5 py-px rounded text-[10px] font-medium">VS</span>
+                                    <span>{{ `${game.c2name} ${game.state === 'finalizado' ? `(${game.gols2 ?? 0})` : ''}` }}</span>
+                                </div>
+                            </td>
+                            <td class="hidden sm:table-cell px-5 py-3.5">
                                 <span :class="gameState(game.state).badge"
                                     class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium">VS</span>
                             </td>
-                            <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ `${game.c2name} ${game.state === 'finalizado' ? `(${game.gols2 ?? 0})` : ''}` }}</td>
+                            <td class="hidden sm:table-cell px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ `${game.c2name} ${game.state === 'finalizado' ? `(${game.gols2 ?? 0})` : ''}` }}</td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center gap-1">
                                     <Link v-if="game.state === 'creado' || game.state === 'planificado'"
                                         :href="route('games.select-players', game.id)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors duration-150">
+                                        class="btn-icon btn-icon-success">
                                         <i class="far fa-futbol text-[11px]"></i>
                                     </Link>
                                     <Link v-else :href="route('playing.index', game.id)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors duration-150">
+                                        class="btn-icon btn-icon-success">
                                         <i class="far fa-futbol text-[11px]"></i>
                                     </Link>
                                     <Link :href="route('games.edit', game.id)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-700/50 transition-colors duration-150">
+                                        class="btn-icon">
                                         <i class="fa fa-edit text-[11px]"></i>
                                     </Link>
                                     <button @click="$event => deleteGame(game)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors duration-150">
+                                        class="btn-icon btn-icon-danger">
                                         <i class="fa fa-trash text-[11px]"></i>
                                     </button>
                                 </div>

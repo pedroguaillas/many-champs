@@ -25,7 +25,7 @@ defineEmits(['close', 'save'])
         <template #content>
             <div class="mt-4">
 
-                <TextInput v-model="payment.amount" type="number" class="mt-2 block w-full" placeholder="Monto" />
+                <TextInput v-model="payment.amount" type="number" inputmode="decimal" step="0.01" class="mt-2 block w-full" placeholder="Monto" />
                 <InputError :message="errors.amount" class="mt-2" />
 
                 <TextInput v-model="payment.note" type="text" class="mt-2 block w-full" placeholder="Nota" minlength="3"
@@ -35,7 +35,7 @@ defineEmits(['close', 'save'])
             </div>
         </template>
         <template #footer>
-            <button @click="$emit('save')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 text-xs font-semibold text-white hover:bg-emerald-400 transition-all duration-200">Guardar</button>
+            <button @click="$emit('save')" class="btn-primary">Guardar</button>
         </template>
     </DialogModal>
 </template>

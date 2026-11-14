@@ -51,6 +51,10 @@ const applyTheme = (mode) => {
             document.documentElement.classList.remove('dark');
         }
     }
+
+    // Barra de estado del celular = color del header
+    const isDark = document.documentElement.classList.contains('dark');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isDark ? '#020617' : '#ffffff');
 };
 
 onMounted(() => {
@@ -96,7 +100,7 @@ const switchToTeam = (team) => {
 </script>
 
 <template>
-    <header class="sticky top-0 z-30 h-16 w-full bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-gray-200 dark:border-white/[0.08] flex items-center justify-between px-4 sm:px-6">
+    <header class="sticky top-0 z-30 h-[calc(4rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] w-full bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-gray-200 dark:border-white/[0.08] flex items-center justify-between px-4 sm:px-6">
         <!-- Left: Hamburger + Page title -->
         <div class="flex items-center gap-4">
             <!-- Hamburger (mobile only) -->
@@ -107,15 +111,15 @@ const switchToTeam = (team) => {
             >
                 <div class="w-5 h-4 flex flex-col justify-between relative">
                     <span
-                        class="block h-[2px] w-5 bg-current rounded-full transition-all duration-300 origin-center"
+                        class="block h-[2px] w-5 bg-current rounded-full transition duration-300 origin-center"
                         :class="open ? 'rotate-45 translate-y-[7px]' : ''"
                     />
                     <span
-                        class="block h-[2px] w-5 bg-current rounded-full transition-all duration-300"
+                        class="block h-[2px] w-5 bg-current rounded-full transition duration-300"
                         :class="open ? 'opacity-0 scale-x-0' : ''"
                     />
                     <span
-                        class="block h-[2px] w-5 bg-current rounded-full transition-all duration-300 origin-center"
+                        class="block h-[2px] w-5 bg-current rounded-full transition duration-300 origin-center"
                         :class="open ? '-rotate-45 -translate-y-[7px]' : ''"
                     />
                 </div>
@@ -151,7 +155,7 @@ const switchToTeam = (team) => {
                     enter-active-class="transition duration-200 ease-out"
                     enter-from-class="opacity-0 scale-95 -translate-y-1"
                     enter-to-class="opacity-100 scale-100 translate-y-0"
-                    leave-active-class="transition duration-150 ease-in"
+                    leave-active-class="transition duration-150 ease-out"
                     leave-from-class="opacity-100 scale-100 translate-y-0"
                     leave-to-class="opacity-0 scale-95 -translate-y-1"
                 >
@@ -185,10 +189,10 @@ const switchToTeam = (team) => {
                     class="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800/60 transition-colors duration-200 group"
                 >
                     <!-- Avatar -->
-                    <div v-if="hasProfilePhoto" class="w-8 h-8 rounded-full overflow-hidden ring-2 ring-gray-200 dark:ring-white/[0.08] group-hover:ring-emerald-500/30 transition-all duration-200">
+                    <div v-if="hasProfilePhoto" class="w-8 h-8 rounded-full overflow-hidden ring-2 ring-gray-200 dark:ring-white/[0.08] group-hover:ring-emerald-500/30 transition duration-200">
                         <img :src="profilePhotoUrl" :alt="userName" class="w-full h-full object-cover" />
                     </div>
-                    <div v-else class="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-800 border border-gray-300 dark:border-white/[0.1] flex items-center justify-center group-hover:border-emerald-500/30 transition-all duration-200">
+                    <div v-else class="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-800 border border-gray-300 dark:border-white/[0.1] flex items-center justify-center group-hover:border-emerald-500/30 transition duration-200">
                         <span class="text-[11px] font-semibold text-gray-600 dark:text-slate-300">{{ userInitials }}</span>
                     </div>
 
@@ -204,7 +208,7 @@ const switchToTeam = (team) => {
                     enter-active-class="transition duration-200 ease-out"
                     enter-from-class="opacity-0 scale-95 -translate-y-1"
                     enter-to-class="opacity-100 scale-100 translate-y-0"
-                    leave-active-class="transition duration-150 ease-in"
+                    leave-active-class="transition duration-150 ease-out"
                     leave-from-class="opacity-100 scale-100 translate-y-0"
                     leave-to-class="opacity-0 scale-95 -translate-y-1"
                 >
@@ -238,7 +242,7 @@ const switchToTeam = (team) => {
                                 <button
                                     @click="applyTheme('light')"
                                     :class="theme === 'light' ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300'"
-                                    class="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[11px] font-medium transition-all duration-200"
+                                    class="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[11px] font-medium transition duration-200"
                                 >
                                     <i class="fa-solid fa-sun text-[10px]"></i>
                                     Light
@@ -246,7 +250,7 @@ const switchToTeam = (team) => {
                                 <button
                                     @click="applyTheme('system')"
                                     :class="theme === 'system' ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300'"
-                                    class="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[11px] font-medium transition-all duration-200"
+                                    class="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[11px] font-medium transition duration-200"
                                 >
                                     <i class="fa-solid fa-desktop text-[10px]"></i>
                                     System
@@ -254,7 +258,7 @@ const switchToTeam = (team) => {
                                 <button
                                     @click="applyTheme('dark')"
                                     :class="theme === 'dark' ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300'"
-                                    class="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[11px] font-medium transition-all duration-200"
+                                    class="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[11px] font-medium transition duration-200"
                                 >
                                     <i class="fa-solid fa-moon text-[10px]"></i>
                                     Dark

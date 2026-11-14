@@ -30,7 +30,7 @@ defineEmits(['close', 'save'])
                         minlength="3" maxlength="50" />
                     <InputError :message="error.name" class="mt-2" />
 
-                    <TextInput v-model="category.inscription" type="text" class="mt-2 block w-full"
+                    <TextInput v-model="category.inscription" type="text" inputmode="decimal" class="mt-2 block w-full"
                         placeholder="Costo de inscripción" minlength="1" />
                     <InputError :message="error.inscription" class="mt-2" />
 
@@ -43,7 +43,7 @@ defineEmits(['close', 'save'])
             </div>
         </template>
         <template #footer>
-            <button @click="$emit('save')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 text-xs font-semibold text-white hover:bg-emerald-400 transition-all duration-200">Guardar</button>
+            <button @click="$emit('save')" class="btn-primary">Guardar</button>
         </template>
     </DialogModal>
 </template>

@@ -2,6 +2,7 @@
 
 // Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import BackLink from '@/Components/BackLink.vue';
 import Pagination from '@/Shared/Pagination.vue'
 
 // Props
@@ -14,6 +15,7 @@ defineProps({
 
 <template>
     <AdminLayout title="Tabla de goleadores">
+        <BackLink :href="route('select.category', 'tabla-de-goleadores')" label="Cambiar categoría" />
 
         <!-- Card -->
         <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">

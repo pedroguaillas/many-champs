@@ -16,7 +16,7 @@ class GameItemController extends Controller
     {
         // SEGURIDAD: Validar que el game existe antes de acceder al índice [0]
         $gameRecord = DB::table('games AS g')
-            ->select('g.*', 'c1.name AS c1_name', 'c2.name AS c2_name')
+            ->select('g.*', 'c1.name AS c1_name', 'c2.name AS c2_name', 'c1.category_id')
             ->join('clubs AS c1', 'club1_id', 'c1.id')
             ->join('clubs AS c2', 'club2_id', 'c2.id')
             ->where('g.id', $game_id)
@@ -31,14 +31,14 @@ class GameItemController extends Controller
             ->where([
                 'game_id' => $game['id'],
                 'club_id' => $game['club1_id']
-            ])->get();
+            ])->orderBy('gi.id')->get();
 
         $c2_players = Player::select('players.*', 'gi.id AS gi_id', 'goals', 'santion', 'paid_santion', 'change_player_id', 'card_black')
             ->join('game_items AS gi', 'players.id', 'player_id')
             ->where([
                 'game_id' => $game['id'],
                 'club_id' => $game['club2_id']
-            ])->get();
+            ])->orderBy('gi.id')->get();
 
         return Inertia::render('Play/Playing', compact('c1_players', 'c2_players', 'game'));
     }
@@ -96,6 +96,8 @@ class GameItemController extends Controller
         } else {
             $gameItem->update(['paid_black' => $carbon->toDateString()]);
         }
+
+        return back();
     }
 
     public function getPlayers(Request $request, Game $game)
@@ -111,9 +113,12 @@ class GameItemController extends Controller
             'players.id',
             'first_name',
             'last_name',
+            'photo',
+            't_shirt',
             DB::raw('(SELECT santion FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS santion'),
             DB::raw('(SELECT gi.id FROM game_items AS gi WHERE player_id = players.id AND santion IS NOT NULL AND paid_santion IS NULL LIMIT 1) AS gi_santion_id'),
-            DB::raw('(SELECT card_black FROM game_items AS gi WHERE player_id = players.id AND card_black = true AND paid_black IS NULL LIMIT 1) AS black')
+            DB::raw('(SELECT card_black FROM game_items AS gi WHERE player_id = players.id AND card_black = true AND paid_black IS NULL LIMIT 1) AS black'),
+            DB::raw('(SELECT gi.id FROM game_items AS gi WHERE player_id = players.id AND card_black = true AND paid_black IS NULL LIMIT 1) AS gi_black_id')
         )
             ->whereNotIn(
                 'id',
@@ -125,6 +130,7 @@ class GameItemController extends Controller
             )
             // A demas el jugar debe ser del club1_id o club2_id
             ->where('club_id', $game->{'club' . $request->type . '_id'})
+            ->orderBy('first_name')
             ->get();
 
         return response()->json(['result' => $players]);

@@ -73,24 +73,16 @@ With icon container: w-8 h-8 rounded-lg bg-{color}-500/10
 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors duration-150
 ```
 
-### Primary button
-```
-inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 text-xs font-semibold text-white hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200
-```
+### Buttons — component classes (resources/css/app.css)
+Use the class, never paste the utility string. All include hover, focus-visible ring, active press (scale 0.97) and disabled.
+- `btn-primary` — save/create/start. 12px/600 white on emerald-500, px-5 py-2.5, rounded-lg
+- `btn-add` — create action in a card header. emerald-500/10 fill + emerald-500/20 border, px-3.5 py-2
+- `btn-icon` — row action. 36px visible, 40px hit area via `::before` (-2px); rows use `gap-1` so hit areas never overlap
+  - intent modifiers: `btn-icon-success` (emerald), `btn-icon-info` (blue), `btn-icon-warning` (amber), `btn-icon-danger` (red)
 
 ### Ghost button (secondary)
 ```
-px-5 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-700/40 transition-all duration-200
-```
-
-### Add/create button (card header)
-```
-inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all duration-200
-```
-
-### Icon action button
-```
-w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-200 hover:bg-slate-700/50 transition-colors duration-150
+px-5 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-700/40 transition duration-200
 ```
 
 ### Text input (dark context)
@@ -122,6 +114,26 @@ inline-flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 trans
 ```
 Parent needs `relative`.
 
+### Back link
+`<BackLink :href label />` (Components/BackLink.vue) as the first child of `AdminLayout` on every sub-page. Label = destination name ("Partidos"), not "Regresar".
+
+### Page action bar
+`<template #footer>` in `AdminLayout`: primary action + one-line status ("5 vs 5 · Listo para iniciar" / what is missing). Lives outside the scroll area, handles the safe area. Never `position: fixed`, negative margins or bottom padding hacks for this.
+
+### Sheet (overlay)
+`<Sheet :show label @close @opened>` (Components/Sheet.vue): bottom sheet < 640px, centered dialog above. Includes Escape, focus trap and focus return. Use it for pickers and action menus; scroll area inside needs `overscroll-y-contain` + `pb-[env(safe-area-inset-bottom)]`. Don't autofocus inputs on coarse pointers (keyboard covers the list).
+
+### Tappable list row
+Whole row is the control (`<button>` full width, py-3, 40px avatar, 14px/500 name, 11px meta). Selected = `bg-emerald-500/[0.07]` + filled check. Blocked rows are a `<div>` with the reason as a badge and the fix as a button ("Cobrar").
+
+### Chips / segmented choices
+`inline-flex items-center min-h-[40px] px-3.5 rounded-lg text-xs font-medium border`; selected = emerald-500/10 fill + emerald-500/40 border. Use instead of `<select>` when there are ≤ 6 options.
+
+### Live match (Play/Playing.vue)
+- Pitch (Play/Pitch.vue): emerald-700/800 stripes, tokens 44px (36px when a side has > 7). Home = white token, away = blue-500. Orientation follows the pitch's own width via container query (≥ 560px horizontal).
+- Team colours: home emerald, away blue-500 (stripe, token, tab).
+- No confirmation dialogs for reversible match events: apply optimistically, toast with "Deshacer" (6s). Confirm only what can't be undone (start match, finish match, payments).
+
 ## SweetAlert2 Dark Theme
 ```js
 background: '#1e293b',
@@ -130,6 +142,40 @@ confirmButtonColor: '#10b981', // or '#ef4444' for destructive
 cancelButtonColor: '#334155',
 ```
 
-## Transitions
-- Duration: 150ms (hover states), 200ms (general transitions), 300ms (sidebar/overlay)
-- Easing: ease-in-out (sidebar), ease-out (dropdown enter), ease-in (dropdown leave)
+## Motion
+- Curves are set globally in tailwind.config.js: `ease-out`/`DEFAULT` = cubic-bezier(0.23, 1, 0.32, 1), `ease-in-out` = cubic-bezier(0.77, 0, 0.175, 1). Never `ease-in` (exits included).
+- Never `transition-all`: use `transition` (colors, opacity, shadow, transform) or `transition-colors`.
+- Animate only transform/opacity. No width/height animations (use scaleX/scaleY).
+- Durations: 150ms hover/press, 200ms dropdowns, 300ms page entrance and modals/sidebar.
+- Entrance stagger 60ms between items.
+- No hover scale on non-interactive cards.
+- `prefers-reduced-motion`: transforms snap, only color/opacity transition (global rule in app.css).
+
+## Polish
+- Root font smoothing antialiased; Roboto loaded from bunny.net (400/500/600/700).
+- Headings `text-wrap: balance`, paragraphs `pretty` (global).
+- Numbers: tables get tabular-nums globally; scores, counters and totals outside tables need `tabular-nums`.
+- Player photos: `img-outline` (1px inset black/10 · white/10), not a tinted border.
+- Every `dark:` utility for an interactive state needs its `dark:hover:` pair — a bare `dark:text-*` next to `hover:` overrides the resting state.
+
+## Mobile (most users are on phones)
+Design at 390px first. Rules from the `mobile-native` skill:
+- Hover only for real pointers: `future.hoverOnlyWhenSupported` in tailwind.config.js. Never hide content behind hover.
+- Press feedback lives on `:active` (all `btn-*` classes include it). Global: no tap highlight, `touch-action: manipulation`, controls not long-press selectable.
+- App shell: `h-[100dvh]`, never `h-screen`. Scroll containers `overscroll-y-contain`.
+- Safe areas: header `pt-[env(safe-area-inset-top)]`, sidebar top+bottom, main bottom. Requires `viewport-fit=cover` (set in app.blade.php).
+- Inputs render at 16px on coarse pointers (global rule) — no iOS zoom. Never `maximum-scale`/`user-scalable=no`.
+- Keyboard hints: `inputmode="decimal"` amounts, `numeric` cédula/dorsal/points, `type="tel"` phone.
+
+### Data tables on mobile — priority columns
+One table for all sizes, no duplicated markup:
+- Add `data-table` to `<table>` (compacts cell padding < 640px).
+- Secondary columns get `hidden sm:table-cell` (N°, address, gender, category, GF/GC/PE...).
+- Merge what was hidden into the primary cell with `sm:hidden` blocks (e.g. rival + state badge under team 1; group · category under match).
+- Row actions must be on screen at 390px without horizontal scroll.
+
+## PWA
+- `public/manifest.webmanifest`, icons in `public/icons/` (any + maskable), `public/sw.js`, `public/offline.html`.
+- Service worker caches ONLY static assets (`/build/assets`, icons, fonts). HTML and Inertia responses always go to network — live scores must never be stale. Full navigations offline → `offline.html`; in-app (Inertia XHR) offline → `OfflineBanner` (amber status panel).
+- Bump `VERSION` in sw.js only when the shell (offline.html, icons, manifest) changes; hashed Vite assets clean themselves up.
+- `theme-color` follows the class-based theme (pre-paint script in app.blade.php + `applyTheme` in Header.vue): `#020617` dark, `#ffffff` light.

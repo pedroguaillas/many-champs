@@ -49,7 +49,7 @@ onMounted(() => {
 
             <!-- Header / Welcome -->
             <div
-                class="transition-all duration-700 ease-out"
+                class="transition duration-300 ease-out"
                 :class="mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
             >
                 <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
@@ -78,10 +78,9 @@ onMounted(() => {
 
                 <!-- Jugadores -->
                 <div
-                    class="group rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden p-5
-                           hover:scale-[1.02] transition-all duration-300 ease-out cursor-default"
+                    class="group rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden p-5 transition duration-300 ease-out"
                     :class="mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
-                    :style="{ transitionDelay: '100ms' }"
+                    :style="{ transitionDelay: '60ms' }"
                 >
                     <div class="flex items-start justify-between">
                         <div>
@@ -96,18 +95,13 @@ onMounted(() => {
                             <i class="fas fa-users text-emerald-500 text-lg"></i>
                         </div>
                     </div>
-                    <div class="mt-4 h-1 rounded-full bg-gray-200 dark:bg-slate-700/50 overflow-hidden">
-                        <div class="h-full rounded-full bg-emerald-400 transition-all duration-1000 ease-out"
-                             :style="{ width: mounted ? '100%' : '0%' }"></div>
-                    </div>
                 </div>
 
                 <!-- Clubes -->
                 <div
-                    class="group rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden p-5
-                           hover:scale-[1.02] transition-all duration-300 ease-out cursor-default"
+                    class="group rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden p-5 transition duration-300 ease-out"
                     :class="mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
-                    :style="{ transitionDelay: '200ms' }"
+                    :style="{ transitionDelay: '120ms' }"
                 >
                     <div class="flex items-start justify-between">
                         <div>
@@ -122,18 +116,13 @@ onMounted(() => {
                             <i class="fas fa-medal text-blue-500 text-lg"></i>
                         </div>
                     </div>
-                    <div class="mt-4 h-1 rounded-full bg-gray-200 dark:bg-slate-700/50 overflow-hidden">
-                        <div class="h-full rounded-full bg-blue-400 transition-all duration-1000 ease-out"
-                             :style="{ width: mounted ? '100%' : '0%' }"></div>
-                    </div>
                 </div>
 
                 <!-- Partidos -->
                 <div
-                    class="group rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden p-5
-                           hover:scale-[1.02] transition-all duration-300 ease-out cursor-default"
+                    class="group rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden p-5 transition duration-300 ease-out"
                     :class="mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
-                    :style="{ transitionDelay: '300ms' }"
+                    :style="{ transitionDelay: '180ms' }"
                 >
                     <div class="flex items-start justify-between">
                         <div>
@@ -148,18 +137,13 @@ onMounted(() => {
                             <i class="fas fa-futbol text-amber-500 text-lg"></i>
                         </div>
                     </div>
-                    <div class="mt-4 h-1 rounded-full bg-gray-200 dark:bg-slate-700/50 overflow-hidden">
-                        <div class="h-full rounded-full bg-amber-400 transition-all duration-1000 ease-out"
-                             :style="{ width: mounted ? '100%' : '0%' }"></div>
-                    </div>
                 </div>
 
                 <!-- Sanciones -->
                 <div
-                    class="group rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden p-5
-                           hover:scale-[1.02] transition-all duration-300 ease-out cursor-default"
+                    class="group rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden p-5 transition duration-300 ease-out"
                     :class="mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
-                    :style="{ transitionDelay: '400ms' }"
+                    :style="{ transitionDelay: '240ms' }"
                 >
                     <div class="flex items-start justify-between">
                         <div>
@@ -174,19 +158,15 @@ onMounted(() => {
                             <i class="fas fa-triangle-exclamation text-rose-500 text-lg"></i>
                         </div>
                     </div>
-                    <div class="mt-4 h-1 rounded-full bg-gray-200 dark:bg-slate-700/50 overflow-hidden">
-                        <div class="h-full rounded-full bg-rose-400 transition-all duration-1000 ease-out"
-                             :style="{ width: mounted ? '100%' : '0%' }"></div>
-                    </div>
                 </div>
 
             </div>
 
             <!-- Bottom section: Quick Actions + Empty state -->
             <div
-                class="grid grid-cols-1 lg:grid-cols-3 gap-5 transition-all duration-700 ease-out"
+                class="grid grid-cols-1 lg:grid-cols-3 gap-5 transition duration-300 ease-out"
                 :class="mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
-                :style="{ transitionDelay: '500ms' }"
+                :style="{ transitionDelay: '300ms' }"
             >
 
                 <!-- Quick Actions -->

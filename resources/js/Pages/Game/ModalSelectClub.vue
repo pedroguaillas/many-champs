@@ -32,7 +32,7 @@ defineProps({
                         <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ club.name }}</td>
                         <td class="px-5 py-3.5">
                             <button @click="$emit('select', club)"
-                                class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all duration-200">
+                                class="btn-add">
                                 Seleccionar
                             </button>
                         </td>

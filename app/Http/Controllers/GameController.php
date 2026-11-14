@@ -44,10 +44,11 @@ class GameController extends Controller
 
     public function create(Category $category)
     {
-        $clubs = Club::where('category_id', $category->id)->get();
+        $clubs = Club::where('category_id', $category->id)->orderBy('name')->get();
+        $groups = Group::where('category_id', $category->id)->get(['id', 'name']);
         $progress = Progress::all();
 
-        return Inertia::render('Game/Create', compact('category', 'clubs', 'progress'));
+        return Inertia::render('Game/Create', compact('category', 'clubs', 'groups', 'progress'));
     }
 
     public function store(Request $request)

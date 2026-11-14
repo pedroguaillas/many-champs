@@ -151,7 +151,7 @@ const jsonLd = {
 
                     <!-- CTA -->
                     <Link :href="route('login')"
-                        class="group inline-flex items-center gap-3 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black px-9 py-4 rounded-xl transition-all duration-150 text-base shadow-2xl shadow-amber-500/25 hover:shadow-amber-400/40 hover:-translate-y-0.5"
+                        class="group inline-flex items-center gap-3 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black px-9 py-4 rounded-xl transition duration-150 text-base shadow-2xl shadow-amber-500/25 hover:shadow-amber-400/40 hover:-translate-y-0.5"
                         aria-label="Ingresar a la plataforma de gestión deportiva">
                         <i class="fa fa-medal" aria-hidden="true"></i>
                         Ingresar a la Plataforma
@@ -180,9 +180,9 @@ const jsonLd = {
                     <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5" role="list">
                         <li
                             v-for="f in features" :key="f.label"
-                            class="group bg-slate-900 hover:bg-slate-800/80 border border-white/[0.06] hover:border-amber-500/25 rounded-xl p-4 flex flex-col items-center gap-3 text-center transition-all duration-200 cursor-default"
+                            class="group bg-slate-900 hover:bg-slate-800/80 border border-white/[0.06] hover:border-amber-500/25 rounded-xl p-4 flex flex-col items-center gap-3 text-center transition duration-200 cursor-default"
                         >
-                            <div class="w-10 h-10 bg-slate-800 group-hover:bg-amber-500/10 border border-white/5 group-hover:border-amber-500/20 rounded-lg flex items-center justify-center transition-all duration-200 flex-shrink-0" aria-hidden="true">
+                            <div class="w-10 h-10 bg-slate-800 group-hover:bg-amber-500/10 border border-white/5 group-hover:border-amber-500/20 rounded-lg flex items-center justify-center transition duration-200 flex-shrink-0" aria-hidden="true">
                                 <i :class="['fa text-sm text-slate-400 group-hover:text-amber-400 transition-colors duration-200', f.icon]"></i>
                             </div>
                             <div>
@@ -260,7 +260,7 @@ const jsonLd = {
                         Ingresa a tu plataforma y lleva el control total de tu torneo de fútbol.
                     </p>
                     <Link :href="route('login')"
-                        class="group inline-flex items-center gap-3 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black px-10 py-4 rounded-xl transition-all duration-150 text-base shadow-2xl shadow-amber-500/25 hover:shadow-amber-400/40 hover:-translate-y-0.5"
+                        class="group inline-flex items-center gap-3 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black px-10 py-4 rounded-xl transition duration-150 text-base shadow-2xl shadow-amber-500/25 hover:shadow-amber-400/40 hover:-translate-y-0.5"
                         aria-label="Ingresar a 5IV SPORT para gestionar tu campeonato">
                         <i class="fa fa-medal" aria-hidden="true"></i>
                         Ingresar a 5IV SPORT

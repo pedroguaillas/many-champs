@@ -6,7 +6,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Many Champs';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -21,3 +21,10 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
+
+// PWA: solo en build de produccion (en dev, Vite sirve los modulos y no hay que cachear nada)
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+    });
+}

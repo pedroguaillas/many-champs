@@ -2,6 +2,7 @@
 
 // Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import BackLink from '@/Components/BackLink.vue';
 import ModalPayment from './ModalPayment.vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { reactive, ref } from 'vue';
@@ -119,6 +120,7 @@ const deletePlayer = (payment) => {
 
 <template>
     <AdminLayout :title="`Pagos de ${club.name}`">
+        <BackLink :href="route('clubs.index', club.category_id)" label="Clubes" />
 
         <!-- Card -->
         <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">
@@ -132,7 +134,7 @@ const deletePlayer = (payment) => {
                     <h2 class="text-sm font-semibold tracking-tight text-white">{{ `Pagos de ${club.name}` }}</h2>
                 </div>
                 <button @click="newPayment"
-                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all duration-200">
+                    class="btn-add">
                     <i class="fa-solid fa-plus text-[11px]"></i> Agregar
                 </button>
             </div>
@@ -140,10 +142,10 @@ const deletePlayer = (payment) => {
             <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="w-full text-center">
+                <table class="data-table w-full text-center">
                     <thead>
                         <tr>
-                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">N°</th>
+                            <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">N°</th>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Monto</th>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Nota</th>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1"></th>
@@ -152,17 +154,17 @@ const deletePlayer = (payment) => {
                     <tbody>
                         <tr v-for="payment, i in payments" :key="payment.id"
                             class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
-                            <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ i + 1 }}</td>
+                            <td class="hidden sm:table-cell px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ i + 1 }}</td>
                             <td class="px-5 py-3.5 text-[13px] text-emerald-400 font-medium">${{ payment.amount }}</td>
                             <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ payment.note }}</td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center gap-1">
                                     <button @click="edit(payment)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:hover:bg-gray-200 dark:bg-slate-700/50 transition-colors duration-150">
+                                        class="btn-icon">
                                         <i class="fa fa-edit text-[11px]"></i>
                                     </button>
                                     <button @click="deletePlayer(payment)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors duration-150">
+                                        class="btn-icon btn-icon-danger">
                                         <i class="fa fa-trash text-[11px]"></i>
                                     </button>
                                 </div>

@@ -2,6 +2,7 @@
 // Imports
 import ModalClub from "./ModalClub.vue";
 import AdminLayout from "@/Layouts/AdminLayout.vue";
+import BackLink from '@/Components/BackLink.vue';
 import { router, Link } from "@inertiajs/vue3";
 import { reactive, ref, watch, nextTick } from "vue";
 import axios from "axios";
@@ -171,6 +172,7 @@ const deleteClub = (clubDelete) => {
 
 <template>
     <AdminLayout title="Clubes">
+        <BackLink :href="route('select.category', 'clubs')" label="Cambiar categoría" />
         <!-- Card -->
         <div
             class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06]"
@@ -194,7 +196,7 @@ const deleteClub = (clubDelete) => {
                     </select>
                     <button
                         @click="newCub"
-                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all duration-200"
+                        class="btn-add"
                     >
                         <i class="fa-solid fa-plus text-[11px]"></i> Agregar
                     </button>
@@ -204,11 +206,11 @@ const deleteClub = (clubDelete) => {
             <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="w-full text-left">
+                <table class="data-table w-full text-left">
                     <thead>
                         <tr>
                             <th
-                                class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1"
+                                class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1"
                             >
                                 N°
                             </th>
@@ -223,7 +225,7 @@ const deleteClub = (clubDelete) => {
                                 Grupo
                             </th>
                             <th
-                                class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500"
+                                class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500"
                             >
                                 Lugar
                             </th>
@@ -238,17 +240,17 @@ const deleteClub = (clubDelete) => {
                             :key="club.id"
                             class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150"
                         >
-                            <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ i + 1 }}</td>
+                            <td class="hidden sm:table-cell px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ i + 1 }}</td>
                             <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ club.name }}</td>
                             <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ club.gname }}</td>
-                            <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">
+                            <td class="hidden sm:table-cell px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">
                                 {{ club.address }}
                             </td>
                             <td class="px-5 py-3.5">
                                 <div class="flex justify-end">
                                     <button
                                         @click.stop="toggleMenu(club.id, $event)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-700/50 transition-colors duration-150"
+                                        class="btn-icon"
                                     >
                                         <i class="fa-solid fa-ellipsis-v text-[13px]"></i>
                                     </button>
@@ -270,7 +272,7 @@ const deleteClub = (clubDelete) => {
             enter-active-class="transition duration-150 ease-out"
             enter-from-class="opacity-0 scale-95 -translate-y-1"
             enter-to-class="opacity-100 scale-100 translate-y-0"
-            leave-active-class="transition duration-100 ease-in"
+            leave-active-class="transition duration-100 ease-out"
             leave-from-class="opacity-100 scale-100 translate-y-0"
             leave-to-class="opacity-0 scale-95 -translate-y-1"
         >

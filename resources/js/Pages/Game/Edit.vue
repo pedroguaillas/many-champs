@@ -2,6 +2,7 @@
 
 // Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import BackLink from '@/Components/BackLink.vue';
 import TextInput from '@/Components/TextInput.vue';
 import SelectClub from './SelectClub.vue';
 import { useForm } from '@inertiajs/vue3';
@@ -42,6 +43,7 @@ const save = () => {
 
 <template>
     <AdminLayout :title="'Registrar juego'">
+        <BackLink :href="route('games.index', category.id)" label="Partidos" />
         <!-- Card -->
         <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">
 
@@ -99,7 +101,7 @@ const save = () => {
                 </div>
 
                 <div class="w-full flex justify-end pt-2">
-                    <button @click="save" :disabled="form.processing" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 text-xs font-semibold text-white hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200">
+                    <button @click="save" :disabled="form.processing" class="btn-primary">
                         <i class="fa fa-save"></i> Guardar
                     </button>
                 </div>

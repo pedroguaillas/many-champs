@@ -91,7 +91,7 @@ const deleteChampionship = (id, name) => {
                     </div>
                 </div>
                 <Link :href="route('admin.championships.create')"
-                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all duration-200">
+                    class="btn-add">
                     <i class="fa-solid fa-plus text-[10px]"></i>
                     Nuevo campeonato
                 </Link>
@@ -99,20 +99,20 @@ const deleteChampionship = (id, name) => {
 
             <!-- Table -->
             <div class="w-full overflow-x-auto">
-                <table class="w-full text-left">
+                <table class="data-table w-full text-left">
                     <thead>
                         <tr class="border-b border-white/[0.06]">
-                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500 w-12">N°</th>
+                            <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500 w-12">N°</th>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Campeonato</th>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Propietario</th>
-                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500 text-center">Miembros</th>
+                            <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500 text-center">Miembros</th>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500 w-24"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(item, i) in championships" :key="item.id"
                             class="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors duration-150">
-                            <td class="px-5 py-3.5 text-xs text-slate-500 tabular-nums">{{ i + 1 }}</td>
+                            <td class="hidden sm:table-cell px-5 py-3.5 text-xs text-slate-500 tabular-nums">{{ i + 1 }}</td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center gap-3">
                                     <div class="w-7 h-7 rounded-md bg-amber-500/10 flex items-center justify-center flex-shrink-0">
@@ -124,7 +124,7 @@ const deleteChampionship = (id, name) => {
                             <td class="px-5 py-3.5">
                                 <span class="text-[13px] text-slate-400">{{ item.owner?.name ?? '—' }}</span>
                             </td>
-                            <td class="px-5 py-3.5 text-center">
+                            <td class="hidden sm:table-cell px-5 py-3.5 text-center">
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-700/50 text-slate-300 text-xs font-medium tabular-nums">
                                     <i class="fa-solid fa-users text-[9px] text-slate-500"></i>
                                     {{ item.users_count }}
@@ -133,11 +133,11 @@ const deleteChampionship = (id, name) => {
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-end gap-1">
                                     <button @click="edit(item)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-200 hover:bg-slate-700/50 transition-colors duration-150">
+                                        class="btn-icon">
                                         <i class="fa-solid fa-pen text-[11px]"></i>
                                     </button>
                                     <button @click="deleteChampionship(item.id, item.name)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors duration-150">
+                                        class="btn-icon btn-icon-danger">
                                         <i class="fa-solid fa-trash text-[11px]"></i>
                                     </button>
                                 </div>

@@ -142,7 +142,7 @@ const navGroups = computed(() => {
 
     <!-- Sidebar -->
     <aside
-        class="fixed sm:sticky top-0 left-0 z-50 h-screen w-[280px] sm:w-[260px] flex flex-col bg-white dark:bg-slate-950 border-r border-gray-200 dark:border-white/[0.08] transform transition-transform duration-300 ease-in-out sm:translate-x-0 sm:flex-shrink-0"
+        class="fixed sm:sticky top-0 left-0 z-50 h-[100dvh] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] w-[280px] sm:w-[260px] flex flex-col bg-white dark:bg-slate-950 border-r border-gray-200 dark:border-white/[0.08] transform transition-transform duration-300 ease-in-out sm:translate-x-0 sm:flex-shrink-0"
         :class="open ? 'translate-x-0' : '-translate-x-full'"
     >
         <!-- Brand -->
@@ -165,7 +165,7 @@ const navGroups = computed(() => {
         </div>
 
         <!-- Navigation -->
-        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-6 scrollbar-thin">
+        <nav class="flex-1 overflow-y-auto overscroll-y-contain py-4 px-3 space-y-6 scrollbar-thin">
             <div v-for="group in navGroups" :key="group.label">
                 <p class="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">
                     {{ group.label }}
@@ -175,7 +175,7 @@ const navGroups = computed(() => {
                         <Link
                             :href="item.href()"
                             @click="closeMobile"
-                            class="group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200"
+                            class="group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition duration-200"
                             :class="item.active()
                                 ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-slate-800/80'
                                 : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800/50'"

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,10 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'team_id' => Team::factory(),
+            'name' => $this->faker->unique()->lexify('Cat ????'),
+            'inscription' => 50,
+            'gender' => 'masculino',
         ];
     }
 }

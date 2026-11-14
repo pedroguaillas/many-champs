@@ -79,20 +79,20 @@ const payBlack = (gi) => {
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
                 <table v-if="sanctions.length > 0"
-                    class="table-auto w-full text-center">
+                    class="data-table table-auto w-full text-center">
                     <thead>
                         <tr class="border-b border-gray-200 dark:border-white/[0.06]">
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Jugador</th>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Club</th>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Tarjeta</th>
-                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Categoría</th>
+                            <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Categoría</th>
                             <th class="w-1 px-5 py-3"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="sanction in sanctions" class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
                             <td class="px-5 py-3 text-left text-[13px] text-gray-700 dark:text-slate-200">{{ `${sanction.first_name} ${sanction.last_name}` }}</td>
-                            <td class="px-5 py-3 text-left text-[13px] text-gray-500 dark:text-slate-400">{{ sanction.player_team_id === sanction.c1id ? sanction.c1name :
+                            <td class="px-5 py-3 text-left text-[13px] text-gray-500 dark:text-slate-400">{{ sanction.player_club_id === sanction.c1id ? sanction.c1name :
                                 sanction.c2name }}
                             </td>
                             <td class="px-5 py-3">
@@ -104,10 +104,10 @@ const payBlack = (gi) => {
                                     {{ sanction.santion }}
                                 </span>
                             </td>
-                            <td class="px-5 py-3 text-[13px] text-gray-500 dark:text-slate-400">{{ sanction.category_name }}</td>
+                            <td class="hidden sm:table-cell px-5 py-3 text-[13px] text-gray-500 dark:text-slate-400">{{ sanction.category_name }}</td>
                             <td class="px-5 py-3">
                                 <div class="flex gap-1">
-                                    <button v-if="sanction.card_black === 1 && sanction.paid_black === null"
+                                    <button v-if="sanction.card_black && sanction.paid_black === null"
                                         @click="$event => payBlack(sanction)"
                                         class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-200/20 text-gray-600 dark:text-slate-300 hover:bg-slate-200/30 transition-colors duration-200">
                                         <i class="fa fa-check text-xs"></i>

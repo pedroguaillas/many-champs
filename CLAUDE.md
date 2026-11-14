@@ -20,7 +20,7 @@ docker run --rm \
     -u "$(id -u):$(id -g)" \
     -v "$(pwd):/var/www/html" \
     -w /var/www/html \
-    laravelsail/php81-composer:latest \
+    laravelsail/php82-composer:latest \
     composer install --ignore-platform-reqs
 ```
 
@@ -54,7 +54,7 @@ docker run --rm \
 
 ## Architecture
 
-**Stack**: Laravel 10 + Inertia.js + Vue 3 + Tailwind CSS, with Server-Side Rendering (SSR).
+**Stack**: Laravel 12 + Inertia.js + Vue 3 + Tailwind CSS, with Server-Side Rendering (SSR).
 
 **Request flow**:
 ```

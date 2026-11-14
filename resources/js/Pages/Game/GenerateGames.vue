@@ -3,6 +3,7 @@
 import InputError from '@/Components/InputError.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import BackLink from '@/Components/BackLink.vue';
 import { useForm } from '@inertiajs/vue3';
 import { reactive } from 'vue';
 
@@ -31,6 +32,7 @@ const generate = () => {
 
 <template>
     <AdminLayout :title="'Generar partidos de la fase de grupos'">
+        <BackLink :href="route('games.index', category.id)" label="Partidos" />
         <!-- Card -->
         <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">
 
@@ -57,7 +59,7 @@ const generate = () => {
 
                 <div class="w-full flex justify-end pt-2">
                     <button @click="generate" :disabled="form.processing"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 text-xs font-semibold text-white hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200">
+                        class="btn-primary">
                         <i class="fa fa-save"></i> Generar
                     </button>
                 </div>

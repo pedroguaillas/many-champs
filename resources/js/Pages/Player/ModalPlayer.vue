@@ -41,7 +41,7 @@ const previewImage = (event) => {
                     <img :src="imagePreviewURL" class="mt-2 rounded-lg max-w-[120px] border border-white/[0.06] mx-auto" v-if="player.photo" alt="Image Preview">
                 </div>
 
-                <TextInput v-model="player.cedula" type="text" class="mt-2 block w-full" placeholder="Cédula" minlength="10"
+                <TextInput v-model="player.cedula" type="text" inputmode="numeric" autocomplete="off" class="mt-2 block w-full" placeholder="Cédula" minlength="10"
                     maxlength="10" />
                 <InputError :message="error.cedula" class="mt-2" />
 
@@ -53,20 +53,20 @@ const previewImage = (event) => {
                     minlength="3" maxlength="50" />
                 <InputError :message="error.last_name" class="mt-2" />
 
-                <TextInput v-model="player.t_shirt" type="number" class="mt-2 block w-full" placeholder="# camiseta" />
+                <TextInput v-model="player.t_shirt" type="number" inputmode="numeric" class="mt-2 block w-full" placeholder="# camiseta" />
                 <InputError :message="error.t_shirt" class="mt-2" />
 
                 <TextInput v-model="player.date_of_birth" type="date" class="mt-2 block w-full" />
                 <InputError :message="error.date_of_birth" class="mt-2" />
 
-                <TextInput v-model="player.phone" type="text" class="mt-2 block w-full" placeholder="Celular" minlength="10"
+                <TextInput v-model="player.phone" type="tel" inputmode="tel" autocomplete="off" class="mt-2 block w-full" placeholder="Celular" minlength="10"
                     maxlength="10" />
                 <InputError :message="error.phone" class="mt-2" />
 
             </div>
         </template>
         <template #footer>
-            <button @click="$emit('save')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 text-xs font-semibold text-white hover:bg-emerald-400 transition-all duration-200">Guardar</button>
+            <button @click="$emit('save')" class="btn-primary">Guardar</button>
         </template>
     </DialogModal>
 </template>

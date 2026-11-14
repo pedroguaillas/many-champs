@@ -2,6 +2,7 @@
 
 // Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import BackLink from '@/Components/BackLink.vue';
 import ModalPlayer from './ModalPlayer.vue';
 import ModalViewPlayer from './ModalViewPlayer.vue';
 import { router, useForm } from '@inertiajs/vue3';
@@ -146,6 +147,7 @@ const viewPlayer = (playerView) => {
 
 <template>
     <AdminLayout :title="`Jugadores de ${club.name}`">
+        <BackLink :href="route('clubs.index', club.category_id)" label="Clubes" />
 
         <!-- Card -->
         <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">
@@ -159,7 +161,7 @@ const viewPlayer = (playerView) => {
                     <h2 class="text-sm font-semibold tracking-tight text-white">{{ `Jugadores de ${club.name}` }}</h2>
                 </div>
                 <button @click="newPlayer"
-                    class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all duration-200">
+                    class="btn-add">
                     <i class="fa fa-user-plus text-[11px]"></i> Agregar
                 </button>
             </div>
@@ -167,13 +169,13 @@ const viewPlayer = (playerView) => {
             <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="w-full text-center">
+                <table class="data-table w-full text-center">
                     <thead>
                         <tr>
-                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1">N°</th>
+                            <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1">N°</th>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500"></th>
-                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Nombre</th>
-                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Apellido</th>
+                            <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500"><span class="sm:hidden">Jugador</span><span class="hidden sm:inline">Nombre</span></th>
+                            <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Apellido</th>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Dorsal</th>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1"></th>
                         </tr>
@@ -181,26 +183,26 @@ const viewPlayer = (playerView) => {
                     <tbody>
                         <tr v-for="player, i in players" :key="player.id"
                             class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
-                            <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ i + 1 }}</td>
+                            <td class="hidden sm:table-cell px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ i + 1 }}</td>
                             <td class="px-5 py-3.5 w-10">
                                 <img v-if="player.photo" :src="`/storage/avatars/${player.photo}`"
-                                    class="w-8 h-8 rounded-lg object-cover border border-gray-200 dark:border-white/[0.06]" alt="Avatar" />
+                                    class="w-8 h-8 rounded-lg object-cover img-outline" alt="Avatar" />
                             </td>
-                            <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ player.first_name }}</td>
-                            <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ player.last_name }}</td>
+                            <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ player.first_name }}<span class="sm:hidden">&nbsp;{{ player.last_name }}</span></td>
+                            <td class="hidden sm:table-cell px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ player.last_name }}</td>
                             <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ player.t_shirt }}</td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center gap-1">
                                     <button @click="viewPlayer(player)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 transition-colors duration-150">
+                                        class="btn-icon btn-icon-warning">
                                         <i class="fa fa-eye text-[11px]"></i>
                                     </button>
                                     <button @click="edit(player)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:hover:bg-gray-200 dark:bg-slate-700/50 transition-colors duration-150">
+                                        class="btn-icon">
                                         <i class="fa fa-user-edit text-[11px]"></i>
                                     </button>
                                     <button @click="deletePlayer(player)"
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors duration-150">
+                                        class="btn-icon btn-icon-danger">
                                         <i class="fa fa-trash text-[11px]"></i>
                                     </button>
                                 </div>

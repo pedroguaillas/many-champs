@@ -64,11 +64,11 @@ const maxWidthClass = computed(() => {
                     enter-active-class="ease-out duration-300"
                     enter-from-class="opacity-0"
                     enter-to-class="opacity-100"
-                    leave-active-class="ease-in duration-200"
+                    leave-active-class="ease-out duration-200"
                     leave-from-class="opacity-100"
                     leave-to-class="opacity-0"
                 >
-                    <div v-show="show" class="fixed inset-0 transform transition-all" @click="close">
+                    <div v-show="show" class="fixed inset-0 transform transition" @click="close">
                         <div class="absolute inset-0 bg-gray-900/50 dark:bg-slate-950/80" />
                     </div>
                 </transition>
@@ -77,11 +77,11 @@ const maxWidthClass = computed(() => {
                     enter-active-class="ease-out duration-300"
                     enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     enter-to-class="opacity-100 translate-y-0 sm:scale-100"
-                    leave-active-class="ease-in duration-200"
+                    leave-active-class="ease-out duration-200"
                     leave-from-class="opacity-100 translate-y-0 sm:scale-100"
                     leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
-                    <div v-show="show" class="mb-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-white/[0.06] rounded-xl overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto" :class="maxWidthClass">
+                    <div v-show="show" class="mb-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-white/[0.06] rounded-xl overflow-hidden shadow-xl transform transition sm:w-full sm:mx-auto" :class="maxWidthClass">
                         <slot v-if="show" />
                     </div>
                 </transition>

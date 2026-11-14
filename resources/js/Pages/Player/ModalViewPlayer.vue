@@ -41,7 +41,7 @@ defineEmits(['close'])
                 </blockquote>
             </div>
             <div class="w-[35%] flex justify-end bg-slate-700/50">
-                <img class="h-auto object-cover" :src="`/storage/avatars/${player.photo}`" alt="Avatar" />
+                <img class="h-auto object-cover img-outline" :src="`/storage/avatars/${player.photo}`" alt="Avatar" />
             </div>
         </figure>
 

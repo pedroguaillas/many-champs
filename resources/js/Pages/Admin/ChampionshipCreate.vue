@@ -1,6 +1,7 @@
 <script setup>
 
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import BackLink from '@/Components/BackLink.vue';
 import InputError from '@/Components/InputError.vue';
 import { reactive, ref } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
@@ -92,12 +93,7 @@ const submit = () => {
     <AdminLayout :title="'Crear Campeonato'">
         <div class="max-w-xl mx-auto">
 
-            <!-- Back link -->
-            <Link :href="route('admin.championships.index')"
-                class="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors duration-150 mb-4">
-                <i class="fa-solid fa-arrow-left text-[10px]"></i>
-                Campeonatos
-            </Link>
+            <BackLink :href="route('admin.championships.index')" label="Campeonatos" />
 
             <!-- Main card -->
             <div class="rounded-xl bg-slate-800/60 border border-white/[0.06] overflow-hidden">
@@ -134,12 +130,12 @@ const submit = () => {
 
                         <!-- Search input -->
                         <div v-if="!searchDone" class="flex gap-2">
-                            <input v-model="emailSearch" type="email"
+                            <input v-model="emailSearch" type="email" autocapitalize="none" autocorrect="off" enterkeyhint="search"
                                 class="flex-1 px-3.5 py-2.5 rounded-lg bg-slate-900/80 border border-white/[0.08] text-[13px] text-slate-200 placeholder-slate-600 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-colors duration-200"
                                 placeholder="correo@ejemplo.com"
                                 @keydown.enter.prevent="searchUser" />
                             <button type="button" @click="searchUser" :disabled="searching || !emailSearch"
-                                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-700/60 border border-white/[0.08] text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200">
+                                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-700/60 border border-white/[0.08] text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition duration-200">
                                 <i v-if="searching" class="fa-solid fa-spinner fa-spin text-[10px]"></i>
                                 <i v-else class="fa-solid fa-magnifying-glass text-[10px]"></i>
                                 Buscar
@@ -222,12 +218,12 @@ const submit = () => {
                     <!-- Footer actions -->
                     <div class="flex items-center justify-end gap-3 pt-5 border-t border-white/[0.06]">
                         <Link :href="route('admin.championships.index')"
-                            class="px-5 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-700/40 transition-all duration-200">
+                            class="px-5 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-700/40 transition duration-200">
                             Cancelar
                         </Link>
                         <button type="submit"
                             :disabled="submitting || !form.owner_mode || !form.name"
-                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-500 text-xs font-semibold text-white hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200">
+                            class="btn-primary">
                             <i v-if="submitting" class="fa-solid fa-spinner fa-spin text-[10px]"></i>
                             <i v-else class="fa-solid fa-plus text-[10px]"></i>
                             Crear Campeonato
