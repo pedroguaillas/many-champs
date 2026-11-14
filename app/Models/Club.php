@@ -9,7 +9,7 @@ class Club extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['category_id', 'group_id', 'name', 'address', 'player_id', 'extra_points'];
+    protected $fillable = ['category_id', 'group_id', 'name', 'color', 'address', 'player_id', 'extra_points'];
 
     public function players()
     {

@@ -61,10 +61,11 @@ class ClubController extends Controller
             'name' => 'required|max:300',
             'address' => 'required|max:300',
             'extra_points' => 'nullable|numeric|min:0|max:20',
+            'color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ]);
 
         // SEGURIDAD: Usar only() en lugar de all() para prevenir mass assignment (OWASP A03:2021)
-        $club = new Club($request->only(['name', 'address', 'extra_points', 'category_id', 'group_id']));
+        $club = new Club($request->only(['name', 'color', 'address', 'extra_points', 'category_id', 'group_id']));
         $club->save();
     }
 
@@ -73,11 +74,12 @@ class ClubController extends Controller
         $request->validate([
             'name' => 'required|max:300',
             'address' => 'required|max:300',
-            'extra_points' => 'numeric|min:0,max:20'
+            'extra_points' => 'numeric|min:0,max:20',
+            'color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ]);
 
         // SEGURIDAD: Usar only() para prevenir mass assignment
-        $club->update($request->only(['name', 'address', 'extra_points', 'group_id']));
+        $club->update($request->only(['name', 'color', 'address', 'extra_points', 'group_id']));
     }
 
     public function destroy(Club $club)

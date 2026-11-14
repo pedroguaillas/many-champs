@@ -3,8 +3,9 @@
 // Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import BackLink from '@/Components/BackLink.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 import ModalGroup from './ModalGroup.vue';
-import { router, useForm } from '@inertiajs/vue3'
+import { Link, router, useForm } from '@inertiajs/vue3'
 import { reactive, ref } from 'vue';
 import Swal from 'sweetalert2';
 
@@ -91,10 +92,10 @@ const deleteGroup = (item) => {
         buttonsStyling: true
     });
     alert.fire({
-        title: `¿Esta seguro eliminar el grupo ${item.name}?`,
+        title: `¿Está seguro de eliminar el grupo ${item.name}?`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: '<i class="fa-solid fa-check"></i> Si, Eliminar',
+        confirmButtonText: '<i class="fa-solid fa-check"></i> Sí, eliminar',
         cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar',
         background: '#1e293b',
         color: '#e2e8f0',
@@ -102,10 +103,11 @@ const deleteGroup = (item) => {
         cancelButtonColor: '#334155',
     }).then((result) => {
         if (result.isConfirmed) {
-            form.delete(route('groups.destroy', item.id))
-                .then(() => {
-                    router.reload({ only: ['groups'] });
-                });
+            // form.delete no devuelve una promesa: se recarga al terminar
+            form.delete(route('groups.destroy', item.id), {
+                preserveScroll: true,
+                onFinish: () => router.reload({ only: ['groups'] }),
+            });
         }
     });
 }
@@ -125,7 +127,7 @@ const deleteGroup = (item) => {
                     <div class="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
                         <i class="fa-solid fa-layer-group text-violet-400 text-[11px]"></i>
                     </div>
-                    <h2 class="text-sm font-semibold tracking-tight text-white">{{ `Grupos ${props.category.name} ${props.category.gender}` }}</h2>
+                    <h2 class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white">{{ `Grupos ${props.category.name} ${props.category.gender}` }}</h2>
                 </div>
                 <button @click="newGroup"
                     class="btn-add">
@@ -136,7 +138,7 @@ const deleteGroup = (item) => {
             <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="w-full text-center">
+                <table v-if="groups.length > 0" class="data-table w-full text-center">
                     <thead>
                         <tr>
                             <th class="px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">N°</th>
@@ -151,11 +153,11 @@ const deleteGroup = (item) => {
                             <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ item.name }}</td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-center gap-1">
-                                    <button @click="edit(item)"
+                                    <button @click="edit(item)" title="Editar" aria-label="Editar grupo"
                                         class="btn-icon">
                                         <i class="fa fa-edit text-[11px]"></i>
                                     </button>
-                                    <button @click="$event => deleteGroup(item)"
+                                    <button @click="$event => deleteGroup(item)" title="Eliminar" aria-label="Eliminar grupo"
                                         class="btn-icon btn-icon-danger">
                                         <i class="fa fa-trash text-[11px]"></i>
                                     </button>
@@ -164,6 +166,18 @@ const deleteGroup = (item) => {
                         </tr>
                     </tbody>
                 </table>
+
+                <!-- Sin grupos -->
+                <EmptyState v-else icon="fa-solid fa-layer-group" title="Esta categoría aún no tiene grupos"
+                    description="Los grupos dividen a los clubes en la primera fase (Grupo A, Grupo B…). Los partidos de fase de grupos se generan entre los clubes de un mismo grupo.">
+                    <button type="button" @click="newGroup" class="btn-primary">
+                        <i class="fa-solid fa-plus text-[11px]"></i> Crear el primer grupo
+                    </button>
+                    <Link :href="route('clubs.index', category.id)"
+                        class="px-5 py-2.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700/40 transition duration-200">
+                        Ir a clubes
+                    </Link>
+                </EmptyState>
             </div>
         </div>
     </AdminLayout>

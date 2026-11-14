@@ -16,7 +16,7 @@ class GameItemController extends Controller
     {
         // SEGURIDAD: Validar que el game existe antes de acceder al índice [0]
         $gameRecord = DB::table('games AS g')
-            ->select('g.*', 'c1.name AS c1_name', 'c2.name AS c2_name', 'c1.category_id')
+            ->select('g.*', 'c1.name AS c1_name', 'c2.name AS c2_name', 'c1.color AS c1_color', 'c2.color AS c2_color', 'c1.category_id')
             ->join('clubs AS c1', 'club1_id', 'c1.id')
             ->join('clubs AS c2', 'club2_id', 'c2.id')
             ->where('g.id', $game_id)
@@ -26,14 +26,14 @@ class GameItemController extends Controller
 
         $game = json_decode(json_encode($gameRecord), true);
 
-        $c1_players = Player::select('players.*', 'gi.id AS gi_id', 'goals', 'santion', 'paid_santion', 'change_player_id', 'card_black')
+        $c1_players = Player::select('players.*', 'gi.id AS gi_id', 'goals', 'santion', 'paid_santion', 'change_player_id', 'card_black', 'gi.pos_x', 'gi.pos_y')
             ->join('game_items AS gi', 'players.id', 'player_id')
             ->where([
                 'game_id' => $game['id'],
                 'club_id' => $game['club1_id']
             ])->orderBy('gi.id')->get();
 
-        $c2_players = Player::select('players.*', 'gi.id AS gi_id', 'goals', 'santion', 'paid_santion', 'change_player_id', 'card_black')
+        $c2_players = Player::select('players.*', 'gi.id AS gi_id', 'goals', 'santion', 'paid_santion', 'change_player_id', 'card_black', 'gi.pos_x', 'gi.pos_y')
             ->join('game_items AS gi', 'players.id', 'player_id')
             ->where([
                 'game_id' => $game['id'],
@@ -52,19 +52,76 @@ class GameItemController extends Controller
             'change_player_id' => 'nullable|integer|exists:players,id',
         ]);
 
-        // SEGURIDAD: Usar only() para prevenir mass assignment
-        $gameItemNew = GameItem::create($request->only(['player_id', 'game_id', 'entered_in']));
-
-        // Si es cambio
-        if ($request->has('change_player_id')) {
-
-            $gameItem = GameItem::where([
+        $outgoing = null;
+        if ($request->filled('change_player_id')) {
+            $outgoing = GameItem::where([
                 'player_id' => $request->change_player_id,
                 'game_id' => $request->game_id
             ])->first();
-
-            $gameItem->update(['change_player_id' => $gameItemNew->player_id]);
         }
+
+        // Posición: en un cambio ocupa el lugar del que sale; si no, la de su último partido
+        $position = $outgoing && $outgoing->pos_x !== null
+            ? ['pos_x' => $outgoing->pos_x, 'pos_y' => $outgoing->pos_y]
+            : (GameItem::lastPositions([(int) $request->player_id], (int) $request->game_id)[(int) $request->player_id] ?? []);
+
+        // SEGURIDAD: Usar only() para prevenir mass assignment
+        $gameItemNew = GameItem::create(array_merge(
+            $request->only(['player_id', 'game_id', 'entered_in']),
+            $position
+        ));
+
+        // Si es cambio
+        if ($outgoing) {
+            $outgoing->update(['change_player_id' => $gameItemNew->player_id]);
+        }
+    }
+
+    // Posición de un jugador en la cancha (null vuelve a la automática)
+    public function position(Request $request, int $gameitem_id)
+    {
+        $data = $request->validate([
+            'x' => 'nullable|numeric|between:0,100|required_with:y',
+            'y' => 'nullable|numeric|between:0,100|required_with:x',
+        ]);
+
+        GameItem::findOrFail($gameitem_id)->update([
+            'pos_x' => $data['x'] ?? null,
+            'pos_y' => $data['y'] ?? null,
+        ]);
+
+        return response()->noContent();
+    }
+
+    // Posiciones de varios jugadores del mismo partido (formación completa o restablecer)
+    public function positions(Request $request, Game $game)
+    {
+        $data = $request->validate([
+            'positions' => 'required|array|min:1|max:40',
+            'positions.*.id' => 'required|integer|distinct',
+            'positions.*.x' => 'nullable|numeric|between:0,100',
+            'positions.*.y' => 'nullable|numeric|between:0,100',
+        ]);
+
+        $items = GameItem::where('game_id', $game->id)
+            ->whereIn('id', array_column($data['positions'], 'id'))
+            ->get()
+            ->keyBy('id');
+
+        // Todas deben pertenecer a este partido
+        abort_if($items->count() !== count($data['positions']), 422, 'Hay jugadores que no pertenecen a este partido.');
+
+        DB::transaction(function () use ($data, $items) {
+            foreach ($data['positions'] as $position) {
+                $hasBoth = isset($position['x'], $position['y']);
+                $items[$position['id']]->update([
+                    'pos_x' => $hasBoth ? $position['x'] : null,
+                    'pos_y' => $hasBoth ? $position['y'] : null,
+                ]);
+            }
+        });
+
+        return response()->noContent();
     }
 
     public function update(Request $request, int $gameitem_id)

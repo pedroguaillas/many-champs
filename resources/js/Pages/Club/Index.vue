@@ -3,6 +3,7 @@
 import ModalClub from "./ModalClub.vue";
 import AdminLayout from "@/Layouts/AdminLayout.vue";
 import BackLink from '@/Components/BackLink.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 import { router, Link } from "@inertiajs/vue3";
 import { reactive, ref, watch, nextTick } from "vue";
 import axios from "axios";
@@ -18,7 +19,7 @@ const props = defineProps({
 // Refs
 const modal = ref(false);
 
-const initialClub = { name: "", address: "", group_id: 0, extra_points: "" };
+const initialClub = { name: "", color: "", address: "", group_id: 0, extra_points: "" };
 
 // Reactives
 const club = reactive({ ...initialClub });
@@ -62,6 +63,7 @@ const save = () => {
             ...club,
             category_id: props.category.id,
             group_id: club.group_id > 0 ? club.group_id : null,
+            color: club.color || null,
             extra_points: club.extra_points === "" ? 0 : club.extra_points,
         };
         axios
@@ -83,6 +85,7 @@ const save = () => {
         axios
             .put(route("clubs.update", club.id), {
                 ...club,
+                color: club.color || null,
                 extra_points: club.extra_points === "" ? 0 : club.extra_points,
             })
             .then(() => {
@@ -106,6 +109,8 @@ const edit = (clubEdit) => {
         if (key === "extra_points") {
             // Para convertir a string extra_points
             club.extra_points = "" + (clubEdit[key] === 0 ? "" : clubEdit[key]);
+        } else if (key === "color") {
+            club.color = clubEdit.color ?? "";
         } else {
             club[key] = clubEdit[key];
         }
@@ -137,22 +142,28 @@ const closeMenu = () => {
 const deleteClub = (clubDelete) => {
     const alert = Swal.mixin({
         buttonsStyling: true,
+        background: "#1e293b",
+        color: "#e2e8f0",
+        confirmButtonColor: "#ef4444",
+        cancelButtonColor: "#334155",
     });
 
     if (clubDelete.game_id !== null || clubDelete.payment_id !== null || clubDelete.player_id !== null) {
         alert.fire({
-            title: "No se permite anular el club, ya que puede contener juegos, jugadores o pagos",
+            title: "No se puede eliminar este club",
+            text: "Tiene partidos, jugadores o pagos registrados. Elimínalos primero.",
             icon: "error",
+            confirmButtonColor: "#10b981",
         });
         return;
     }
 
     alert
         .fire({
-            title: `¿Esta seguro eliminar el club ${clubDelete.name}?`,
+            title: `¿Está seguro de eliminar el club ${clubDelete.name}?`,
             icon: "question",
             showCancelButton: true,
-            confirmButtonText: '<i class="fa-solid fa-check"></i> Si, Eliminar',
+            confirmButtonText: '<i class="fa-solid fa-check"></i> Sí, eliminar',
             cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar',
         })
         .then((result) => {
@@ -163,7 +174,12 @@ const deleteClub = (clubDelete) => {
                         router.reload({ only: ["clubs"] });
                     })
                     .catch((error) => {
-                        console.log(error.response.data.msm);
+                        alert.fire({
+                            title: "No se pudo eliminar el club",
+                            text: error.response?.data?.msm ?? "Inténtalo de nuevo.",
+                            icon: "error",
+                            confirmButtonColor: "#10b981",
+                        });
                     });
             }
         });
@@ -172,7 +188,7 @@ const deleteClub = (clubDelete) => {
 
 <template>
     <AdminLayout title="Clubes">
-        <BackLink :href="route('select.category', 'clubs')" label="Cambiar categoría" />
+        <BackLink :href="route('select.category', { type: 'clubs', todas: 1 })" label="Cambiar categoría" />
         <!-- Card -->
         <div
             class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06]"
@@ -206,7 +222,7 @@ const deleteClub = (clubDelete) => {
             <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="data-table w-full text-left">
+                <table v-if="clubs.length > 0" class="data-table w-full text-left">
                     <thead>
                         <tr>
                             <th
@@ -241,7 +257,12 @@ const deleteClub = (clubDelete) => {
                             class="border-b border-gray-100 dark:border-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150"
                         >
                             <td class="hidden sm:table-cell px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ i + 1 }}</td>
-                            <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">{{ club.name }}</td>
+                            <td class="px-5 py-3.5 text-[13px] text-gray-700 dark:text-slate-200">
+                                <span class="inline-flex items-center gap-2">
+                                    <span v-if="club.color" class="w-3 h-3 shrink-0 rounded-full ring-1 ring-inset ring-black/15 dark:ring-white/20" :style="{ backgroundColor: club.color }" :title="`Color ${club.color}`"></span>
+                                    {{ club.name }}
+                                </span>
+                            </td>
                             <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ club.gname }}</td>
                             <td class="hidden sm:table-cell px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">
                                 {{ club.address }}
@@ -250,6 +271,7 @@ const deleteClub = (clubDelete) => {
                                 <div class="flex justify-end">
                                     <button
                                         @click.stop="toggleMenu(club.id, $event)"
+                                        :aria-label="`Acciones de ${club.name}`"
                                         class="btn-icon"
                                     >
                                         <i class="fa-solid fa-ellipsis-v text-[13px]"></i>
@@ -259,6 +281,32 @@ const deleteClub = (clubDelete) => {
                         </tr>
                     </tbody>
                 </table>
+
+                <!-- El filtro de grupo no encontró clubes -->
+                <EmptyState v-else-if="search" icon="fa-solid fa-filter" :title="`El grupo ${search} no tiene clubes`"
+                    description="Agrega un club a este grupo o quita el filtro para ver todos.">
+                    <button type="button" @click="newCub" class="btn-primary">
+                        <i class="fa-solid fa-plus text-[11px]"></i> Agregar club
+                    </button>
+                    <button type="button" @click="search = ''"
+                        class="px-5 py-2.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700/40 transition duration-200">
+                        Ver todos
+                    </button>
+                </EmptyState>
+
+                <!-- Sin clubes -->
+                <EmptyState v-else icon="fa-solid fa-shield-halved" title="Esta categoría aún no tiene clubes"
+                    :description="groups.length
+                        ? 'Los clubes son los equipos del torneo. Registra cada uno con su grupo y color de camiseta; después podrás agregar sus jugadores.'
+                        : 'Los clubes son los equipos del torneo. Si el torneo tiene fase de grupos, crea primero los grupos para asignar cada club al suyo.'">
+                    <button type="button" @click="newCub" class="btn-primary">
+                        <i class="fa-solid fa-plus text-[11px]"></i> Registrar el primer club
+                    </button>
+                    <Link v-if="!groups.length" :href="route('groups.index', category.id)"
+                        class="px-5 py-2.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700/40 transition duration-200">
+                        Crear grupos
+                    </Link>
+                </EmptyState>
             </div>
         </div>
     </AdminLayout>
@@ -286,7 +334,7 @@ const deleteClub = (clubDelete) => {
                         <Link
                             :href="route('payments.index', club.id)"
                             @click="closeMenu"
-                            class="flex items-center gap-3 px-4 py-2 text-[13px] text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800/60 transition-colors duration-150"
+                            class="flex items-center gap-3 min-h-[40px] px-4 py-2 text-[13px] text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800/60 transition-colors duration-150"
                         >
                             <i class="fas fa-money-bill-wave w-4 text-center text-xs text-emerald-500"></i>
                             Pagos
@@ -294,7 +342,7 @@ const deleteClub = (clubDelete) => {
                         <Link
                             :href="route('players.index', club.id)"
                             @click="closeMenu"
-                            class="flex items-center gap-3 px-4 py-2 text-[13px] text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800/60 transition-colors duration-150"
+                            class="flex items-center gap-3 min-h-[40px] px-4 py-2 text-[13px] text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800/60 transition-colors duration-150"
                         >
                             <i class="fa fa-users w-4 text-center text-xs text-blue-400"></i>
                             Jugadores
@@ -302,14 +350,14 @@ const deleteClub = (clubDelete) => {
                         <div class="border-t border-gray-100 dark:border-white/[0.06]"></div>
                         <button
                             @click="edit(club); closeMenu()"
-                            class="w-full flex items-center gap-3 px-4 py-2 text-[13px] text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800/60 transition-colors duration-150"
+                            class="w-full flex items-center gap-3 min-h-[40px] px-4 py-2 text-[13px] text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800/60 transition-colors duration-150"
                         >
                             <i class="fa fa-edit w-4 text-center text-xs text-gray-400"></i>
                             Editar
                         </button>
                         <button
                             @click="deleteClub(club); closeMenu()"
-                            class="w-full flex items-center gap-3 px-4 py-2 text-[13px] text-red-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors duration-150"
+                            class="w-full flex items-center gap-3 min-h-[40px] px-4 py-2 text-[13px] text-red-400 hover:text-red-500 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors duration-150"
                         >
                             <i class="fa fa-trash w-4 text-center text-xs"></i>
                             Eliminar

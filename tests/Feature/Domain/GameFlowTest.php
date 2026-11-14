@@ -327,6 +327,97 @@ class GameFlowTest extends DomainTestCase
         $this->assertSame(5, GameItem::where('game_id', $game->id)->count());
     }
 
+    public function test_player_position_can_be_saved_and_reset(): void
+    {
+        [$game, $players1] = $this->startedGame();
+        $item = GameItem::where(['game_id' => $game->id, 'player_id' => $players1[0]->id])->sole();
+
+        $this->patch(route('gameitems.position', $item->id), ['x' => 12.5, 'y' => 40])->assertNoContent();
+        $item->refresh();
+        $this->assertSame(12.5, $item->pos_x);
+        $this->assertSame(40.0, $item->pos_y);
+
+        $this->patch(route('gameitems.position', $item->id), ['x' => null, 'y' => null])->assertNoContent();
+        $this->assertNull($item->fresh()->pos_x);
+    }
+
+    public function test_player_position_is_validated(): void
+    {
+        [$game, $players1] = $this->startedGame();
+        $item = GameItem::where(['game_id' => $game->id, 'player_id' => $players1[0]->id])->sole();
+
+        $this->patch(route('gameitems.position', $item->id), ['x' => 120, 'y' => -1])
+            ->assertSessionHasErrors(['x', 'y']);
+        $this->patch(route('gameitems.position', $item->id), ['x' => 50])
+            ->assertSessionHasErrors(['y']);
+    }
+
+    public function test_team_positions_are_saved_in_batch(): void
+    {
+        [$game, $players1] = $this->startedGame();
+        $items = GameItem::where('game_id', $game->id)->whereIn('player_id', $players1->pluck('id'))->get();
+
+        $this->patch(route('gameitems.positions', $game->id), ['positions' => [
+            ['id' => $items[0]->id, 'x' => 8, 'y' => 50],
+            ['id' => $items[1]->id, 'x' => 30, 'y' => 25],
+        ]])->assertNoContent();
+
+        $this->assertSame(8.0, $items[0]->fresh()->pos_x);
+        $this->assertSame(25.0, $items[1]->fresh()->pos_y);
+    }
+
+    public function test_batch_positions_reject_items_from_other_games(): void
+    {
+        [$game] = $this->startedGame();
+        [$other, $otherPlayers] = $this->startedGame();
+        $foreign = GameItem::where(['game_id' => $other->id, 'player_id' => $otherPlayers[0]->id])->sole();
+
+        $this->patch(route('gameitems.positions', $game->id), ['positions' => [
+            ['id' => $foreign->id, 'x' => 10, 'y' => 10],
+        ]])->assertStatus(422);
+
+        $this->assertNull($foreign->fresh()->pos_x);
+    }
+
+    public function test_substitute_takes_outgoing_player_position(): void
+    {
+        [$game, $players1] = $this->startedGame();
+        GameItem::where(['game_id' => $game->id, 'player_id' => $players1[0]->id])->update(['pos_x' => 20, 'pos_y' => 70]);
+        $substitute = $this->makePlayers(Club::find($game->club1_id))->first();
+
+        $this->post(route('gameitems.store'), [
+            'player_id' => $substitute->id,
+            'game_id' => $game->id,
+            'entered_in' => 'cambio',
+            'change_player_id' => $players1[0]->id,
+        ])->assertOk();
+
+        $item = GameItem::where(['game_id' => $game->id, 'player_id' => $substitute->id])->sole();
+        $this->assertSame(20.0, $item->pos_x);
+        $this->assertSame(70.0, $item->pos_y);
+    }
+
+    public function test_lineup_remembers_positions_from_previous_game(): void
+    {
+        [$previous, $players1, $players2] = $this->startedGame();
+        GameItem::where(['game_id' => $previous->id, 'player_id' => $players1[0]->id])->update(['pos_x' => 5, 'pos_y' => 50]);
+
+        $next = Game::factory()->create(['club1_id' => $previous->club1_id, 'club2_id' => $previous->club2_id, 'state' => 'planificado']);
+        $newcomer = $this->makePlayers(Club::find($previous->club1_id))->first();
+
+        $this->post(route('play.store', $next->id), [
+            'clubs1' => [$players1[0]->id, $newcomer->id],
+            'clubs2' => [$players2[0]->id],
+        ])->assertRedirect(route('playing.index', $next->id));
+
+        $veteran = GameItem::where(['game_id' => $next->id, 'player_id' => $players1[0]->id])->sole();
+        $this->assertSame(5.0, $veteran->pos_x);
+        $this->assertSame(50.0, $veteran->pos_y);
+
+        // Sin partido anterior con posición: queda para ubicar a mano
+        $this->assertNull(GameItem::where(['game_id' => $next->id, 'player_id' => $newcomer->id])->sole()->pos_x);
+    }
+
     public function test_available_players_excludes_those_already_in_game(): void
     {
         [$game, $players1] = $this->startedGame();

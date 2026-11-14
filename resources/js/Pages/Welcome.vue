@@ -7,41 +7,72 @@ import { Head, Link } from '@inertiajs/vue3';
 defineProps({
     canLogin: Boolean,
     canRegister: Boolean,
-    laravelVersion: String,
-    phpVersion: String,
+    // Campeonatos que su organizador compartió
+    championships: { type: Array, default: () => [] },
 })
 
-const features = [
-    { icon: 'fa-layer-group',  label: 'Categorías',  desc: 'Torneos y ligas' },
-    { icon: 'fa-shield',       label: 'Equipos',      desc: 'Clubes y plantillas' },
-    { icon: 'fa-users',        label: 'Jugadores',    desc: 'Dorsales y registros' },
-    { icon: 'fa-futbol',       label: 'Partidos',     desc: 'Seguimiento en vivo' },
-    { icon: 'fa-bullseye',     label: 'Goles',        desc: 'Anotaciones y asist.' },
-    { icon: 'fa-square',       label: 'Tarjetas',     desc: 'Amarillas y rojas' },
-    { icon: 'fa-credit-card',  label: 'Inscripciones',desc: 'Pagos por equipo' },
-    { icon: 'fa-list-ol',      label: 'Posiciones',   desc: 'Tabla actualizada' },
-    { icon: 'fa-fire',         label: 'Goleadores',   desc: 'Mejores artilleros' },
-    { icon: 'fa-ban',          label: 'Sanciones',    desc: 'Control disciplinario' },
+const plural = (n, one, many) => `${n} ${Number(n) === 1 ? one : many}`
+
+// Cancha ilustrativa del hero: posición en % (x de arco a arco, y de banda a banda)
+const homeTokens = [
+    { n: 1, x: 8, y: 50 },
+    { n: 4, x: 24, y: 26 },
+    { n: 6, x: 24, y: 74 },
+    { n: 9, x: 41, y: 34, goals: 2, scored: true },
+    { n: 10, x: 41, y: 68, card: true },
+]
+const awayTokens = [
+    { n: 12, x: 92, y: 50 },
+    { n: 3, x: 76, y: 26 },
+    { n: 5, x: 76, y: 74 },
+    { n: 7, x: 60, y: 38, goals: 1 },
+    { n: 11, x: 60, y: 66 },
 ]
 
-const highlights = [
+// Es una secuencia real: el orden en que se arma y se juega un campeonato
+const steps = [
+    {
+        title: 'Crea tu campeonato y sus categorías',
+        desc: 'Senior, femenino, sub 12. Cada categoría tiene sus grupos y su valor de inscripción.',
+    },
+    {
+        title: 'Registra clubes y jugadores',
+        desc: 'Cada club con su color de camiseta. Cada jugador con su cédula, dorsal y foto.',
+    },
+    {
+        title: 'Programa los partidos',
+        desc: 'Créalos uno por uno o genera toda la fase de grupos de una sola vez.',
+    },
+    {
+        title: 'Lleva el partido en vivo',
+        desc: 'Elige a los titulares, toca al jugador y marca gol, tarjeta o cambio. Si te equivocas, lo deshaces.',
+    },
+    {
+        title: 'Las tablas se calculan solas',
+        desc: 'Al finalizar el partido ya están las posiciones, los goleadores y las sanciones por cobrar.',
+    },
+]
+
+const solves = [
     {
         icon: 'fa-futbol',
-        color: 'emerald',
-        title: 'Partidos en Tiempo Real',
-        desc: 'Registra goles, tarjetas y eventos minuto a minuto. El historial completo de cada encuentro queda documentado automáticamente.',
+        title: 'El partido, en la cancha',
+        desc: 'Ves a los dos equipos en pantalla, cada jugador en su puesto. Arrástralo para moverlo y toca para anotar lo que pasó.',
     },
     {
-        icon: 'fa-list-ol',
-        color: 'amber',
-        title: 'Estadísticas Automáticas',
-        desc: 'Tabla de posiciones, goleadores y sanciones se actualizan solos al finalizar cada partido. Sin trabajo manual.',
+        icon: 'fa-ranking-star',
+        title: 'Tablas sin hoja de cálculo',
+        desc: 'Posiciones, goleadores y sanciones salen de los partidos que registras. Nadie suma puntos a mano.',
     },
     {
-        icon: 'fa-trophy',
-        color: 'sky',
-        title: 'Gestión Completa',
-        desc: 'Desde las inscripciones hasta la final: categorías, grupos, equipos, jugadores y pagos en una sola plataforma.',
+        icon: 'fa-coins',
+        title: 'Cobros claros',
+        desc: 'Inscripciones por club y tarjetas por jugador. Quien debe una sanción no entra al partido hasta pagarla.',
+    },
+    {
+        icon: 'fa-mobile-screen',
+        title: 'En tu celular',
+        desc: 'Se abre en el navegador y se instala como una app, sin pasar por la tienda. También funciona en la computadora.',
     },
 ]
 
@@ -69,6 +100,8 @@ const jsonLd = {
     ]
 }
 
+const focusRing = 'focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400'
+
 </script>
 
 <template>
@@ -93,246 +126,259 @@ const jsonLd = {
     <!-- JSON-LD Structured Data -->
     <component :is="'script'" type="application/ld+json" v-text="JSON.stringify(jsonLd)"></component>
 
-    <div class="min-h-screen bg-slate-950 text-white overflow-x-hidden">
+    <div class="min-h-[100svh] bg-slate-950 text-white overflow-x-hidden">
 
-        <!-- ─── HEADER / NAV ──────────────────────────────────────── -->
-        <header class="relative z-20 border-b border-white/5">
-            <nav class="flex items-center justify-between px-6 py-5" aria-label="Navegación principal">
+        <!-- ─── Cabecera ─────────────────────────────────────────── -->
+        <header class="border-b border-white/[0.06] pt-[env(safe-area-inset-top)]">
+            <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 h-16" aria-label="Navegación principal">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 bg-amber-400 rounded-lg flex items-center justify-center shadow-lg shadow-amber-500/30" aria-hidden="true">
-                        <i class="fa fa-medal text-slate-950 text-sm"></i>
+                    <div class="w-10 h-10 rounded-lg bg-emerald-500 flex items-center justify-center text-[13px] font-bold tracking-tight text-white" aria-hidden="true">5IV</div>
+                    <div class="leading-tight">
+                        <p class="text-[15px] font-semibold tracking-tight">Many Champs</p>
+                        <p class="text-[10px] font-semibold tracking-wider text-slate-500">SPORT MANAGER</p>
                     </div>
-                    <span class="text-lg font-bold tracking-wider">
-                        5IV <span class="text-amber-400">SPORT</span>
-                    </span>
                 </div>
                 <Link :href="route('login')"
-                    class="text-sm font-medium text-slate-400 hover:text-white transition-colors duration-150"
-                    aria-label="Iniciar sesión en la plataforma">
-                    Ingresar <span aria-hidden="true">&rarr;</span>
+                    class="inline-flex items-center min-h-[44px] px-4 rounded-lg text-sm font-semibold text-slate-200 border border-white/[0.1] hover:border-emerald-500/50 hover:text-white active:scale-[0.97] transition duration-150"
+                    :class="focusRing">
+                    Ingresar
                 </Link>
             </nav>
         </header>
 
         <main>
-            <!-- ─── HERO ────────────────────────────────────────────── -->
-            <section class="relative flex items-center justify-center min-h-[92vh] overflow-hidden" aria-labelledby="hero-heading">
+            <!-- ─── Hero: el partido en vivo ─────────────────────────── -->
+            <section class="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 lg:py-0 lg:min-h-[calc(100svh-4rem)] grid lg:grid-cols-[5fr_6fr] gap-10 lg:gap-14 items-center" aria-labelledby="hero-heading">
 
-                <!-- Pitch grid texture -->
-                <div class="pitch-grid absolute inset-0 opacity-[0.04]" aria-hidden="true"></div>
-
-                <!-- Ambient glow orbs -->
-                <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-emerald-600/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
-                <div class="absolute bottom-0 right-0 w-[400px] h-[400px] bg-amber-500/6 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
-
-                <!-- Content -->
-                <div class="relative z-10 text-center px-6 max-w-4xl mx-auto py-20">
-
-                    <!-- Live badge -->
-                    <div class="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-10" role="status">
-                        <span class="live-dot w-2 h-2 bg-emerald-400 rounded-full" aria-hidden="true"></span>
-                        Plataforma de Gestión Deportiva
-                    </div>
-
-                    <!-- Headline -->
-                    <h1 id="hero-heading" class="text-5xl sm:text-6xl lg:text-7xl font-black leading-[0.95] tracking-tight mb-6">
-                        <span class="block text-white">Controla</span>
-                        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-300 py-1">
-                            todo tu campeonato
-                        </span>
-                        <span class="block text-white">de fútbol</span>
+                <div>
+                    <h1 id="hero-heading" class="text-[2.5rem] sm:text-5xl lg:text-6xl font-black leading-[1.02] tracking-tight">
+                        Lleva tu campeonato desde la cancha
                     </h1>
-
-                    <!-- Sub -->
-                    <p class="text-slate-400 text-lg sm:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-                        Categorías, equipos, jugadores, partidos, goles, tarjetas, inscripciones,
-                        posiciones y goleadores — todo en un solo lugar.
+                    <p class="mt-5 max-w-md text-base sm:text-lg leading-relaxed text-slate-300">
+                        Anota goles, tarjetas y cambios tocando al jugador. Las posiciones, los goleadores y las sanciones se actualizan solos.
                     </p>
-
-                    <!-- CTA -->
-                    <Link :href="route('login')"
-                        class="group inline-flex items-center gap-3 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black px-9 py-4 rounded-xl transition duration-150 text-base shadow-2xl shadow-amber-500/25 hover:shadow-amber-400/40 hover:-translate-y-0.5"
-                        aria-label="Ingresar a la plataforma de gestión deportiva">
-                        <i class="fa fa-medal" aria-hidden="true"></i>
-                        Ingresar a la Plataforma
-                        <i class="fa fa-arrow-right text-sm group-hover:translate-x-1 transition-transform duration-150" aria-hidden="true"></i>
-                    </Link>
-
+                    <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+                        <Link :href="route('login')"
+                            class="inline-flex items-center justify-center min-h-[48px] px-7 rounded-lg bg-emerald-500 text-base font-bold text-white hover:bg-emerald-400 active:scale-[0.97] transition duration-150"
+                            :class="focusRing">
+                            Ingresar
+                        </Link>
+                        <a href="#como-funciona"
+                            class="inline-flex items-center min-h-[44px] text-sm font-medium text-slate-300 underline decoration-slate-600 underline-offset-4 hover:text-white hover:decoration-emerald-400 transition-colors duration-150"
+                            :class="focusRing">
+                            Ver cómo funciona
+                        </a>
+                    </div>
+                    <p class="mt-6 text-[13px] text-slate-500">Para campeonatos de fútbol y futsal. Funciona en el celular.</p>
                 </div>
 
-                <!-- Scroll hint -->
-                <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-700" aria-hidden="true">
-                    <i class="fa fa-chevron-down text-xs bounce-slow"></i>
+                <!-- Ilustración del partido en vivo (decorativa) -->
+                <div class="w-full max-w-xl mx-auto lg:max-w-none" aria-hidden="true">
+                    <div class="rounded-2xl bg-slate-900 border border-white/[0.08] overflow-hidden select-none">
+
+                        <!-- Marcador -->
+                        <div class="px-4 py-3 border-b border-white/[0.06]">
+                            <div class="flex justify-center mb-1.5">
+                                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-500/10 text-[10px] font-semibold text-red-400">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>En vivo
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+                                <span class="truncate text-[13px] sm:text-sm font-semibold">Leones</span>
+                                <span class="text-2xl sm:text-3xl font-bold tabular-nums">2 <span class="text-slate-600">–</span> 1</span>
+                                <span class="truncate text-right text-[13px] sm:text-sm font-semibold">Tigres</span>
+                            </div>
+                        </div>
+
+                        <!-- Cancha -->
+                        <div class="pitch relative aspect-[16/10]">
+                            <svg viewBox="0 0 160 100" preserveAspectRatio="none" class="absolute inset-0 w-full h-full">
+                                <g fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="0.6">
+                                    <rect x="3" y="3" width="154" height="94" rx="1" />
+                                    <line x1="80" y1="3" x2="80" y2="97" />
+                                    <circle cx="80" cy="50" r="12" />
+                                    <path d="M3 25 Q 26 25 26 50 Q 26 75 3 75" />
+                                    <path d="M157 25 Q 134 25 134 50 Q 134 75 157 75" />
+                                </g>
+                                <circle cx="80" cy="50" r="0.9" fill="rgba(255,255,255,0.5)" />
+                            </svg>
+
+                            <template v-for="(team, side) in [homeTokens, awayTokens]" :key="side">
+                                <div v-for="t in team" :key="`${side}-${t.n}`"
+                                    class="absolute -translate-x-1/2 -translate-y-1/2 w-[9.5%] aspect-square"
+                                    :style="{ left: `${t.x}%`, top: `${t.y}%` }">
+                                    <span v-if="t.scored" class="goal-ring absolute inset-0 rounded-full border-2 border-white"></span>
+                                    <span class="relative w-full h-full rounded-full flex items-center justify-center text-[11px] sm:text-sm font-bold tabular-nums shadow-md ring-2"
+                                        :class="side === 0 ? 'bg-white text-emerald-800 ring-emerald-950/30' : 'bg-blue-500 text-white ring-blue-950/30'">
+                                        {{ t.n }}
+                                        <span v-if="t.card" class="absolute -top-1 -left-1 w-2 h-3 sm:w-2.5 sm:h-3.5 rounded-[2px] bg-amber-400 shadow"></span>
+                                        <span v-if="t.goals"
+                                            class="absolute -top-1.5 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-slate-950 text-white text-[9px] font-bold flex items-center justify-center gap-0.5 ring-2 ring-white/90">
+                                            <i class="fa-solid fa-futbol text-[7px]"></i>{{ t.goals }}
+                                        </span>
+                                    </span>
+                                    <span v-if="t.scored"
+                                        class="goal-label absolute left-1/2 bottom-full mb-2 whitespace-nowrap px-2 py-0.5 rounded-full bg-white text-slate-900 text-[11px] sm:text-xs font-extrabold shadow-lg">
+                                        <i class="fa-solid fa-futbol mr-1"></i>¡GOL!
+                                    </span>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Acciones del jugador tocado -->
+                        <div class="px-3 sm:px-4 py-3 border-t border-white/[0.06] flex items-center gap-2 sm:gap-3">
+                            <span class="shrink-0 w-9 h-9 rounded-full bg-white text-emerald-800 text-xs font-bold flex items-center justify-center tabular-nums">9</span>
+                            <div class="flex-1 min-w-0 leading-tight">
+                                <p class="truncate text-[13px] font-semibold">Kevin Paucar</p>
+                                <p class="truncate text-[11px] text-slate-500">Leones, 2 goles</p>
+                            </div>
+                            <span class="shrink-0 inline-flex items-center gap-1.5 h-9 px-3 rounded-lg bg-emerald-500 text-xs font-bold">
+                                <i class="fa-solid fa-futbol text-[10px]"></i>Gol
+                            </span>
+                            <span class="shrink-0 w-9 h-9 rounded-lg border border-white/[0.08] flex items-center justify-center">
+                                <span class="w-3 h-4 rounded-[2px] bg-amber-400"></span>
+                            </span>
+                            <span class="shrink-0 w-9 h-9 rounded-lg border border-white/[0.08] flex items-center justify-center">
+                                <span class="w-3 h-4 rounded-[2px] bg-red-500"></span>
+                            </span>
+                            <span class="shrink-0 hidden sm:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-white/[0.08] text-xs font-semibold text-slate-200">
+                                <i class="fa-solid fa-arrow-right-arrow-left text-[10px]"></i>Cambio
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <!-- ─── FEATURES GRID ───────────────────────────────────── -->
-            <section class="py-20 px-6 border-t border-white/5" aria-labelledby="features-heading">
-                <div class="max-w-5xl mx-auto">
+            <!-- ─── Campeonatos compartidos ──────────────────────────── -->
+            <section v-if="championships.length" class="border-t border-white/[0.06]" aria-labelledby="championships-heading">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+                    <h2 id="championships-heading" class="text-3xl sm:text-4xl font-black tracking-tight leading-tight">Campeonatos</h2>
+                    <p class="mt-3 max-w-lg text-base text-slate-400">Entra a uno para ver sus partidos, resultados, posiciones y goleadores. No necesitas cuenta.</p>
 
-                    <div class="text-center mb-12">
-                        <h2 id="features-heading" class="text-2xl sm:text-3xl font-black text-white mb-3">
-                            Todo lo que necesitas para gestionar tu torneo
-                        </h2>
-                        <p class="text-slate-500 text-sm">Diez módulos integrados, una sola plataforma</p>
-                    </div>
-
-                    <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5" role="list">
-                        <li
-                            v-for="f in features" :key="f.label"
-                            class="group bg-slate-900 hover:bg-slate-800/80 border border-white/[0.06] hover:border-amber-500/25 rounded-xl p-4 flex flex-col items-center gap-3 text-center transition duration-200 cursor-default"
-                        >
-                            <div class="w-10 h-10 bg-slate-800 group-hover:bg-amber-500/10 border border-white/5 group-hover:border-amber-500/20 rounded-lg flex items-center justify-center transition duration-200 flex-shrink-0" aria-hidden="true">
-                                <i :class="['fa text-sm text-slate-400 group-hover:text-amber-400 transition-colors duration-200', f.icon]"></i>
-                            </div>
-                            <div>
-                                <p class="text-white font-semibold text-sm leading-snug">{{ f.label }}</p>
-                                <p class="text-slate-600 text-xs mt-0.5 leading-snug">{{ f.desc }}</p>
-                            </div>
+                    <ul class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <li v-for="item in championships" :key="item.slug">
+                            <Link :href="route('public.championship', item.slug)"
+                                class="group flex items-center gap-3 h-full min-h-[72px] rounded-xl bg-slate-900 border px-4 py-3.5 hover:border-emerald-500/40 active:scale-[0.99] transition duration-150"
+                                :class="[focusRing, item.live ? 'border-red-500/30' : 'border-white/[0.08]']">
+                                <div class="flex-1 min-w-0">
+                                    <p class="truncate text-base font-semibold">{{ item.name }}</p>
+                                    <p class="mt-0.5 text-[13px] text-slate-400">
+                                        <span v-if="item.live" class="inline-flex items-center gap-1.5 font-semibold text-red-400">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500" aria-hidden="true"></span>{{ plural(item.live, 'partido en vivo', 'partidos en vivo') }}
+                                        </span>
+                                        <span v-else class="tabular-nums">{{ plural(item.categories, 'categoría', 'categorías') }}, {{ plural(item.games, 'partido', 'partidos') }}</span>
+                                    </p>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-[11px] text-slate-600 group-hover:text-emerald-400 transition-colors duration-150" aria-hidden="true"></i>
+                            </Link>
                         </li>
                     </ul>
-
                 </div>
             </section>
 
-            <!-- ─── STATS BAR ───────────────────────────────────────── -->
-            <section class="py-12 px-6 bg-slate-900/40 border-y border-white/5" aria-label="Estadísticas de la plataforma">
-                <div class="max-w-3xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
+            <!-- ─── Cómo funciona ────────────────────────────────────── -->
+            <section id="como-funciona" class="scroll-mt-6 border-t border-white/[0.06] bg-slate-900/40" aria-labelledby="steps-heading">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid lg:grid-cols-[5fr_6fr] gap-8 lg:gap-14">
                     <div>
-                        <p class="text-3xl font-black text-amber-400 tabular-nums">10+</p>
-                        <p class="text-slate-500 text-xs mt-1 uppercase tracking-wider">Módulos de gestión</p>
+                        <h2 id="steps-heading" class="text-3xl sm:text-4xl font-black tracking-tight leading-tight">Cómo funciona</h2>
+                        <p class="mt-3 max-w-sm text-base leading-relaxed text-slate-400">
+                            Cinco pasos, en el orden en que se arma y se juega un campeonato.
+                        </p>
                     </div>
-                    <div>
-                        <p class="text-3xl font-black text-emerald-400">360°</p>
-                        <p class="text-slate-500 text-xs mt-1 uppercase tracking-wider">Control del torneo</p>
-                    </div>
-                    <div>
-                        <p class="text-3xl font-black text-amber-400">Live</p>
-                        <p class="text-slate-500 text-xs mt-1 uppercase tracking-wider">Seguimiento de partidos</p>
-                    </div>
-                    <div>
-                        <p class="text-3xl font-black text-emerald-400">Auto</p>
-                        <p class="text-slate-500 text-xs mt-1 uppercase tracking-wider">Estadísticas en tiempo real</p>
-                    </div>
-                </div>
-            </section>
 
-            <!-- ─── HIGHLIGHTS ──────────────────────────────────────── -->
-            <section class="py-20 px-6" aria-labelledby="highlights-heading">
-                <h2 id="highlights-heading" class="sr-only">Características destacadas de 5IV SPORT</h2>
-                <div class="max-w-5xl mx-auto">
-                    <div class="grid sm:grid-cols-3 gap-5">
-                        <article
-                            v-for="h in highlights" :key="h.title"
-                            class="bg-slate-900/60 border border-white/[0.06] rounded-2xl p-7"
-                        >
-                            <div
-                                class="w-12 h-12 rounded-xl flex items-center justify-center mb-5 text-lg"
-                                :class="{
-                                    'bg-emerald-500/10 text-emerald-400 border border-emerald-500/15': h.color === 'emerald',
-                                    'bg-amber-500/10  text-amber-400  border border-amber-500/15':  h.color === 'amber',
-                                    'bg-sky-500/10    text-sky-400    border border-sky-500/15':    h.color === 'sky',
-                                }"
-                                aria-hidden="true"
-                            >
-                                <i :class="['fa', h.icon]"></i>
+                    <ol class="relative">
+                        <li v-for="(step, i) in steps" :key="step.title" class="relative flex gap-4 sm:gap-5 pb-8 last:pb-0">
+                            <!-- Línea que une los pasos -->
+                            <span v-if="i < steps.length - 1" class="absolute left-5 top-10 bottom-0 w-px bg-white/[0.08]" aria-hidden="true"></span>
+                            <span class="relative shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold tabular-nums"
+                                :class="i === 3 ? 'bg-emerald-500 text-white' : 'bg-slate-800 text-emerald-400 border border-white/[0.08]'"
+                                aria-hidden="true">
+                                {{ i + 1 }}
+                            </span>
+                            <div class="pt-1.5">
+                                <h3 class="text-base sm:text-lg font-semibold leading-snug">{{ step.title }}</h3>
+                                <p class="mt-1 max-w-md text-sm leading-relaxed text-slate-400">{{ step.desc }}</p>
                             </div>
-                            <h3 class="text-white font-bold text-lg mb-2 leading-snug">{{ h.title }}</h3>
-                            <p class="text-slate-500 text-sm leading-relaxed">{{ h.desc }}</p>
-                        </article>
-                    </div>
+                        </li>
+                    </ol>
                 </div>
             </section>
 
-            <!-- ─── FINAL CTA ───────────────────────────────────────── -->
-            <section class="py-24 px-6 text-center relative overflow-hidden border-t border-white/5" aria-labelledby="cta-heading">
-                <div class="absolute inset-0 bg-gradient-to-t from-emerald-950/20 to-transparent pointer-events-none" aria-hidden="true"></div>
-                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/80 pointer-events-none" aria-hidden="true"></div>
-
-                <div class="relative z-10 max-w-xl mx-auto">
-                    <div class="w-16 h-16 bg-amber-400/10 border border-amber-400/20 rounded-2xl flex items-center justify-center mx-auto mb-7 shadow-inner" aria-hidden="true">
-                        <i class="fa fa-trophy text-amber-400 text-xl"></i>
-                    </div>
-                    <h2 id="cta-heading" class="text-3xl sm:text-4xl font-black text-white mb-4 leading-tight">
-                        Empieza a gestionar<br>tu campeonato hoy
+            <!-- ─── Lo que resuelve ──────────────────────────────────── -->
+            <section class="border-t border-white/[0.06]" aria-labelledby="solves-heading">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+                    <h2 id="solves-heading" class="max-w-xl text-3xl sm:text-4xl font-black tracking-tight leading-tight">
+                        Menos cuaderno, más fútbol
                     </h2>
-                    <p class="text-slate-500 mb-9 text-base leading-relaxed">
-                        Ingresa a tu plataforma y lleva el control total de tu torneo de fútbol.
-                    </p>
+
+                    <dl class="mt-10 grid sm:grid-cols-2 gap-x-14">
+                        <div v-for="item in solves" :key="item.title" class="flex gap-4 py-6 border-t border-white/[0.08]">
+                            <i class="fa-solid mt-1 w-5 text-center text-emerald-400" :class="item.icon" aria-hidden="true"></i>
+                            <div>
+                                <dt class="text-base font-semibold">{{ item.title }}</dt>
+                                <dd class="mt-1 max-w-md text-sm leading-relaxed text-slate-400">{{ item.desc }}</dd>
+                            </div>
+                        </div>
+                    </dl>
+                </div>
+            </section>
+
+            <!-- ─── Cierre ───────────────────────────────────────────── -->
+            <section class="border-t border-white/[0.06] bg-emerald-950/30" aria-labelledby="cta-heading">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-16 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                    <div>
+                        <h2 id="cta-heading" class="text-2xl sm:text-3xl font-black tracking-tight leading-tight">¿Ya tienes tu campeonato?</h2>
+                        <p class="mt-2 text-base text-slate-400">Ingresa con tu cuenta y sigue donde lo dejaste.</p>
+                    </div>
                     <Link :href="route('login')"
-                        class="group inline-flex items-center gap-3 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-black px-10 py-4 rounded-xl transition duration-150 text-base shadow-2xl shadow-amber-500/25 hover:shadow-amber-400/40 hover:-translate-y-0.5"
-                        aria-label="Ingresar a 5IV SPORT para gestionar tu campeonato">
-                        <i class="fa fa-medal" aria-hidden="true"></i>
-                        Ingresar a 5IV SPORT
-                        <i class="fa fa-arrow-right text-sm group-hover:translate-x-1 transition-transform duration-150" aria-hidden="true"></i>
+                        class="self-start sm:self-auto shrink-0 inline-flex items-center justify-center min-h-[48px] px-7 rounded-lg bg-emerald-500 text-base font-bold text-white hover:bg-emerald-400 active:scale-[0.97] transition duration-150"
+                        :class="focusRing">
+                        Ingresar
                     </Link>
                 </div>
             </section>
         </main>
 
-        <!-- ─── FOOTER ──────────────────────────────────────────── -->
-        <footer class="px-6 py-8 border-t border-white/5 text-center" role="contentinfo">
-            <p class="text-slate-700 text-sm">
-                <i class="fa fa-medal text-amber-600/60 mr-2" aria-hidden="true"></i>
-                5IV <span class="text-amber-600/60">SPORT</span>
-                <span class="mx-2 text-slate-800" aria-hidden="true">&middot;</span>
-                Plataforma de Gestión Deportiva
-            </p>
+        <!-- ─── Pie ──────────────────────────────────────────────── -->
+        <footer class="border-t border-white/[0.06] pb-[env(safe-area-inset-bottom)]" role="contentinfo">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-1 text-[13px] text-slate-500">
+                <p>Many Champs, por 5IV SPORT</p>
+                <p>Gestión de campeonatos de fútbol y futsal</p>
+            </div>
         </footer>
 
     </div>
 </template>
 
 <style scoped>
-/* Pitch grid texture — subtle stadium floor lines */
-.pitch-grid {
-    background-image:
-        repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 79px,
-            rgba(16, 185, 129, 1) 79px,
-            rgba(16, 185, 129, 1) 80px
-        ),
-        repeating-linear-gradient(
-            90deg,
-            transparent,
-            transparent 79px,
-            rgba(16, 185, 129, 1) 79px,
-            rgba(16, 185, 129, 1) 80px
-        );
+/* Césped: las mismas franjas de la cancha del partido en vivo */
+.pitch {
+    background: repeating-linear-gradient(90deg, #047857 0 10%, #065f46 10% 20%);
 }
 
-/* Live dot pulse */
-.live-dot {
-    animation: pulse-glow 2s ease-in-out infinite;
+/* Único momento de animación: el gol, una vez al cargar */
+.goal-label {
+    translate: -50% 0;
+    animation: goal-label 600ms cubic-bezier(0.23, 1, 0.32, 1) 700ms both;
 }
 
-@keyframes pulse-glow {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50%       { opacity: 0.4; transform: scale(0.8); }
+@keyframes goal-label {
+    from { transform: translateY(8px) scale(0.85); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-/* Scroll chevron */
-.bounce-slow {
-    animation: bounce-slow 2.5s ease-in-out infinite;
+.goal-ring {
+    opacity: 0;
+    animation: goal-ring 900ms cubic-bezier(0.23, 1, 0.32, 1) 700ms;
 }
 
-@keyframes bounce-slow {
-    0%, 100% { transform: translateY(0); }
-    50%       { transform: translateY(6px); }
+@keyframes goal-ring {
+    from { transform: scale(0.8); opacity: 0.9; }
+    to { transform: scale(2.4); opacity: 0; }
 }
 
-/* Screen reader only — for hidden headings */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
+@media (prefers-reduced-motion: reduce) {
+    .goal-label { animation: none; }
+    .goal-ring { display: none; }
 }
 </style>

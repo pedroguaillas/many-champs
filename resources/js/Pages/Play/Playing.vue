@@ -4,9 +4,11 @@
 import { Link, router } from '@inertiajs/vue3';
 import AdminLayout from '../../Layouts/AdminLayout.vue';
 import BackLink from '@/Components/BackLink.vue';
+import ShareChampionship from '@/Components/ShareChampionship.vue';
 import Sheet from '@/Components/Sheet.vue';
 import ClubBadge from '../Game/ClubBadge.vue';
 import Pitch from './Pitch.vue';
+import { teamColors } from '@/Shared/teamColors';
 import Swal from 'sweetalert2';
 import { computed, onUnmounted, ref, watch } from 'vue';
 import axios from 'axios';
@@ -26,7 +28,8 @@ const swalConfig = {
 };
 
 // Copia local para actualizar al instante (optimista) y sincronizar luego con el servidor
-const clone = (list) => list.map(p => ({ ...p, card_black: !!p.card_black }))
+const toNumber = (v) => v === null || v === undefined ? null : Number(v)
+const clone = (list) => list.map(p => ({ ...p, card_black: !!p.card_black, pos_x: toNumber(p.pos_x), pos_y: toNumber(p.pos_y) }))
 const team1 = ref(clone(props.c1_players))
 const team2 = ref(clone(props.c2_players))
 
@@ -39,8 +42,8 @@ watch(() => [props.c1_players, props.c2_players], ([c1, c2]) => {
 })
 
 const teams = computed(() => [
-    { side: 1, club: { id: props.game.club1_id, name: props.game.c1_name }, players: team1.value },
-    { side: 2, club: { id: props.game.club2_id, name: props.game.c2_name }, players: team2.value },
+    { side: 1, club: { id: props.game.club1_id, name: props.game.c1_name, color: props.game.c1_color }, players: team1.value },
+    { side: 2, club: { id: props.game.club2_id, name: props.game.c2_name, color: props.game.c2_color }, players: team2.value },
 ])
 
 // Estado del jugador en el partido
@@ -104,6 +107,75 @@ const update = (giId, data, message, undoable = true) => {
         .finally(() => {
             if (--pending === 0) sync()
         })
+}
+
+// ───── Posiciones en la cancha ─────
+const byGi = (giId) => allPlayers.value.find(p => p.gi_id === giId)
+const applyPositions = (changes) => changes.forEach(c => {
+    const p = byGi(c.gi_id)
+    if (p) { p.pos_x = c.x; p.pos_y = c.y }
+})
+const currentPositions = (changes) => changes.map(c => {
+    const p = byGi(c.gi_id)
+    return { gi_id: c.gi_id, x: p?.pos_x ?? null, y: p?.pos_y ?? null }
+})
+
+// Guarda una o varias posiciones (optimista) y ofrece deshacer
+const savePositions = (changes, message, { undoable = true, before = null } = {}) => {
+    const previous = before ?? currentPositions(changes)
+    applyPositions(changes)
+    pending++
+    const request = changes.length === 1
+        ? axios.patch(route('gameitems.position', changes[0].gi_id), { x: changes[0].x, y: changes[0].y })
+        : axios.patch(route('gameitems.positions', props.game.id), { positions: changes.map(c => ({ id: c.gi_id, x: c.x, y: c.y })) })
+    request
+        .then(() => {
+            notify(message, { undo: undoable ? () => savePositions(previous, 'Posición restaurada', { undoable: false }) : null })
+        })
+        .catch(() => {
+            applyPositions(previous)
+            notify('No se pudo guardar la posición', { tone: 'error' })
+        })
+        .finally(() => {
+            if (--pending === 0) sync()
+        })
+}
+
+// Con flechas se guarda al dejar de mover, no en cada pulsación
+const keyboardMoves = new Map()
+onUnmounted(() => keyboardMoves.forEach(m => clearTimeout(m.timer)))
+
+const onMove = ({ player, side, x, y, team, source }) => {
+    const teamPlayers = onField(side === 1 ? team1.value : team2.value)
+
+    // Primera vez que se mueve alguien del equipo: se guarda toda la formación
+    // para que los compañeros no salten de lugar
+    if (!teamPlayers.some(p => p.pos_x !== null)) {
+        const changes = team.map(t => t.gi_id === player.gi_id ? { gi_id: t.gi_id, x, y } : t)
+        savePositions(changes, `Formación de ${side === 1 ? props.game.c1_name : props.game.c2_name} guardada`)
+        return
+    }
+
+    const change = { gi_id: player.gi_id, x, y }
+    if (source === 'keyboard') {
+        const entry = keyboardMoves.get(player.gi_id) ?? { before: currentPositions([change]) }
+        clearTimeout(entry.timer)
+        applyPositions([change])
+        entry.timer = setTimeout(() => {
+            keyboardMoves.delete(player.gi_id)
+            savePositions([change], `${shortName(player)} movido`, { before: entry.before })
+        }, 500)
+        keyboardMoves.set(player.gi_id, entry)
+        return
+    }
+
+    savePositions([change], `${shortName(player)} movido`)
+}
+
+const hasFormation = (team) => onField(team.players).some(p => p.pos_x !== null)
+const resetFormation = (team) => {
+    const changes = onField(team.players).map(p => ({ gi_id: p.gi_id, x: null, y: null }))
+    if (changes.length) savePositions(changes, `Formación de ${team.club.name} restablecida`)
 }
 
 // ───── Hoja de acciones ─────
@@ -224,13 +296,20 @@ const ended = () => {
 }
 
 const cardTone = (p) => p.card_black ? 'bg-slate-950 ring-1 ring-white/40' : p.santion === 'roja' ? 'bg-red-500' : p.santion === 'amarilla' ? 'bg-amber-400' : ''
-const accent = (side) => side === 1 ? 'bg-white text-emerald-700 ring-1 ring-gray-200 dark:ring-0' : 'bg-blue-500 text-white'
+// Camisetas de cada lado (con alterna si los colores chocan)
+const colors = computed(() => teamColors(props.game.c1_color, props.game.c2_color))
+const kitStyle = (side) => side ? { backgroundColor: colors.value[side].bg, color: colors.value[side].fg } : {}
 
 </script>
 
 <template>
     <AdminLayout :title="finished ? 'Partido finalizado' : 'En vivo'">
-        <BackLink :href="route('games.index', game.category_id)" label="Partidos" />
+        <div class="flex items-start justify-between gap-3">
+            <BackLink :href="route('games.index', game.category_id)" label="Partidos" />
+            <!-- Enlace público del partido: se ve en vivo, sin poder tocar nada -->
+            <ShareChampionship :game-id="game.id" :text="`${game.c1_name} vs ${game.c2_name}, en vivo`" label="Compartir partido"
+                class="btn-add shrink-0 min-h-[40px]" />
+        </div>
 
         <!-- Marcador fijo -->
         <div class="sticky top-0 z-20 pb-3 bg-gray-50 dark:bg-slate-900">
@@ -283,10 +362,14 @@ const accent = (side) => side === 1 ? 'bg-white text-emerald-700 ring-1 ring-gra
             <div>
                 <p v-if="started" class="mb-2 flex items-center gap-2 text-[12px] text-gray-500 dark:text-slate-400">
                     <i class="fa-solid fa-hand-pointer text-[11px]"></i>
-                    Toca un jugador para marcar gol, tarjeta o hacer un cambio
+                    <span>
+                        Toca un jugador para gol, tarjeta o cambio ·
+                        <span class="[@media(pointer:coarse)]:hidden">arrástralo para moverlo</span>
+                        <span class="hidden [@media(pointer:coarse)]:inline">mantén presionado para moverlo</span>
+                    </span>
                 </p>
                 <Pitch :home="onField(team1)" :away="onField(team2)"
-                    :selected-id="selected?.player?.id ?? 0" @select="openPlayer">
+                    :colors="colors" :selected-id="selected?.player?.id ?? 0" @select="openPlayer" @move="onMove">
                     <template #empty>
                         <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
                             <p class="text-sm font-medium text-white">{{ started ? 'No hay jugadores en cancha' : 'Este partido aún no tiene alineación' }}</p>
@@ -303,11 +386,13 @@ const accent = (side) => side === 1 ? 'bg-white text-emerald-700 ring-1 ring-gra
                 <section v-for="team in teams" :key="team.side"
                     class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06] overflow-hidden">
                     <header class="relative flex items-center gap-3 px-4 py-3 border-b border-gray-200 dark:border-white/[0.06]">
-                        <span class="absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full" :class="team.side === 1 ? 'bg-emerald-500' : 'bg-blue-500'"></span>
+                        <span class="absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full ring-1 ring-inset ring-black/10" :style="{ backgroundColor: colors[team.side].bg }"></span>
                         <ClubBadge :club="team.club" size="sm" />
                         <div class="flex-1 min-w-0">
                             <h2 class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ team.club.name }}</h2>
-                            <p class="text-[11px] text-gray-500 dark:text-slate-400 tabular-nums">{{ onField(team.players).length }} en cancha</p>
+                            <p class="text-[11px] text-gray-500 dark:text-slate-400 tabular-nums">
+                                {{ onField(team.players).length }} en cancha<span v-if="colors[team.side].alternate" title="Los colores de ambos clubes se parecen"> · camiseta alterna</span>
+                            </p>
                         </div>
                         <button type="button" @click="openBench(team.side)" class="btn-add" title="Agregar jugador sin sustituir">
                             <i class="fa-solid fa-user-plus text-[11px]"></i><span class="hidden sm:inline lg:hidden xl:inline">Agregar</span>
@@ -318,7 +403,7 @@ const accent = (side) => side === 1 ? 'bg-white text-emerald-700 ring-1 ring-gra
                         <li v-for="p in offField(team.players)" :key="p.gi_id">
                             <button type="button" @click="openPlayer(p, team.side)"
                                 class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors duration-150">
-                                <span class="relative shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold tabular-nums opacity-60" :class="accent(team.side)">
+                                <span class="relative shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold tabular-nums opacity-60 ring-1 ring-inset ring-black/10" :style="kitStyle(team.side)">
                                     {{ p.t_shirt ?? initials(p) }}
                                 </span>
                                 <span class="flex-1 min-w-0">
@@ -333,6 +418,13 @@ const accent = (side) => side === 1 ? 'bg-white text-emerald-700 ring-1 ring-gra
                         </li>
                     </ul>
                     <p v-else class="px-4 py-3 text-[12px] text-gray-400 dark:text-slate-500">Sin cambios ni expulsados</p>
+
+                    <div v-if="hasFormation(team)" class="px-2 py-1 border-t border-gray-100 dark:border-white/[0.04]">
+                        <button type="button" @click="resetFormation(team)"
+                            class="inline-flex items-center gap-2 min-h-[40px] px-2 rounded-lg text-[12px] font-medium text-gray-500 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-50 dark:hover:text-slate-200 dark:hover:bg-white/[0.03] transition-colors duration-150">
+                            <i class="fa-solid fa-rotate-left text-[11px]"></i> Restablecer formación
+                        </button>
+                    </div>
                 </section>
 
                 <button v-if="!finished && started" type="button" @click="ended"
@@ -347,7 +439,7 @@ const accent = (side) => side === 1 ? 'bg-white text-emerald-700 ring-1 ring-gra
             <!-- Acciones -->
             <template v-if="mode === 'actions' && selected?.player">
                 <div class="px-5 pt-3 sm:pt-5 pb-4 flex items-center gap-3 border-b border-gray-200 dark:border-white/[0.06]">
-                    <span class="relative shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold tabular-nums" :class="accent(selected.side)">
+                    <span class="relative shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold tabular-nums ring-1 ring-inset ring-black/10" :style="kitStyle(selected.side)">
                         {{ selected.player.t_shirt ?? initials(selected.player) }}
                         <span v-if="cardTone(selected.player)" class="absolute -top-0.5 -left-0.5 w-2.5 h-3.5 rounded-[2px]" :class="cardTone(selected.player)"></span>
                     </span>
@@ -457,7 +549,7 @@ const accent = (side) => side === 1 ? 'bg-white text-emerald-700 ring-1 ring-gra
                             </div>
                             <button v-else type="button" @click="enter(p)"
                                 class="w-full flex items-center gap-3 px-5 py-3 text-left hover:bg-gray-50 dark:hover:bg-white/[0.03] active:bg-gray-100 dark:active:bg-white/[0.05] transition-colors duration-150">
-                                <span class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-[13px] font-bold tabular-nums" :class="accent(selected?.side)">
+                                <span class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-[13px] font-bold tabular-nums ring-1 ring-inset ring-black/10" :style="kitStyle(selected?.side)">
                                     {{ p.t_shirt ?? initials(p) }}
                                 </span>
                                 <span class="flex-1 min-w-0 truncate text-[14px] font-medium text-gray-800 dark:text-slate-100">{{ fullName(p) }}</span>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ChampionshipController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ChampionshipSharingController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\GameItemController;
@@ -13,10 +14,9 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PlayController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\PositionTableController;
+use App\Http\Controllers\PublicSite;
 use App\Http\Controllers\SantionController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,13 +29,14 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+Route::get('/', PublicSite\HomeController::class)->name('home');
+
+// Páginas públicas de un campeonato compartido (solo lectura, sin sesión)
+Route::prefix('c/{championship}')->name('public.')->group(function () {
+    Route::get('/', PublicSite\ChampionshipController::class)->name('championship');
+    Route::get('calendario/{date?}', PublicSite\CalendarController::class)->name('calendar');
+    Route::get('categoria/{category}', PublicSite\CategoryController::class)->whereNumber('category')->name('category');
+    Route::get('partido/{game}', PublicSite\GameController::class)->whereNumber('game')->name('game');
 });
 
 Route::middleware([
@@ -45,6 +46,10 @@ Route::middleware([
 ])->group(function () {
 
     Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard');
+
+    // Compartir el campeonato actual (lo hace público) o dejar de compartirlo
+    Route::post('campeonato/compartir', [ChampionshipSharingController::class, 'store'])->name('championship.share');
+    Route::delete('campeonato/compartir', [ChampionshipSharingController::class, 'destroy'])->name('championship.unshare');
 
     Route::get('seleccionar-categoria/{type}', [HomeController::class, 'sendRedirect'])->name('select.category');
 
@@ -79,6 +84,9 @@ Route::middleware([
 
     // Patch
     Route::patch('gameitems/{gameitem_id}/patch', [GameItemController::class, 'patch'])->name('gameitems.patch');
+    // Posiciones en la cancha (una o el equipo completo)
+    Route::patch('gameitems/{gameitem_id}/position', [GameItemController::class, 'position'])->name('gameitems.position');
+    Route::patch('games/{game}/positions', [GameItemController::class, 'positions'])->name('gameitems.positions');
 
     // Traer losjugadores para el cambio o completar
     Route::post('gameitems/{game}/players', [GameItemController::class, 'getPlayers'])->name('gameitems.players');

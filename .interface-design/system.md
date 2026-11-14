@@ -131,7 +131,8 @@ Whole row is the control (`<button>` full width, py-3, 40px avatar, 14px/500 nam
 
 ### Live match (Play/Playing.vue)
 - Pitch (Play/Pitch.vue): emerald-700/800 stripes, tokens 44px (36px when a side has > 7). Home = white token, away = blue-500. Orientation follows the pitch's own width via container query (≥ 560px horizontal).
-- Team colours: home emerald, away blue-500 (stripe, token, tab).
+- Team colours: `clubs.color` (#rrggbb, nullable) via `Shared/teamColors.js` → `teamColors(c1, c2)` gives `{bg, fg, ring, alternate}` per side. Fallback home white / away blue-500. Text colour by luminance; green or near-black kits get a white ring on the pitch; if both kits are too similar the away side switches to an alternate (white or slate-900) and the team card says "camiseta alterna". Used by pitch tokens, avatars, team stripes and `ClubBadge` (solid kit colour when set).
+- Positions: `game_items.pos_x/pos_y` (0–100, relative to the team: x 0 = own goal, y = touchline to touchline; away side mirrored when drawn). `null` = automatic layout. Mouse drags after 4px; touch needs a 250ms long-press (scroll stays free). Players without a position, or overlapping a teammate (< 7 units), show a dashed amber outline + "Ubicar" badge and an amber status line above the pitch. First move of a team saves the whole team's layout. Lineups inherit each player's last position; a substitute takes the outgoing player's spot.
 - No confirmation dialogs for reversible match events: apply optimistically, toast with "Deshacer" (6s). Confirm only what can't be undone (start match, finish match, payments).
 
 ## SweetAlert2 Dark Theme
@@ -179,3 +180,30 @@ One table for all sizes, no duplicated markup:
 - Service worker caches ONLY static assets (`/build/assets`, icons, fonts). HTML and Inertia responses always go to network — live scores must never be stale. Full navigations offline → `offline.html`; in-app (Inertia XHR) offline → `OfflineBanner` (amber status panel).
 - Bump `VERSION` in sw.js only when the shell (offline.html, icons, manifest) changes; hashed Vite assets clean themselves up.
 - `theme-color` follows the class-based theme (pre-paint script in app.blade.php + `applyTheme` in Header.vue): `#020617` dark, `#ffffff` light.
+
+## Empty states and guidance
+- `Components/EmptyState.vue` (`icon`, `title`, `description`, `bordered`; actions in the default slot). Every list uses it: say what is missing, what it is for, and give the next step as a `btn-primary`. Never "haz clic aquí".
+- Distinguish "nothing yet" from "filter found nothing" (the latter offers "Ver todos").
+- When the previous step is missing, send the user there instead of showing an empty form (e.g. Game/Create and Game/Index with fewer than 2 clubs → "Registrar clubes").
+- Two valid ways to do something → two choice cards, the recommended one tinted emerald (Game/Index: generar fase de grupos / crear un partido).
+- Dashboard setup guide: ordered steps (categoría → grupos → clubes → jugadores → partidos); done = solid emerald check, current = emerald outline + the only `btn-primary`; the card disappears once all are done. Live matches go above it with a red border.
+- Dates relative to "today" (Hoy/Mañana, quick chips) are computed in `onMounted`, never during render.
+
+## Guest pages (welcome, login, password, 2FA)
+- Always dark: `<html class="dark">` for guests (app.blade.php) and `AuthenticationCard` carries its own `dark` class, so field components render dark regardless of the saved theme.
+- `AuthenticationCard` (`title`, `description`, slots `logo`, default, `footer`): slate-950 page with faint centre-circle pitch lines, slate-900 card `max-w-sm`, pitch stripe beside the title, `min-h-[100svh]` + safe areas.
+- Brand: emerald "5IV" square + "Many Champs / SPORT MANAGER" (`AuthenticationCardLogo`, same as Welcome header).
+- Copy in Spanish, verbs match the action ("Ingresar", "Enviar enlace", "Guardar contraseña"). Primary button full width on login, 48px+ tall.
+- `PrimaryButton` = `btn-primary`; `Checkbox` and `InputLabel` follow the emerald/slate tokens.
+
+## Public pages (shared championship, read-only)
+- Routes `/c/{slug}` (championship), `/calendario/{fecha?}`, `/categoria/{id}`, `/partido/{id}`. `{championship}` binds by slug and only resolves `is_public` teams (AppServiceProvider); private = 404.
+- Private by default. The organizer's "Compartir" (`Components/ShareChampionship.vue`, owner only) publishes on first use after a confirm, then shows the link sheet; "Dejar de compartir" closes the pages, slug is kept.
+- Data is a whitelist built in `app/Queries/*` (GameSummaries, MatchSheet, TopScorers, Standings, PublicChampionships). Never expose cédula, phone, birth date, photos, payments, unpaid sanctions or black cards.
+- `Layouts/PublicLayout.vue`: always dark (own `dark` class), `max-w-3xl`, championship name + share in the header, tabs Inicio / Calendario, footer "Hecho con Many Champs".
+- `Components/Public/GameRow.vue` is the only match row: when/"En vivo"/"Final" on the left, both clubs with kit dot and score, context line below.
+- `Play/Pitch.vue` with `readonly`: tokens are not buttons, no drag, no "Ubicar". Event animations still play.
+- Live match page polls with `router.reload({ only })` every 15 s while not finished and the tab is visible.
+- `Components/ShareButton.vue`: `navigator.share`, falls back to copying the link.
+- Link previews: controllers pass an `og` prop (`title`, `description`); app.blade.php prints the meta tags server-side.
+- Date/time text helpers live in `Shared/dates.js` (`dayLabel`, `longDay`, `hour`, `todayParts`).

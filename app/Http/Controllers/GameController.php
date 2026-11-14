@@ -39,7 +39,10 @@ class GameController extends Controller
 
         $groups = Group::where('category_id', $category->id)->get();
 
-        return Inertia::render('Game/Index', compact('category', 'games', 'groups'));
+        // Para guiar el estado vacío: sin dos clubes no se puede crear un partido
+        $clubs_count = Club::where('category_id', $category->id)->count();
+
+        return Inertia::render('Game/Index', compact('category', 'games', 'groups', 'clubs_count'));
     }
 
     public function create(Category $category)

@@ -5,6 +5,7 @@ import { computed, reactive, ref } from 'vue';
 import AdminLayout from '../../Layouts/AdminLayout.vue';
 import BackLink from '@/Components/BackLink.vue';
 import ClubBadge from '../Game/ClubBadge.vue';
+import { teamColors } from '@/Shared/teamColors';
 import { Link, router } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 
@@ -33,9 +34,10 @@ const pendings = (p) => {
 }
 const isBlocked = (p) => pendings(p).length > 0
 
+const colors = computed(() => teamColors(props.game.c1_color, props.game.c2_color))
 const teams = computed(() => [
-    { key: 'clubs1', club: { id: props.game.club1_id, name: props.game.c1_name }, paid: Number(props.game.paid1 ?? 0), players: props.club1_players, accent: 'bg-emerald-500' },
-    { key: 'clubs2', club: { id: props.game.club2_id, name: props.game.c2_name }, paid: Number(props.game.paid2 ?? 0), players: props.club2_players, accent: 'bg-blue-500' },
+    { key: 'clubs1', club: { id: props.game.club1_id, name: props.game.c1_name, color: props.game.c1_color }, paid: Number(props.game.paid1 ?? 0), players: props.club1_players, accent: colors.value[1].bg },
+    { key: 'clubs2', club: { id: props.game.club2_id, name: props.game.c2_name, color: props.game.c2_color }, paid: Number(props.game.paid2 ?? 0), players: props.club2_players, accent: colors.value[2].bg },
 ])
 
 // Selección por equipo
@@ -195,7 +197,7 @@ const pay = (player, pending) => {
 
                     <!-- Cabecera del equipo -->
                     <header class="relative px-4 sm:px-5 py-4 border-b border-gray-200 dark:border-white/[0.06]">
-                        <span class="absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full" :class="team.accent"></span>
+                        <span class="absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full ring-1 ring-inset ring-black/10" :style="{ backgroundColor: team.accent }"></span>
                         <div class="flex items-center gap-3">
                             <ClubBadge :club="team.club" size="sm" />
                             <div class="flex-1 min-w-0">

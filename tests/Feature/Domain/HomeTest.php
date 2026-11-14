@@ -67,12 +67,35 @@ class HomeTest extends DomainTestCase
             );
     }
 
+    public function test_dashboard_lists_live_and_upcoming_games_and_setup_progress(): void
+    {
+        $club1 = $this->makeClub();
+        $club2 = $this->makeClub();
+        $live = Game::factory()->create(['club1_id' => $club1->id, 'club2_id' => $club2->id, 'state' => 'jugando']);
+        $next = Game::factory()->create(['club1_id' => $club1->id, 'club2_id' => $club2->id, 'state' => 'creado', 'date' => now()->addDay()->toDateString()]);
+        // Ya pasó la fecha o ya se jugó: no es "próximo"
+        Game::factory()->create(['club1_id' => $club1->id, 'club2_id' => $club2->id, 'state' => 'creado', 'date' => now()->subDays(2)->toDateString()]);
+        Game::factory()->create(['club1_id' => $club1->id, 'club2_id' => $club2->id, 'state' => 'finalizado', 'date' => now()->addDay()->toDateString()]);
+
+        $this->get(route('dashboard'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('categories', fn ($count) => $count >= 1)
+                ->has('groups')
+                ->has('live', 1)
+                ->where('live.0.id', $live->id)
+                ->where('live.0.c1name', $club1->name)
+                ->has('upcoming', 1)
+                ->where('upcoming.0.id', $next->id)
+            );
+    }
+
     public function test_select_category_lists_categories_with_club_count(): void
     {
         $this->makeClub();
         $this->makeClub();
 
-        $this->get(route('select.category', 'partidos'))
+        $this->get(route('select.category', ['type' => 'partidos', 'todas' => 1]))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('SelectCategory')
@@ -80,6 +103,32 @@ class HomeTest extends DomainTestCase
                 ->has('categories', 1)
                 ->where('categories.0.count', 2)
             );
+    }
+
+    public function test_select_category_summarizes_players_and_games(): void
+    {
+        $club1 = $this->makeClub();
+        $club2 = $this->makeClub();
+        $this->makePlayers($club1, 3);
+        Game::factory()->create(['club1_id' => $club1->id, 'club2_id' => $club2->id, 'state' => 'jugando']);
+        Game::factory()->create(['club1_id' => $club2->id, 'club2_id' => $club1->id, 'state' => 'finalizado']);
+
+        $this->get(route('select.category', ['type' => 'clubs', 'todas' => 1]))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('categories.0.players', 3)
+                ->where('categories.0.games', 2)
+                ->where('categories.0.finished', 1)
+                ->where('categories.0.live', 1)
+            );
+    }
+
+    public function test_select_category_skips_list_when_there_is_only_one(): void
+    {
+        $this->get(route('select.category', 'partidos'))
+            ->assertRedirect(route('games.index', $this->category->id));
+
+        $this->get(route('select.category', 'grupos'))
+            ->assertRedirect(route('groups.index', $this->category->id));
     }
 
     public function test_select_category_rejects_unknown_type(): void

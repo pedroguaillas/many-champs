@@ -55,6 +55,8 @@ const applyTheme = (mode) => {
     // Barra de estado del celular = color del header
     const isDark = document.documentElement.classList.contains('dark');
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isDark ? '#020617' : '#ffffff');
+    // App instalada en iOS: se aplica al volver a abrirla
+    document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')?.setAttribute('content', isDark ? 'black-translucent' : 'default');
 };
 
 onMounted(() => {
@@ -100,7 +102,7 @@ const switchToTeam = (team) => {
 </script>
 
 <template>
-    <header class="sticky top-0 z-30 h-[calc(4rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] w-full bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-gray-200 dark:border-white/[0.08] flex items-center justify-between px-4 sm:px-6">
+    <header class="sticky top-0 z-30 h-[calc(4rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] w-full bg-white dark:bg-slate-950 border-b border-gray-200 dark:border-white/[0.08] flex items-center justify-between px-4 sm:px-6">
         <!-- Left: Hamburger + Page title -->
         <div class="flex items-center gap-4">
             <!-- Hamburger (mobile only) -->

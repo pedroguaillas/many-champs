@@ -1,6 +1,7 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import BackLink from '@/Components/BackLink.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 import InputError from '@/Components/InputError.vue';
 import ClubPicker from './ClubPicker.vue';
 import ClubBadge from './ClubBadge.vue';
@@ -115,7 +116,20 @@ const sides = [
 
 <template>
     <AdminLayout :title="'Registrar juego'">
-        <form @submit.prevent="save" class="max-w-3xl mx-auto">
+        <!-- Sin dos clubes no hay partido que crear: se guía al paso anterior -->
+        <div v-if="clubs.length < 2" class="max-w-3xl mx-auto">
+            <BackLink :href="route('games.index', category.id)" label="Partidos" />
+            <div class="rounded-xl bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-white/[0.06]">
+                <EmptyState icon="fa-solid fa-shield-halved" title="Primero registra los clubes"
+                    :description="`Un partido necesita dos clubes y ${category.name} tiene ${clubs.length}. Regístralos y vuelve para crear el partido.`">
+                    <Link :href="route('clubs.index', category.id)" class="btn-primary">
+                        <i class="fa-solid fa-plus text-[11px]"></i> Registrar clubes
+                    </Link>
+                </EmptyState>
+            </div>
+        </div>
+
+        <form v-else @submit.prevent="save" class="max-w-3xl mx-auto">
 
             <BackLink :href="route('games.index', category.id)" label="Partidos" />
 
@@ -248,7 +262,7 @@ const sides = [
             @close="picking = null" @select="onPick" />
 
         <!-- Barra de acción: siempre visible, fuera del scroll -->
-        <template #footer>
+        <template v-if="clubs.length >= 2" #footer>
             <div class="max-w-3xl mx-auto flex items-center gap-3 px-4 sm:px-6 py-3">
                 <p class="flex-1 min-w-0 truncate text-[12px] text-gray-500 dark:text-slate-400">
                     <template v-if="canSave">

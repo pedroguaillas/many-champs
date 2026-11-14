@@ -1,5 +1,5 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import InputError from '@/Components/InputError.vue';
@@ -21,29 +21,29 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Forgot Password" />
+    <Head title="Recuperar contraseña" />
 
-    <AuthenticationCard>
+    <AuthenticationCard title="Recuperar contraseña">
         <template #logo>
             <AuthenticationCardLogo />
         </template>
 
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
+        <div class="mb-4 text-[13px] leading-relaxed text-slate-400">
+            Escribe el correo de tu cuenta y te enviaremos un enlace para crear una contraseña nueva.
         </div>
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
+        <div v-if="status" role="status" class="mb-4 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2.5 text-[13px] text-emerald-300">
             {{ status }}
         </div>
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="email" value="Correo electrónico" />
                 <TextInput
                     id="email"
                     v-model="form.email"
                     type="email"
-                    class="mt-1 block w-full"
+                    class="mt-1.5 block w-full py-3"
                     required
                     autofocus
                     autocomplete="username"
@@ -51,9 +51,10 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Email Password Reset Link
+            <div class="flex flex-wrap items-center justify-between gap-3 mt-5">
+                <Link :href="route('login')" class="py-2 text-[13px] font-medium text-slate-400 hover:text-slate-200 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40"><i class="fa-solid fa-arrow-left text-[11px] mr-1.5" aria-hidden="true"></i>Volver a ingresar</Link>
+                <PrimaryButton :disabled="form.processing">
+                    Enviar enlace
                 </PrimaryButton>
             </div>
         </form>

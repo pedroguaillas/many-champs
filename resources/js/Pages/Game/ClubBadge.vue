@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import { isHex, textOn } from '@/Shared/teamColors';
 
 const props = defineProps({
     club: { type: Object, default: null },
@@ -22,7 +23,9 @@ const initials = computed(() => {
     return (words.length === 1 ? words[0].slice(0, 2) : words[0][0] + words[1][0]).toUpperCase()
 })
 
-const tone = computed(() => tones[(props.club?.id ?? 0) % tones.length])
+// Con color de camiseta se usa ese; si no, un tono fijo según el id
+const kit = computed(() => isHex(props.club?.color) ? { backgroundColor: props.club.color, color: textOn(props.club.color) } : null)
+const tone = computed(() => kit.value ? 'ring-1 ring-inset ring-black/10 dark:ring-white/10' : tones[(props.club?.id ?? 0) % tones.length])
 
 const sizeClass = computed(() => ({
     sm: 'w-9 h-9 text-[12px] rounded-lg',
@@ -32,7 +35,7 @@ const sizeClass = computed(() => ({
 </script>
 
 <template>
-    <span class="shrink-0 inline-flex items-center justify-center font-bold tracking-tight" :class="[sizeClass, tone]" aria-hidden="true">
+    <span class="shrink-0 inline-flex items-center justify-center font-bold tracking-tight" :class="[sizeClass, tone]" :style="kit" aria-hidden="true">
         {{ initials }}
     </span>
 </template>

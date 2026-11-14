@@ -19,6 +19,7 @@ class Team extends JetstreamTeam
      */
     protected $casts = [
         'personal_team' => 'boolean',
+        'is_public' => 'boolean',
     ];
 
     /**
@@ -29,6 +30,8 @@ class Team extends JetstreamTeam
     protected $fillable = [
         'name',
         'personal_team',
+        'slug',
+        'is_public',
     ];
 
     /**

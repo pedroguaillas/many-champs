@@ -2,13 +2,14 @@
 
 // Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 import { Link, router } from '@inertiajs/vue3';
-import { reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { gameState } from '@/Composables/gameState';
 
 // Props
 const props = defineProps({
-    games: { type: Array, default: () => { } },
+    games: { type: Array, default: () => [] },
     date: { type: String, default: () => null }
 })
 
@@ -22,6 +23,23 @@ const changeDate = (e) => {
     router.get(route('calendar', e.target.value))
 }
 
+// Fecha local de hoy en formato Y-m-d (sin pasar por UTC)
+const today = () => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+// El reloj es del dispositivo: se compara al montar (el servidor está en UTC)
+const now = ref(null)
+onMounted(() => { now.value = today() })
+const isToday = computed(() => !now.value || props.date === now.value)
+
+// "sábado, 15 de noviembre" para el estado vacío
+const dateLabel = computed(() => {
+    if (!props.date) return 'este día'
+    const [y, m, d] = props.date.split('-').map(Number)
+    return new Intl.DateTimeFormat('es', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(y, m - 1, d))
+})
+
 </script>
 
 <template>
@@ -33,7 +51,7 @@ const changeDate = (e) => {
             <!-- Card header -->
             <div class="px-5 py-4 border-b border-gray-200 dark:border-white/[0.06] flex justify-between items-center">
                 <h2 class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white">Calendario de juegos</h2>
-                <input v-model="date" type="date" @change="changeDate"
+                <input v-model="date" type="date" @change="changeDate" aria-label="Fecha del calendario"
                     class="px-3.5 py-2.5 rounded-lg bg-white dark:bg-slate-900/80 border border-gray-300 dark:border-white/[0.08] text-[13px] text-gray-700 dark:text-slate-200 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-colors duration-200" />
             </div>
 
@@ -72,11 +90,13 @@ const changeDate = (e) => {
                                 <td class="px-3 py-3 w-1">
                                     <Link v-if="game.state === 'creado' || game.state === 'planificado'"
                                         :href="route('games.select-players', game.id)"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors duration-200">
+                                        title="Elegir titulares" :aria-label="`Elegir titulares de ${game.c1name} vs ${game.c2name}`"
+                                        class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors duration-200">
                                     <i class="far fa-futbol text-xs"></i>
                                     </Link>
                                     <Link v-else :href="route('playing.index', game.id)"
-                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors duration-200">
+                                        title="Abrir partido" :aria-label="`Abrir el partido ${game.c1name} vs ${game.c2name}`"
+                                        class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors duration-200">
                                     <i class="far fa-futbol text-xs"></i>
                                     </Link>
                                 </td>
@@ -84,6 +104,18 @@ const changeDate = (e) => {
                         </template>
                     </tbody>
                 </table>
+
+                <!-- Sin partidos ese día -->
+                <EmptyState v-else icon="fa-regular fa-calendar-xmark" :title="`No hay partidos el ${dateLabel}`"
+                    description="El calendario muestra los partidos de todas las categorías en la fecha elegida. Cambia la fecha arriba o programa un partido para este día.">
+                    <Link :href="route('select.category', 'games')" class="btn-primary">
+                        <i class="fa-solid fa-futbol text-[11px]"></i> Ir a partidos
+                    </Link>
+                    <Link v-if="!isToday" :href="route('calendar')"
+                        class="px-5 py-2.5 rounded-lg text-xs font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700/40 transition duration-200">
+                        Ver hoy
+                    </Link>
+                </EmptyState>
             </div>
         </div>
 

@@ -3,6 +3,7 @@
 // Imports
 import ModalCategory from './ModalCategory.vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 import { router, useForm, Link } from '@inertiajs/vue3';
 import { reactive, ref } from 'vue';
 import axios from 'axios';
@@ -88,11 +89,15 @@ const deleteCategory = (id, name) => {
         buttonsStyling: true
     });
     alert.fire({
-        title: `¿Esta seguro eliminar la categoría ${name}?`,
+        title: `¿Está seguro de eliminar la categoría ${name}?`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: '<i class="fa-solid fa-check"></i> Si, Eliminar',
-        cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar'
+        confirmButtonText: '<i class="fa-solid fa-check"></i> Sí, eliminar',
+        cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar',
+        background: '#1e293b',
+        color: '#e2e8f0',
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#334155',
     }).then((result) => {
         if (result.isConfirmed) {
             form.delete(route('categories.destroy', id), {
@@ -126,7 +131,7 @@ const deleteCategory = (id, name) => {
             <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="data-table w-full text-left">
+                <table v-if="categories.length > 0" class="data-table w-full text-left">
                     <thead>
                         <tr>
                             <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 w-1">N°</th>
@@ -148,15 +153,15 @@ const deleteCategory = (id, name) => {
                             <td class="hidden sm:table-cell px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ item.gender }}</td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center gap-1">
-                                    <Link :href="route('groups.index', item.id)"
+                                    <Link :href="route('groups.index', item.id)" title="Grupos" aria-label="Grupos de la categoría"
                                         class="btn-icon btn-icon-success">
                                         <i class="fa fa-users text-[11px]"></i>
                                     </Link>
-                                    <button @click="edit(item)"
+                                    <button @click="edit(item)" title="Editar" aria-label="Editar categoría"
                                         class="btn-icon">
                                         <i class="fa fa-edit text-[11px]"></i>
                                     </button>
-                                    <button @click="$event => deleteCategory(item.id, item.name)"
+                                    <button @click="$event => deleteCategory(item.id, item.name)" title="Eliminar" aria-label="Eliminar categoría"
                                         class="btn-icon btn-icon-danger">
                                         <i class="fa fa-trash text-[11px]"></i>
                                     </button>
@@ -165,6 +170,14 @@ const deleteCategory = (id, name) => {
                         </tr>
                     </tbody>
                 </table>
+
+                <!-- Sin categorías: primer paso del campeonato -->
+                <EmptyState v-else icon="fa-solid fa-layer-group" title="Aún no hay categorías"
+                    description="Una categoría es un torneo dentro del campeonato (por ejemplo, Senior masculino). Dentro de ella se crean los grupos, los clubes y los partidos.">
+                    <button type="button" @click="newCategory" class="btn-primary">
+                        <i class="fa-solid fa-plus text-[11px]"></i> Crear la primera categoría
+                    </button>
+                </EmptyState>
             </div>
         </div>
     </AdminLayout>

@@ -38,33 +38,33 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Two-factor Confirmation" />
+    <Head title="Verificación en dos pasos" />
 
-    <AuthenticationCard>
+    <AuthenticationCard title="Verificación en dos pasos">
         <template #logo>
             <AuthenticationCardLogo />
         </template>
 
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+        <div class="mb-4 text-[13px] leading-relaxed text-slate-400">
             <template v-if="! recovery">
-                Please confirm access to your account by entering the authentication code provided by your authenticator application.
+                Escribe el código de tu aplicación de autenticación.
             </template>
 
             <template v-else>
-                Please confirm access to your account by entering one of your emergency recovery codes.
+                Escribe uno de tus códigos de recuperación.
             </template>
         </div>
 
         <form @submit.prevent="submit">
             <div v-if="! recovery">
-                <InputLabel for="code" value="Code" />
+                <InputLabel for="code" value="Código" />
                 <TextInput
                     id="code"
                     ref="codeInput"
                     v-model="form.code"
                     type="text"
                     inputmode="numeric"
-                    class="mt-1 block w-full"
+                    class="mt-1.5 block w-full py-3"
                     autofocus
                     autocomplete="one-time-code"
                 />
@@ -72,31 +72,31 @@ const submit = () => {
             </div>
 
             <div v-else>
-                <InputLabel for="recovery_code" value="Recovery Code" />
+                <InputLabel for="recovery_code" value="Código de recuperación" />
                 <TextInput
                     id="recovery_code"
                     ref="recoveryCodeInput"
                     v-model="form.recovery_code"
                     type="text"
-                    class="mt-1 block w-full"
+                    class="mt-1.5 block w-full py-3"
                     autocomplete="one-time-code"
                 />
                 <InputError class="mt-2" :message="form.errors.recovery_code" />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <button type="button" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 underline cursor-pointer" @click.prevent="toggleRecovery">
+            <div class="flex flex-wrap items-center justify-between gap-3 mt-5">
+                <button type="button" class="py-2 text-left text-[13px] font-medium text-emerald-400 hover:text-emerald-300 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40" @click.prevent="toggleRecovery">
                     <template v-if="! recovery">
-                        Use a recovery code
+                        Usar un código de recuperación
                     </template>
 
                     <template v-else>
-                        Use an authentication code
+                        Usar el código de la aplicación
                     </template>
                 </button>
 
-                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
+                <PrimaryButton :disabled="form.processing">
+                    Ingresar
                 </PrimaryButton>
             </div>
         </form>

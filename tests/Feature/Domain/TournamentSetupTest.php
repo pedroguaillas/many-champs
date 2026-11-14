@@ -161,6 +161,39 @@ class TournamentSetupTest extends DomainTestCase
             ->assertSessionHasErrors(['name', 'address', 'extra_points']);
     }
 
+    public function test_club_jersey_color_is_saved_and_validated(): void
+    {
+        $this->post(route('clubs.store'), [
+            'name' => 'Rayados',
+            'address' => 'Centro',
+            'category_id' => $this->category->id,
+            'color' => '#DC2626',
+        ])->assertOk();
+
+        $club = Club::where('name', 'Rayados')->sole();
+        $this->assertSame('#DC2626', $club->color);
+
+        $this->put(route('clubs.update', $club->id), ['name' => 'Rayados', 'address' => 'Centro', 'extra_points' => 0, 'color' => null])
+            ->assertOk();
+        $this->assertNull($club->fresh()->color);
+
+        $this->post(route('clubs.store'), ['name' => 'X', 'address' => 'Y', 'color' => 'rojo'])
+            ->assertSessionHasErrors('color');
+    }
+
+    public function test_playing_page_includes_club_colors(): void
+    {
+        $club1 = $this->makeClub(['color' => '#facc15']);
+        $club2 = $this->makeClub(['color' => '#16a34a']);
+        $game = Game::factory()->create(['club1_id' => $club1->id, 'club2_id' => $club2->id, 'state' => 'jugando']);
+
+        $this->get(route('playing.index', $game->id))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('game.c1_color', '#facc15')
+                ->where('game.c2_color', '#16a34a')
+            );
+    }
+
     public function test_club_with_games_cannot_be_deleted(): void
     {
         $club = $this->makeClub();

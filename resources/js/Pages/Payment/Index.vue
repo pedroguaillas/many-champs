@@ -3,6 +3,7 @@
 // Imports
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import BackLink from '@/Components/BackLink.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 import ModalPayment from './ModalPayment.vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { reactive, ref } from 'vue';
@@ -88,7 +89,7 @@ const edit = (paymentEdit) => {
     toggle();
 }
 
-// Utilizado para eliminar un club
+// Utilizado para eliminar un pago
 const form = useForm({ id: '' });
 
 const deletePlayer = (payment) => {
@@ -98,10 +99,10 @@ const deletePlayer = (payment) => {
     });
 
     alert.fire({
-        title: `¿Esta seguro eliminar el pago de $${payment.amount}?`,
+        title: `¿Está seguro de eliminar el pago de $${payment.amount}?`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: '<i class="fa-solid fa-check"></i> Si, Eliminar',
+        confirmButtonText: '<i class="fa-solid fa-check"></i> Sí, eliminar',
         cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar',
         background: '#1e293b',
         color: '#e2e8f0',
@@ -131,7 +132,7 @@ const deletePlayer = (payment) => {
                     <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
                         <i class="fas fa-money-bill-wave text-emerald-400 text-[11px]"></i>
                     </div>
-                    <h2 class="text-sm font-semibold tracking-tight text-white">{{ `Pagos de ${club.name}` }}</h2>
+                    <h2 class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white">{{ `Pagos de ${club.name}` }}</h2>
                 </div>
                 <button @click="newPayment"
                     class="btn-add">
@@ -142,7 +143,7 @@ const deletePlayer = (payment) => {
             <!-- Responsive -->
             <div class="w-full overflow-x-auto">
                 <!-- Tabla -->
-                <table class="data-table w-full text-center">
+                <table v-if="payments.length > 0" class="data-table w-full text-center">
                     <thead>
                         <tr>
                             <th class="hidden sm:table-cell px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">N°</th>
@@ -159,11 +160,11 @@ const deletePlayer = (payment) => {
                             <td class="px-5 py-3.5 text-[13px] text-gray-500 dark:text-slate-400">{{ payment.note }}</td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center gap-1">
-                                    <button @click="edit(payment)"
+                                    <button @click="edit(payment)" title="Editar" aria-label="Editar pago"
                                         class="btn-icon">
                                         <i class="fa fa-edit text-[11px]"></i>
                                     </button>
-                                    <button @click="deletePlayer(payment)"
+                                    <button @click="deletePlayer(payment)" title="Eliminar" aria-label="Eliminar pago"
                                         class="btn-icon btn-icon-danger">
                                         <i class="fa fa-trash text-[11px]"></i>
                                     </button>
@@ -172,6 +173,14 @@ const deletePlayer = (payment) => {
                         </tr>
                     </tbody>
                 </table>
+
+                <!-- Sin pagos -->
+                <EmptyState v-else icon="fa-solid fa-money-bill-wave" :title="`${club.name} aún no tiene pagos`"
+                    description="Aquí se anotan los abonos del club: inscripción, arbitraje o multas. Cada pago guarda el monto y una nota para saber a qué corresponde.">
+                    <button type="button" @click="newPayment" class="btn-primary">
+                        <i class="fa-solid fa-plus text-[11px]"></i> Registrar el primer pago
+                    </button>
+                </EmptyState>
             </div>
         </div>
     </AdminLayout>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use App\Models\GameItem;
 use App\Models\Player;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,8 @@ class PlayController extends Controller
                 'g.*',
                 'c1.name AS c1_name', 'c1.category_id',
                 'c2.name AS c2_name',
+                'c1.color AS c1_color',
+                'c2.color AS c2_color',
                 'pr.description AS phase',
                 DB::raw('(SELECT SUM(amount) FROM payments AS p WHERE club_id = club1_id) AS paid1,(SELECT SUM(amount) FROM payments AS p WHERE club_id = club2_id) AS paid2')
             )
@@ -66,20 +69,15 @@ class PlayController extends Controller
 
         $game_items = [];
 
-        // Formar un nuevo array para insertar en game_items
+        // Cada titular arranca donde jugó su último partido (si tiene posición guardada)
+        $playerIds = array_map('intval', array_merge($request->clubs1, $request->clubs2));
+        $lastPositions = GameItem::lastPositions($playerIds, $game->id);
 
-        foreach ($request->clubs1 as $key => $value) {
-            array_push($game_items, [
-                'player_id' => $value,
-                'entered_in' => 'inicio'
-            ]);
-        }
-
-        foreach ($request->clubs2 as $key => $value) {
-            array_push($game_items, [
-                'player_id' => $value,
-                'entered_in' => 'inicio'
-            ]);
+        foreach ($playerIds as $playerId) {
+            $game_items[] = array_merge([
+                'player_id' => $playerId,
+                'entered_in' => 'inicio',
+            ], $lastPositions[$playerId] ?? []);
         }
 
         $game->gameitems()->createMany($game_items);

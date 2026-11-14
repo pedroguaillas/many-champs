@@ -7,6 +7,18 @@
 }
 
 @layer base {
+    /* Fondo de la página = color del header. iOS 26 Safari ignora theme-color y tiñe
+       la barra de estado con este fondo; también se ve en el rebote del scroll */
+    html {
+        background-color: #ffffff;
+        color-scheme: light;
+    }
+
+    html.dark {
+        background-color: #020617; /* slate-950 */
+        color-scheme: dark;
+    }
+
     html {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
